@@ -1,0 +1,49 @@
+{
+    "name": "dzup-dashboard",
+    "version": "0.0.1",
+    "authors": [
+    "Ninel Hodzic <ninel.hodzic@gmail.com>"
+  ],
+    "description": "dzup-dashboard",
+    "main": "index.html",
+    "license": "MIT",
+    "ignore": [
+    "**/.*",
+    "node_modules",
+    "lib",
+    "test",
+    "tests"
+  ],
+    "dependencies": {
+        "angular": ">=1.4 <1.5.6",
+        "angular-animate": ">=1.4 <1.5.6",
+        "angular-sanitize": ">=1.4 <1.5.6",
+        "angular-cookies": "~1.2.21",
+        "angular-bootstrap": "^1.3.1",
+        "angular-ui-ace": "0.1.1",
+        "bootstrap": "^3.3.6",
+        "font-awesome": "~4.5.0",
+        "Sortable": "^1.2.1",
+        "angular-ui-router": "~0.2.10",
+        "lodash": "~4.3.0",
+        "angular-local-storage": "~0.1.5",
+        "angular-bootstrap-scrolling-tabs": "~0.0.10",
+        "jquery": "~2.2.3",
+        "ui-select": "https://github.com/angular-ui/ui-select.git#~0.16.1",
+        "angular-schema-form": "0.8.12",
+        "angular-schema-form-ui-select": "https://github.com/networknt/angular-schema-form-ui-select.git#~0.1.1",
+        "angular-schema-form-dynamic-select": "https://github.com/OptimalBPM/angular-schema-form-dynamic-select.git#~0.10.0",
+        "angular-lodash": "https://github.com/cabrel/angular-lodash.git#~0.1.2",
+        "angular-dashboard-framework": "^0.11.0",
+        "adf-structures-base": "^0.1.1",
+        "dzup-utils": "../angular-dzup-utils",
+        "dzup-json-tree": "../angular-dzup-json-tree"
+
+    },
+    "resolutions": {
+        "angular": "1.5.4",
+        "angular-bootstrap": "^1.3.1",
+        "bootstrap": "^3.3.6",
+        "jquery": "~2.2.3"
+    }
+}

@@ -1,0 +1,67 @@
+.ui-select-container button {
+    padding: 5px 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+}
+.ui-select-container span.btn {
+    height: 30px;   
+}
+
+
+.fieldset-complex {
+    border: 1px solid #E2E2E2;   
+    border-radius: 6px;
+    padding: 10px 0px 0px 0px;
+    background: white;   
+}
+
+.checkboxes {
+    background: white;
+    padding: 10px;
+    border: 1px solid #E2E2E2;   
+    border-radius: 6px;
+}
+
+.radioboxes {
+    margin-top: 20px;
+}
+
+.radioboxes div.radio {
+    display: inline-block;
+    padding-left: 20px;
+    cursor: pointer;
+}
+
+.checkboxes div.checkbox {
+    display: inline-block;
+    padding-left: 20px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.schema-form-tabarray-left li a {
+    word-wrap: break-word;
+}
+
+.form-clean-text {
+    border-bottom-color: black;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;   
+    word-break: break-all;
+}
+
+.tab-content {
+    border: solid #e5e5e5;
+    padding: 10px;
+    border-width: 1px 1px 1px 0px;
+    background-color: #F5F5F5;
+}
+
+.schema-form-actions  {
+    margin-top: 20px;    
+}
+
+a > .menu-icon {
+    margin-left: 5px;
+}

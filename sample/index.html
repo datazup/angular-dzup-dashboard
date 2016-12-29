@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="dashboard sample app">
+    <meta name="author" content="Sebastian Sdorra">
+
+    <title>Sample Dzup Dashboard</title>
+
+    <!-- build:css css/sample.min.css -->
+    <!-- Bootstrap core CSS -->
+    <link href="components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+
+    <!-- dashboard style -->
+    <link href="components/angular-dashboard-framework/dist/angular-dashboard-framework.css" rel="stylesheet">
+    <!-- endbuild -->
+    
+    <link rel="stylesheet" type="text/css" href="components/ui-select/dist/select.min.css">
+
+    <link href="components/font-awesome/css/font-awesome.css" rel="stylesheet">
+    
+    <link rel="stylesheet" type="text/css" href="../src/styles/dashboard.css">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <!--[if lte IE 8]>
+      <script>
+        document.createElement('adf-dashboard');
+        document.createElement('adf-widget');
+        document.createElement('adf-widget-content');
+        document.createElement('adf-dashboard-row');
+        document.createElement('adf-dashboard-column');
+
+        document.createElement('highchart');
+      </script>
+    <![endif]-->
+
+    <!-- inlince css -->
+    <style type="text/css">
+        body {
+            padding-top: 60px;
+        }
+        /* fixe for modal-backdrop*/
+        
+        .modal-backdrop {
+            bottom: 0;
+            /* some fixes appear to use this, too: */
+            position: fixed;
+        }
+
+    </style>
+</head>
+
+<body ng-app="sample">
+
+
+    <div class="container">
+        <dzup-dashboard />
+    </div>
+
+    <!-- build:js js/angular.min.js -->
+    <script type="text/javascript" src="components/angular/angular.js"></script>
+    <script type="text/javascript" src="components/angular-sanitize/angular-sanitize.js"></script>
+    <!-- endbuild -->
+
+
+    <script type="text/javascript" src="components/ace-builds/src-noconflict/ace.js"></script>
+    <script type="text/javascript" src="components/ace-builds/src-noconflict/ext-language_tools.js"></script>
+    <script type="text/javascript" src="components/angular-ui-ace/ui-ace.js"></script>
+    
+    <!-- build:js js/sample.min.js -->
+    <!-- Sortable -->
+    <script type="text/javascript" src="components/Sortable/Sortable.js"></script>
+    
+    <script type="text/javascript" src="components/lodash/dist/lodash.js"></script>
+    <script type="text/javascript" src="components/ui-select/dist/select.js"></script>
+    
+
+    <!-- angular-bootstrap -->
+    <script type="text/javascript" src="components/angular-bootstrap/ui-bootstrap.js"></script>
+    <script type="text/javascript" src="components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+
+    <script type="text/javascript" src="components/tv4/tv4.js"></script>
+    <script type="text/javascript" src="components/objectpath/lib/ObjectPath.js"></script>
+    <script type="text/javascript" src="components/angular-schema-form/dist/schema-form.js"></script>
+    <script type="text/javascript" src="components/angular-schema-form/dist/bootstrap-decorator.min.js"></script>
+    <!--<script type="text/javascript" src="components/angular-schema-form/dist/bootstrap-datepicker.min.js"></script>-->
+    
+
+    <!--
+    
+                'lib/tv4/tv4.js',
+                'lib/objectpath/lib/ObjectPath.js',
+                'lib/angular-schema-form/dist/schema-form.js',
+                'lib/angular-schema-form/dist/bootstrap-decorator.min.js',
+                'lib/angular-schema-form/dist/bootstrap-datepicker.min.js',
+
+   --> <!-- local storage -->
+    <script type="text/javascript" src="components/angular-local-storage/dist/angular-local-storage.js"></script>
+
+    <script type="text/javascript" src="components/angular-dashboard-framework/dist/angular-dashboard-framework.js"></script>
+    <script type="text/javascript" src="components/adf-structures-base/dist/adf-structures-base.js"></script>
+
+    <script type="text/javascript" src="components/dzup-utils/index.js"></script>
+    <script type="text/javascript" src="components/dzup-json-tree/dzup.json.tree.js"></script>
+    <script type="text/javascript" src="components/dzup-json-tree/json.schema.directive.js"></script>
+
+    <script type="text/javascript" src="../src/scripts/directives/schema/schema.form.directives.js"></script>
+    
+    <script type="text/javascript" src="../src/scripts/dzup-dash.js"></script>
+
+    <script type="text/javascript" src="../src/scripts/directives/dashboard/dzup-dash.directive.js"></script>
+    <script type="text/javascript" src="../src/scripts/directives/datasource/datasource.controllers.js"></script>
+    <script type="text/javascript" src="../src/scripts/directives/widgets/dzup-dash.widget.factory.js"></script>
+
+    <script type="text/javascript" src="../src/scripts/reports/controllers/report.create.edit.controller.js"></script>
+    <script type="text/javascript" src="../src/scripts/reports/directives/dzup.report.expression.directive.js"></script>
+    <script type="text/javascript" src="../src/scripts/services/dzup-dash.provider.js"></script>
+    <script type="text/javascript" src="../src/scripts/services/dzup-dash.widget.provider.js"></script>
+
+
+
+
+    <script type="text/javascript" src="script/app.js"></script>
+
+
+
+
+
+    <!-- inject:js -->
+    <!-- endinject -->
+
+    <!-- endbuild -->
+</body>
+
+</html>

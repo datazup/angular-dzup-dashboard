@@ -1,0 +1,20 @@
+<div class="dzup-dashboard-container">
+    <uib-tabset active="activeTabIndex">        
+        <uib-tab dzup-resolve-attr="template-url=tabUrl" select="selectDashboard(dashboard, $index)" data-ng-repeat="dashboard in dashboardList track by dashboard.model.key | orderBy: 'dashboard.createdAt'" index="$index">
+            <uib-tab-heading>
+                {{ dashboard.model.title }}
+                <span title="Click to remove" class="remove-tab" ng-click="removeDashboard(dashboard);$event.stopPropagation();">
+                            <i class="fa fa-times" aria-hidden="true"></i>
+                        </span>
+            </uib-tab-heading>
+            <adf-dashboard name="{{dashboard.key}}" structure="{{dashboard.model.structure}}" categories="true" adf-model="dashboard.model" />
+        </uib-tab>
+        <uib-tab select="addDashboard()" index="$index">
+            <uib-tab-heading>
+                <div>
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                </div>
+            </uib-tab-heading>
+        </uib-tab>
+    </uib-tabset>
+</div>

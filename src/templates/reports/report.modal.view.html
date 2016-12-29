@@ -1,0 +1,13 @@
+<section>
+    <div class="modal-header">
+        <h4 class="modal-title" ng-bind="getTitle()"></h4>
+        <p class="text-muted small" ng-bind="getDescription()" />
+    </div>
+    <div class="modal-body">
+       <dzup-expression-report is-read-only='infoConfig.isReadOnly' model='infoConfig.inputSchemaInfo'></dzup-expression-report>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+        <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+    </div>
+</section>
