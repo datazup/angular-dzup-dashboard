@@ -41,17 +41,25 @@ dzupDashboard.provider('$dzupDashboardWidget', [function () {
     };
     var dataSources = function () {
         var ds = {
-            testDataSource: {
-                title: 'DataSource',
-                description: 'Test datasource',
-                category: 'Data Source',
+           dataSource: {
+                title: 'Data Source',
+                description: 'Data source widget',
+                category: 'DataSource',
                 controller: 'DzupGenericDataSourceController',
                 templateUrl: configProvider.templateUrlBase['dzup-dashboard'] + '/templates/directives/datasource/empty.view.html',
                 frameless: true,
                 edit: {
                     templateUrl: configProvider.templateUrlBase['dzup-dashboard'] + '/templates/directives/datasource/edit.view.html',
                     controller: 'DzupGenericDataSourceEditController',
-                    immediate: true
+                    immediate: true,
+                    apply: function($http, config){
+                           config.changesApplied = true;
+                       return true;
+                       },
+                    remove: function(widget)
+                    {
+                        console.log("HII")
+                    }
                 },
                 config: null,
                 commonSchema: {
@@ -68,7 +76,39 @@ dzupDashboard.provider('$dzupDashboardWidget', [function () {
                     },
                     form: ['reportSource']
                 }
-            }
+            },
+            chartConf: {
+                    title: 'Chart Configuration',
+                    description: 'Chart Configuration',
+                    category: 'Chart',
+                    controller: 'DzupGenericChartEditController',
+                    templateUrl: configProvider.templateUrlBase['dzup-dashboard'] + '/templates/directives/chart/empty.view.html',
+                    frameless: true,
+                    edit: {
+                        templateUrl: configProvider.templateUrlBase['dzup-dashboard'] + '/templates/directives/chart/edit.view.html',
+                        controller: 'DzupGenericChartEditController',
+                        immediate: true,
+                        apply: function($http, config){
+                            config.changesApplied = true;
+                        return true;
+                        }
+                    },
+                    config: null,
+                    commonSchema: {
+                        schema: {
+                            type: 'object',
+                            properties: {
+                                reportSource: {
+                                    type: 'string',
+                                    description: 'Chart definition',
+                                    title: 'Chart',
+                                    enum: ['twitter_stream', 'user_log']
+                                }
+                            }
+                        },
+                        form: ['reportSource']
+                    }
+                }
         }
         return ds;
     };
@@ -100,6 +140,7 @@ dzupDashboard.provider('$dzupDashboardWidget', [function () {
     return service;
 
 }]);
+/*
 
 dzupDashboard.factory('dzupDashboardReport', [function () {
 
@@ -114,3 +155,6 @@ dzupDashboard.factory('dzupDashboardReport', [function () {
     };
 
 }]);
+*/
+
+

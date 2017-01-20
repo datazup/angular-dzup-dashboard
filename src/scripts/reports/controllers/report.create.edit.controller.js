@@ -5,13 +5,13 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
 
         $scope.report = report;
         
-        $scope.schema = {
+  /*      $scope.schema = {
             type: 'object',
             properties: {
                 reportSource: {
                     type: 'string',
                     title: 'Report Source',
-                    description: 'Source of the report'                    
+                    description: 'Source of the report'
                 },
                 name: {
                     type: 'string',
@@ -25,7 +25,7 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
                 }
             }
         };
-        
+        */
         $scope.form = [];
 
         $scope.infoConfig = {

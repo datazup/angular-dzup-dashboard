@@ -1,6 +1,6 @@
 var app = angular.module('dzupDash');
 
-app.controller('DzupGenericDataSourceController', ['$scope', '$timeout', '$dzupConfigUtils', 'config', 'widget',
+app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfigUtils', 'config', 'widget',
     function ($scope, $timeout, $dzupConfigUtils, config, widget) {
         $scope.config = config;
         $scope.widget = widget;
@@ -8,8 +8,8 @@ app.controller('DzupGenericDataSourceController', ['$scope', '$timeout', '$dzupC
 ]);
 
 
-app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$uibModal', '$dzupConfigUtils', 'config', 'widget', 'dzupDashboardWidgetHelper',
-    function ($scope, $timeout, $uibModal, $dzupConfigUtils, config, widget, dzupDashboardWidgetHelper) {
+app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibModal', '$dzupConfigUtils', 'config', 'widget','$dzupDashboard', 'chartService','dzupDashboardWidgetHelper',
+    function ($scope, $timeout, $uibModal, $dzupConfigUtils, config, widget, $dzupDashboard, chartService, dzupDashboardWidgetHelper) {
         $scope.config = config;
         $scope.widget = widget;
 
@@ -51,32 +51,55 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
             });
         };
 
+        $scope.ChartTypes  = function () {
+            return [{"label":"PieChart","value":"Pie Chart"},{"label":"BarChart","value":"Bar Chart"},{"label":"LineChart","value":"Line Chart"}];
+        };
 
-        $scope.AvailableReports  = function () {
-                  return [
-                           { value: 'one', label: 'report 1'},
-                           { value: 'two', label: 'report 2'},
-                           { value: 'three', label: 'report 3'}
-                         ];
-                };
+        if(config.changesApplied == true)
+        {
+            config.changesApplied  = false;
+           $dzupDashboard.getReport("twitter_stream", "d2b2320c-7d09-49e5-bc81-f06e97dd0a4a","hourlyCount").success(function (result) {
 
+                $scope.pieChartTypeHour = chartService.getChart('pieChart');
+                var hourChartOptions= {title: "Tweets count by hour"};
+                $scope.hourlyCountReportDataByHour =  $scope.pieChartTypeHour.processData("HOURcreated_at", "COUNTcreated_at", result.list, $scope.pieChartTypeHour, hourChartOptions);
+
+                $scope.pieChartTypeDay = chartService.getChart('pieChart');
+                var dayChartOptions= {title: "Tweets count by day (in a month)"};
+                $scope.hourlyCountReportDataByDay =  $scope.pieChartTypeDay.processData("DAYcreated_at", "COUNTcreated_at", result.list, $scope.pieChartTypeDay, dayChartOptions);
+
+                $scope.pieChartTypeMonth = chartService.getChart('pieChart');
+                var monthChartOptions= {title: "Tweets count by month"};
+                $scope.hourlyCountReportDataByMonth =  $scope.pieChartTypeMonth.processData("MONTHcreated_at", "COUNTcreated_at", result.list, $scope.pieChartTypeMonth, monthChartOptions);
+
+                $scope.pieChartTypeYear = chartService.getChart('pieChart');
+                var yearChartOptions= {title: "Tweets count by year"};
+                $scope.hourlyCountReportDataByYear =  $scope.pieChartTypeYear.processData("YEARcreated_at", "COUNTcreated_at", result.list, $scope.pieChartTypeYear, yearChartOptions);
+
+                $scope.lineChartTypeHour = chartService.getChart('lineChart');
+                var hourLineChartOptions= {title: "Tweets by hour", color:"#ff7f0e", key:"Tweets by hour", xAxisLabel:"Hour", yAxisLabel:"Count"};
+                $scope.hourlyCountReportDataByHourLineChart = $scope.lineChartTypeHour.processData("HOURcreated_at", "COUNTcreated_at", result.list, $scope.lineChartTypeHour, hourLineChartOptions);
+
+                $scope.discreteBarChartHour = chartService.getChart('discreteBarChart');
+                var hourDiscreteBarChartOptions= {title: "Tweets by hour", key:"Tweets by hour", xAxisLabel:"Hour", yAxisLabel:"Count"};
+                $scope.hourlyCountReportDataByHourDiscreteBarChart = $scope.discreteBarChartHour.processData("HOURcreated_at", "COUNTcreated_at", result.list, $scope.discreteBarChartHour, hourDiscreteBarChartOptions);
+
+            });
+        }
         $scope.schema = {
             type: 'object',
             properties: {
-                reportSource: {
+                chartType: {
                     type: 'string',
-                    title: 'Report Source',
-                    description: 'Report source defines stream data from which we want report to build',
+                    title: 'Chart Type',
                     format: "uiselect",
-                    placeholder: 'Select report source',
-                    enum: ['Twitter', 'other']
+                    placeholder: 'Select Chart Type'
                 },
-                report: {
+                dataSource: {
                     type: 'string',
-                    title: 'Report',
+                    title: 'Data Source',
                     format: "uiselect",
-                    placeholder: 'Select Report',
-                    description: 'Existing report that will be data source for the charts'
+                    placeholder: 'Select Data Source'
                 },
                 totalMetric: {
                     type: 'string',
@@ -135,7 +158,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                 type: 'tabs',
                 tabs: [
                     {
-                        title: 'Report',
+                        title: 'Chart Selection',
                         items: [
                             {
                                 type: 'section',
@@ -146,15 +169,13 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                         htmlClass: "col-xs-6",
                                         items: [
                                             {
-                                                key: 'reportSource',
+                                                key: 'chartType',
                                                 type: 'uiselect',
                                                 options: {
-                                                        callback:function(){return [{"label":"Twitter","value":"twitter_stream"}];} ,
+                                                        callback: $scope.ChartTypes ,
                                                         objectid: 4226
                                                    }
-
                                             },
-
                                         ]
                                     },
                                     {
@@ -162,9 +183,9 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                         htmlClass: "col-xs-6",
                                         items: [
                                             {
-                                                key: 'report',
+                                                key: 'dataSource',
                                                 options: {
-                                                    callback: $scope.AvailableReports
+                                                    callback: _.map(dzupDashboardWidgetHelper.getWidgetsByType("dataSource"),function(x){ return { value:x.wid,label:x.title}})
                                                 },
                                                 feedback: false,
                                                 type: 'uiselect'
@@ -172,81 +193,11 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                         ]
                                     }
                                 ]
-                            },
-                            {
-                                type: 'section',
-                                htmlClass: 'row',
-                                items: [
-                                    {
-                                        type: "section",
-                                        htmlClass: "col-xs-12",
-                                        items: [
-                                            {
-                                                type: 'button',
-                                                title: 'Create Report',
-                                                onClick: "createReport()",
-                                                feedback: false
-                                            }
-                                        ]
-                                    }
-                                ]
                             }
                         ]
                     },
                     {
-                        title: 'Date Range Filters',
-                        items: [
-                            {
-                                type: 'section',
-                                htmlClass: 'row',
-                                items: [
-                                    {
-                                        type: 'section',
-                                        htmlClass: 'col-xs-12',
-                                        items: [
-                                            {
-                                                key: 'isDateRangeFilterEnabled',
-                                                type: 'checkbox'
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                type: 'section',
-                                htmlClass: 'row',
-                                items: [
-                                    {
-                                        type: 'section',
-                                        htmlClass: 'col-xs-6',
-                                        items: [
-                                            {
-                                                key: 'dateRangeFilterType',
-                                                condition: 'model.isDateRangeFilterEnabled'
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        type: 'section',
-                                        htmlClass: 'col-xs-6',
-                                        items: [
-                                            {
-                                                key: 'dateRangeFieldsMap',
-                                                condition: "model.isDateRangeFilterEnabled && model.dateRangeFilterType=='FIELDS'"
-                                            },
-                                            {
-                                                key: 'dateRangeFilterField',
-                                                condition: "model.isDateRangeFilterEnabled && model.dateRangeFilterType=='DATEFIELD'"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-
-                        ]
-                    },
-                    {
-                        title: 'Field Filters',
+                        title: 'Chart Filters',
                         items: [
                             {
                                 type: 'section',
@@ -264,11 +215,6 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                 ]
             }
         ];
-
-        if(config.changesApplied == true)
-        {
-            dzupDashboardWidgetHelper.addDashboardWidget(widget);
-        }
 
     }
 ]);

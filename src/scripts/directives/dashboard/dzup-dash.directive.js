@@ -1,6 +1,6 @@
 var dzupDashboard = angular.module('dzupDash');
 // not in use
-dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', function ($dzupDashboard, $dzupConfigUtils) {
+dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 'dzupDashboardWidgetHelper', function ($dzupDashboard, $dzupConfigUtils,dzupDashboardWidgetHelper) {
 
     return {
         restrict: "E",
@@ -16,7 +16,9 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
 
 
                 $scope.selectDashboard = function (dashboard, index) {
+
                     $scope.selectedDashboard = dashboard;
+                    dzupDashboardWidgetHelper.setDashboardWidgets(index,dashboard);
                 };
 
                 $scope.indexOfItem = function (item) {
@@ -48,8 +50,8 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                     return uuid;
                 }
 
-                $scope.addDashboard = function ($event) {
-
+                $scope.addDashboard = function ($event)
+                {
                     var dash = $scope.getDashboardTemplate();
 
                     $scope.dashboardList.push(dash);
@@ -83,8 +85,6 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                     }
                 };
 
-
-
                 $scope.updateInList = function (dashboard) {
                     var dashItem = _.find($scope.dashboardList, function (item) {
                         if (item.model.key === dashboard.model.key) {
@@ -97,14 +97,14 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                 }
 
                 $scope.create = function (dashItem) {
-                    $dzupDashboard.dataService.create(dashItem)
-                        .success(function (result) {
+                    $dzupDashboard.dataService.create(dashItem);
+                       /* .success(function (result) {
                             $scope.updateInList(result);
                             $scope.success = "Successfully created";
                         })
                         .error(function (data, status) {
                             $scope.error = data.message;
-                        });
+                        });*/
                 };
 
                 $scope.update = function (dashItem) {
@@ -119,12 +119,20 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                 };
 
                 $scope.saveOrUpdate = function (dashItem) {
-                    if (dashItem.id) {
+                     if (dashItem.id && (typeof dashItem.id != "undefined")) {
                         $scope.update(dashItem);
                     } else {
                         $scope.create(dashItem);
                     }
                 };
+
+                $scope.$on('adfWidgetAdded',function(event,name,model,widget){
+                     dzupDashboardWidgetHelper.addDashboardWidget(widget);
+                });
+
+                $scope.$on('adfWidgetRemovedFromColumn',function(root){
+                     dzupDashboardWidgetHelper.setDashboardWidgets(-1, root.currentScope.selectedDashboard);
+                });
 
                 $scope.$on('adfDashboardChanged', function (event, name, model) {
                     var dashItem = _.find($scope.dashboardList, function (item) {
@@ -138,6 +146,19 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                         $scope.error = 'Something wrong. Please try again!';
                     }
                 });
+
+             /*   $scope.$on('adfIsEditMode', function (event, name, model) {
+                                    var dashItem = _.find($scope.dashboardList, function (item) {
+                                        if (item.model.key === model.key) {
+                                            return item;
+                                        }
+                                    });
+                                    if (dashItem) {
+                                        $scope.saveOrUpdate(dashItem);
+                                    } else {
+                                        $scope.error = 'Something wrong. Please try again!';
+                                    }
+                                });*/
 
               /*$timeout(function () {                    
                     if ($scope.dashboardList.length==0){
