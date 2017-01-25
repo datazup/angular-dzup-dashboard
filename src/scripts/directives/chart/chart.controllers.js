@@ -31,7 +31,6 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
 
         $scope.config.definitionModel = $scope.config.definitionModel || {};
         $scope.loadChildModelByChartType($scope.config.definitionModel.chartType);
-
         $scope.createReport = function () {
             var modalInstance = $uibModal.open({
                 templateUrl: $dzupConfigUtils.templateUrlBase['dzup-dashboard'] + '/templates/reports/report.modal.view.html',
@@ -56,6 +55,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
             return [{ "label": "Pie Chart", "value": "pieChart" }, { "label": "Bar Chart", "value": "discreteBarChart" }, { "label": "Line Chart", "value": "lineChart" }];
         };
 
+
         if (config.changesApplied == true) {
             config.changesApplied = false;
             $dzupDashboard.getReport("twitter_stream", "41a864f1-3e57-4912-8f93-69dd40067a9a", "hourlyCount").success(function (result) {
@@ -64,6 +64,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                 //var hourChartOptions = { title: "Tweets count by hour" };
                 var chartOptions = { title: config.definitionModel.chartTitle };
                 $scope.populatedChart = $scope.chart.processData(config.definitionModel.xAxis, "COUNTcreated_at", result.list, $scope.chart, chartOptions);
+
 
                 // $scope.pieChartTypeDay = chartService.getChart('pieChart');
                 // var dayChartOptions = { title: "Tweets count by day (in a month)" };
