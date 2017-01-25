@@ -1,4 +1,5 @@
 <div class="dzup-dashboard-container">
+
     <uib-tabset active="activeTabIndex">        
         <uib-tab dzup-resolve-attr="template-url=tabUrl" select="selectDashboard(dashboard, $index)" data-ng-repeat="dashboard in dashboardList track by dashboard.model.key | orderBy: 'dashboard.createdAt'" index="$index">
             <uib-tab-heading>

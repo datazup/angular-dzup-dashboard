@@ -8,7 +8,7 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
 ]);
 
 
-app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibModal', '$dzupConfigUtils', 'config', 'widget','$dzupDashboard', 'chartService','dzupDashboardWidgetHelper',
+app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibModal', '$dzupConfigUtils', 'config', 'widget', '$dzupDashboard', 'chartService', 'dzupDashboardWidgetHelper',
     function ($scope, $timeout, $uibModal, $dzupConfigUtils, config, widget, $dzupDashboard, chartService, dzupDashboardWidgetHelper) {
         $scope.config = config;
         $scope.widget = widget;
@@ -16,12 +16,13 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
         $scope.config.chartDefinitionModel = $scope.config.chartDefinitionModel || {};
         $scope.chartDefinition = {};
         $scope.chartType = null;
+        $scope.model = {};
 
 
         $scope.loadChildModelByChartType = function (chartType) {
             $scope.chartType = chartType;
             if (chartType) {
-                var chartDef = null; 
+                var chartDef = null;
                 $scope.chartDefinition = chartDef;
             } else {
                 $scope.chartDefinition = {};
@@ -36,9 +37,9 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                 templateUrl: $dzupConfigUtils.templateUrlBase['dzup-dashboard'] + '/templates/reports/report.modal.view.html',
                 controller: 'ReportCreateEditController',
                 resolve: {
-                    report: function(){
+                    report: function () {
                         return {};
-                    }  
+                    }
                 },
                 size: 'lg'
             });
@@ -51,49 +52,84 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
             });
         };
 
-        $scope.ChartTypes  = function () {
-            return [{"label":"PieChart","value":"Pie Chart"},{"label":"BarChart","value":"Bar Chart"},{"label":"LineChart","value":"Line Chart"}];
+        $scope.ChartTypes = function () {
+            return [{ "label": "Pie Chart", "value": "pieChart" }, { "label": "Bar Chart", "value": "discreteBarChart" }, { "label": "Line Chart", "value": "lineChart" }];
         };
 
-        if(config.changesApplied == true)
-        {
-            config.changesApplied  = false;
-           $dzupDashboard.getReport("twitter_stream", "d2b2320c-7d09-49e5-bc81-f06e97dd0a4a","hourlyCount").success(function (result) {
+        if (config.changesApplied == true) {
+            config.changesApplied = false;
+            $dzupDashboard.getReport("twitter_stream", "41a864f1-3e57-4912-8f93-69dd40067a9a", "hourlyCount").success(function (result) {
 
-                $scope.pieChartTypeHour = chartService.getChart('pieChart');
-                var hourChartOptions= {title: "Tweets count by hour"};
-                $scope.hourlyCountReportDataByHour =  $scope.pieChartTypeHour.processData("HOURcreated_at", "COUNTcreated_at", result.list, $scope.pieChartTypeHour, hourChartOptions);
+                $scope.chart = chartService.getChart(config.definitionModel.chartType);
+                //var hourChartOptions = { title: "Tweets count by hour" };
+                var chartOptions = { title: config.definitionModel.chartTitle };
+                $scope.populatedChart = $scope.chart.processData(config.definitionModel.xAxis, "COUNTcreated_at", result.list, $scope.chart, chartOptions);
 
-                $scope.pieChartTypeDay = chartService.getChart('pieChart');
-                var dayChartOptions= {title: "Tweets count by day (in a month)"};
-                $scope.hourlyCountReportDataByDay =  $scope.pieChartTypeDay.processData("DAYcreated_at", "COUNTcreated_at", result.list, $scope.pieChartTypeDay, dayChartOptions);
+                // $scope.pieChartTypeDay = chartService.getChart('pieChart');
+                // var dayChartOptions = { title: "Tweets count by day (in a month)" };
+                // $scope.hourlyCountReportDataByDay = $scope.pieChartTypeDay.processData("DAYcreated_at", "COUNTcreated_at", result.list, $scope.pieChartTypeDay, dayChartOptions);
 
-                $scope.pieChartTypeMonth = chartService.getChart('pieChart');
-                var monthChartOptions= {title: "Tweets count by month"};
-                $scope.hourlyCountReportDataByMonth =  $scope.pieChartTypeMonth.processData("MONTHcreated_at", "COUNTcreated_at", result.list, $scope.pieChartTypeMonth, monthChartOptions);
+                // $scope.pieChartTypeMonth = chartService.getChart('pieChart');
+                // var monthChartOptions = { title: "Tweets count by month" };
+                // $scope.hourlyCountReportDataByMonth = $scope.pieChartTypeMonth.processData("MONTHcreated_at", "COUNTcreated_at", result.list, $scope.pieChartTypeMonth, monthChartOptions);
 
-                $scope.pieChartTypeYear = chartService.getChart('pieChart');
-                var yearChartOptions= {title: "Tweets count by year"};
-                $scope.hourlyCountReportDataByYear =  $scope.pieChartTypeYear.processData("YEARcreated_at", "COUNTcreated_at", result.list, $scope.pieChartTypeYear, yearChartOptions);
+                // $scope.pieChartTypeYear = chartService.getChart('pieChart');
+                // var yearChartOptions = { title: "Tweets count by year" };
+                // $scope.hourlyCountReportDataByYear = $scope.pieChartTypeYear.processData("YEARcreated_at", "COUNTcreated_at", result.list, $scope.pieChartTypeYear, yearChartOptions);
 
-                $scope.lineChartTypeHour = chartService.getChart('lineChart');
-                var hourLineChartOptions= {title: "Tweets by hour", color:"#ff7f0e", key:"Tweets by hour", xAxisLabel:"Hour", yAxisLabel:"Count"};
-                $scope.hourlyCountReportDataByHourLineChart = $scope.lineChartTypeHour.processData("HOURcreated_at", "COUNTcreated_at", result.list, $scope.lineChartTypeHour, hourLineChartOptions);
+                // $scope.lineChartTypeHour = chartService.getChart('lineChart');
+                // var hourLineChartOptions = { title: "Tweets by hour", color: "#ff7f0e", key: "Tweets by hour", xAxisLabel: "Hour", yAxisLabel: "Count" };
+                // $scope.hourlyCountReportDataByHourLineChart = $scope.lineChartTypeHour.processData("HOURcreated_at", "COUNTcreated_at", result.list, $scope.lineChartTypeHour, hourLineChartOptions);
 
-                $scope.discreteBarChartHour = chartService.getChart('discreteBarChart');
-                var hourDiscreteBarChartOptions= {title: "Tweets by hour", key:"Tweets by hour", xAxisLabel:"Hour", yAxisLabel:"Count"};
-                $scope.hourlyCountReportDataByHourDiscreteBarChart = $scope.discreteBarChartHour.processData("HOURcreated_at", "COUNTcreated_at", result.list, $scope.discreteBarChartHour, hourDiscreteBarChartOptions);
+                // $scope.discreteBarChartHour = chartService.getChart('discreteBarChart');
+                // var hourDiscreteBarChartOptions = { title: "Tweets by hour", key: "Tweets by hour", xAxisLabel: "Hour", yAxisLabel: "Count" };
+                // $scope.hourlyCountReportDataByHourDiscreteBarChart = $scope.discreteBarChartHour.processData("HOURcreated_at", "COUNTcreated_at", result.list, $scope.discreteBarChartHour, hourDiscreteBarChartOptions);
 
             });
         }
+
         $scope.schema = {
             type: 'object',
             properties: {
+                chartTitle: {
+                    type: 'string',
+                    title: 'Chart Title'
+                },
+                chartXLabel: {
+                    type: 'string',
+                    title: 'X Axis',
+                },
+                chartYLabel: {
+                    type: 'string',
+                    title: 'Y Axis',
+                },
+                chartColor: {
+                    type: 'string',
+                    title: 'Color',
+                },
+                xAxixLabel: {
+                    type: 'string',
+                    title: 'X Axis Lebel',
+                },
+                yAxixLabel: {
+                    type: 'string',
+                    title: 'Y Axis Label',
+                },
+                xAxis: {
+                    type: 'select',
+                    //title: 'X Axis Propertie',
+                    title: 'X Axis Property',
+                    placeholder: 'Select X Axis Property',
+                },
+
+
+
+
                 chartType: {
                     type: 'string',
                     title: 'Chart Type',
                     format: "uiselect",
-                    placeholder: 'Select Chart Type'
+                    placeholder: 'Select Chart Type',
                 },
                 dataSource: {
                     type: 'string',
@@ -153,6 +189,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                 }
             }
         };
+
         $scope.form = [
             {
                 type: 'tabs',
@@ -172,10 +209,10 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                 key: 'chartType',
                                                 type: 'uiselect',
                                                 options: {
-                                                        callback: $scope.ChartTypes ,
-                                                        objectid: 4226
-                                                   }
-                                            },
+                                                    callback: $scope.ChartTypes,
+                                                    objectid: 4226,
+                                                },
+                                            }
                                         ]
                                     },
                                     {
@@ -185,7 +222,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                             {
                                                 key: 'dataSource',
                                                 options: {
-                                                    callback: _.map(dzupDashboardWidgetHelper.getWidgetsByType("dataSource"),function(x){ return { value:x.wid,label:x.title}})
+                                                    callback: _.map(dzupDashboardWidgetHelper.getWidgetsByType("dataSource"), function (x) { return { value: x.wid, label: x.title } })
                                                 },
                                                 feedback: false,
                                                 type: 'uiselect'
@@ -197,16 +234,30 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                         ]
                     },
                     {
-                        title: 'Chart Filters',
+                        title: 'Chart Options',
                         items: [
                             {
-                                type: 'section',
-                                htmlClass: 'row',
+                                type: "section",
+                                htmlClass: "row",
                                 items: [
+
                                     {
-                                        type: 'section',
-                                        htmlClass: 'col-xs-12',
-                                        items: ['filterFields']
+                                        type: "section",
+                                        htmlClass: "col-xs-12",
+                                        condition: "model.chartType=='pieChart'",
+                                        items: chartService.getChartOptionsForm("pieChart")
+                                    },
+                                    {
+                                        type: "section",
+                                        htmlClass: "col-xs-12",
+                                        condition: "model.chartType=='discreteBarChart'",
+                                        items: chartService.getChartOptionsForm("discreteBarChart")
+                                    },
+                                    {
+                                        type: "section",
+                                        htmlClass: "col-xs-12",
+                                        condition: "model.chartType=='lineChart'",
+                                        items: chartService.getChartOptionsForm("lineChart")
                                     }
                                 ]
                             }
@@ -215,6 +266,9 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                 ]
             }
         ];
+
+        console.log(config.definitionModel.chartType);
+        console.log(config.definitionModel.xAxis);
 
     }
 ]);
