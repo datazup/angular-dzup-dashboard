@@ -8,8 +8,8 @@ app.controller('DzupGenericDataSourceController', ['$scope', '$timeout', '$dzupC
 ]);
 
 
-app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$uibModal', '$dzupConfigUtils', 'config', 'widget', 'dzupDashboardWidgetHelper',
-    function ($scope, $timeout, $uibModal, $dzupConfigUtils, config, widget, dzupDashboardWidgetHelper) {
+app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$uibModal', '$dzupConfigUtils', 'config', 'widget', 'dzupDashboardWidgetHelper','$dzupDashboard',
+    function ($scope, $timeout, $uibModal, $dzupConfigUtils, config, widget, dzupDashboardWidgetHelper, $dzupDashboard) {
         $scope.config = config;
         $scope.widget = widget;
 
@@ -29,6 +29,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
         };
 
         $scope.config.definitionModel = $scope.config.definitionModel || {};
+
         $scope.loadChildModelByChartType($scope.config.definitionModel.chartType);
 
         $scope.createReport = function () {
@@ -52,13 +53,21 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
         };
 
 
-        $scope.AvailableReports  = function () {
-                  return [
-                           { value: 'one', label: 'report 1'},
-                           { value: 'two', label: 'report 2'},
-                           { value: 'three', label: 'report 3'}
-                         ];
-                };
+        $scope.AvailableSources = $dzupDashboard.getSources().success(function (result) {
+              return result;}).then(function(result){
+              return _.map(result.data, function(x){ return { value:x, label:x } });});
+
+        $scope.AvailableReports = [];
+        $scope.$on('getReportsEvent', function(ev, args){
+            $dzupDashboard.getReportsBySource(args.value).success(function (result) { return result;})
+            .then(function(result){
+                $scope.AvailableReports = _.map(result.data, function(x){ return { value:x, label:x } });
+                $timeout(function(){
+                    //the code which needs to run after dom rendering
+                    $scope.schema.properties.report.items = $scope.AvailableReports;
+                })
+            });
+        });
 
         $scope.schema = {
             type: 'object',
@@ -68,8 +77,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                     title: 'Report Source',
                     description: 'Report source defines stream data from which we want report to build',
                     format: "uiselect",
-                    placeholder: 'Select report source',
-                    enum: ['Twitter', 'other']
+                    placeholder: 'Select report source'
                 },
                 report: {
                     type: 'string',
@@ -149,12 +157,13 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                                 key: 'reportSource',
                                                 type: 'uiselect',
                                                 options: {
-                                                        callback:function(){return [{"label":"Twitter","value":"twitter_stream"}];} ,
+                                                        callback:$scope.AvailableSources,
+                                                        eventCallback: function(value){
+                                                                    $scope.$broadcast('getReportsEvent', {value:value});
+                                                                  },
                                                         objectid: 4226
                                                    }
-
                                             },
-
                                         ]
                                     },
                                     {

@@ -56,8 +56,7 @@ dzupDashboard.provider('$dzupDashboardWidget', [function () {
                            config.changesApplied = true;
                        return true;
                        },
-                    remove: function(widget)
-                    {
+                    remove: function(widget){
                         console.log("HII")
                     }
                 },
