@@ -55,9 +55,6 @@ dzupDashboard.provider('$dzupDashboardWidget', [function () {
                     apply: function($http, config){
                            config.changesApplied = true;
                        return true;
-                       },
-                    remove: function(widget){
-                        console.log("HII")
                     }
                 },
                 config: null,
@@ -68,8 +65,7 @@ dzupDashboard.provider('$dzupDashboardWidget', [function () {
                             reportSource: {
                                 type: 'string',
                                 description: 'Report Source used to define source for the report stream',
-                                title: 'Report Source',
-                                enum: ['twitter_stream', 'user_log']
+                                title: 'Report Source'
                             }
                         }
                     },

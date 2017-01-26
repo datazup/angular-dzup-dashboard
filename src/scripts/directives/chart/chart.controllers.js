@@ -56,8 +56,13 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
 
         if(config.changesApplied == true)
         {
+
            config.changesApplied  = false;
-           $dzupDashboard.getReport("twitter_stream", "d2b2320c-7d09-49e5-bc81-f06e97dd0a4a","hourlyCount").success(function (result) {
+           var wData = dzupDashboardWidgetHelper.getWidgetData(config.definitionModel.dataSource);
+           $scope.pieChartTypeHour = chartService.getChart('pieChart');
+           var hourChartOptions= {title: "Tweets count by hour"};
+           $scope.hourlyCountReportDataByHour =  $scope.pieChartTypeHour.processData("HOURcreated_at", "COUNTcreated_at", wData.data[0].list, $scope.pieChartTypeHour, hourChartOptions);
+           /*$dzupDashboard.getReport("twitter_stream", "d2b2320c-7d09-49e5-bc81-f06e97dd0a4a","hourlyCount").success(function (result) {
                 console.log(result)
                 $scope.pieChartTypeHour = chartService.getChart('pieChart');
                 var hourChartOptions= {title: "Tweets count by hour"};
@@ -83,7 +88,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                 var hourDiscreteBarChartOptions= {title: "Tweets by hour", key:"Tweets by hour", xAxisLabel:"Hour", yAxisLabel:"Count"};
                 $scope.hourlyCountReportDataByHourDiscreteBarChart = $scope.discreteBarChartHour.processData("HOURcreated_at", "COUNTcreated_at", result.list, $scope.discreteBarChartHour, hourDiscreteBarChartOptions);
 
-            });
+            });*/
         }
         $scope.schema = {
             type: 'object',
@@ -184,7 +189,12 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                             {
                                                 key: 'dataSource',
                                                 options: {
-                                                    callback: _.map(dzupDashboardWidgetHelper.getWidgetsByType("dataSource"),function(x){ return { value:x.wid,label:x.title}})
+                                                    callback: _.map(dzupDashboardWidgetHelper.getWidgetsByType("dataSource"),function(x){ return { value:x.wid,label:x.title}}),
+                                                    eventCallback: function(value){
+                                                        if(typeof value != 'undefined'){
+                                                            console.log("value: "+value);
+                                                        }
+                                                      }
                                                 },
                                                 feedback: false,
                                                 type: 'uiselect'
