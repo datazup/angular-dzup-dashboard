@@ -345,7 +345,8 @@ app.directive('widgetChildConfigFactory', ['$compile', '$interpolate', function 
 
 app.factory('dzupDashboardWidgetHelper', [function () {
 
-    var widgets = [];
+    var widgets =  [];
+    var widgetsData =  [];
     return {
         setDashboardWidgets: function (index, dashboard) {
             this.clear();
@@ -367,6 +368,26 @@ app.factory('dzupDashboardWidgetHelper', [function () {
 
             console.log(this.widgets);
         },
+        setWidgetData:function (wid, data){
+
+            var WData = {wid:wid, data: data};
+            if(typeof WData != 'undefined'){
+                var index = _.indexOf(this.widgetsData, _.find(this.widgetsData, {wid: WData.wid}));
+                if(index != -1){ // widget array contains widget replace is
+                    this.widgetsData.splice(index, 1,WData);
+                }
+                else{
+                    this.widgetsData.push(WData);
+                }
+            }
+        },
+        getWidgetData: function(wid){
+            var index = _.indexOf(this.widgetsData, _.find(this.widgetsData, {wid: wid}));
+            if(index != -1)
+                return this.widgetsData[index];
+             else
+                return null;
+        },
         addDashboardWidget: function (widget) {
 
             var index = _.indexOf(this.widgets, _.find(this.widgets, { wid: widget.wid }));
@@ -382,6 +403,7 @@ app.factory('dzupDashboardWidgetHelper', [function () {
         },
         clear: function () {
             this.widgets = [];
+            this.widgetsData = [];
         },
         getWidgets: function () {
             return this.widgets;

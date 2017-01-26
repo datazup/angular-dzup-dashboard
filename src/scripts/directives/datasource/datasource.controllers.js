@@ -13,24 +13,30 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
         $scope.config = config;
         $scope.widget = widget;
 
-        $scope.config.chartDefinitionModel = $scope.config.chartDefinitionModel || {};
-        $scope.chartDefinition = {};
-        $scope.chartType = null;
+        $scope.AvailableReports = [];
+        $scope.getAvailableReports =function(value, injectValue)
+        {
+            $scope.AvailableReports = $dzupDashboard.getReportsBySource(value).success(function (result) { return result;})
+                    .then(function(result){
+                        $scope.AvailableReports = _.map(result.data, function(x){ return { value:x, label:x } });
+                        if(injectValue == true)
+                        {
+                            $timeout(function(){
+                                //the code which needs to run after dom rendering
+                                $scope.schema.properties.report.items = $scope.AvailableReports;
+                            })
+                        }
 
+                        return $scope.AvailableReports;
 
-        $scope.loadChildModelByChartType = function (chartType) {
-            $scope.chartType = chartType;
-            if (chartType) {
-                var chartDef = null; 
-                $scope.chartDefinition = chartDef;
-            } else {
-                $scope.chartDefinition = {};
-            }
-        };
+                    });
+        }
+
+        if(typeof config.definitionModel != 'undefined' && typeof config.definitionModel.reportSource != 'undefined'){
+            $scope.getAvailableReports(config.definitionModel.reportSource, false);
+        }
 
         $scope.config.definitionModel = $scope.config.definitionModel || {};
-
-        $scope.loadChildModelByChartType($scope.config.definitionModel.chartType);
 
         $scope.createReport = function () {
             var modalInstance = $uibModal.open({
@@ -52,22 +58,9 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
             });
         };
 
-
         $scope.AvailableSources = $dzupDashboard.getSources().success(function (result) {
               return result;}).then(function(result){
               return _.map(result.data, function(x){ return { value:x, label:x } });});
-
-        $scope.AvailableReports = [];
-        $scope.$on('getReportsEvent', function(ev, args){
-            $dzupDashboard.getReportsBySource(args.value).success(function (result) { return result;})
-            .then(function(result){
-                $scope.AvailableReports = _.map(result.data, function(x){ return { value:x, label:x } });
-                $timeout(function(){
-                    //the code which needs to run after dom rendering
-                    $scope.schema.properties.report.items = $scope.AvailableReports;
-                })
-            });
-        });
 
         $scope.schema = {
             type: 'object',
@@ -159,7 +152,9 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                                 options: {
                                                         callback:$scope.AvailableSources,
                                                         eventCallback: function(value){
-                                                                    $scope.$broadcast('getReportsEvent', {value:value});
+                                                                    if(typeof value != 'undefined'){
+                                                                        $scope.getAvailableReports(value,true);
+                                                                    }
                                                                   },
                                                         objectid: 4226
                                                    }
@@ -274,9 +269,17 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
             }
         ];
 
-        if(config.changesApplied == true)
+        if(config.changesApplied == true && typeof config.definitionModel != 'undefined' && typeof config.definitionModel.reportSource != 'undefined'
+         && typeof config.definitionModel.report != 'undefined')
         {
+            config.changesApplied  = false;
             dzupDashboardWidgetHelper.addDashboardWidget(widget);
+
+           $dzupDashboard.getReport(config.definitionModel.reportSource, "d2b2320c-7d09-49e5-bc81-f06e97dd0a4a",config.definitionModel.report).success(function (result) {
+
+               dzupDashboardWidgetHelper.setWidgetData(widget.wid, result)
+           });
+
         }
 
     }

@@ -56,11 +56,19 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
         };
 
 
+        if(config.changesApplied == true && typeof config.definitionModel.chartType != 'undefined')
+        {
 
-
-        if (typeof config.definitionModel.chartType != 'undefined') {
-            config.changesApplied = false;
-            $dzupDashboard.getReport("twitter_stream", "41a864f1-3e57-4912-8f93-69dd40067a9a", "hourlyAvgSentimentByCountryStateCity").success(function (result) {
+           config.changesApplied  = false;
+           var wData = dzupDashboardWidgetHelper.getWidgetData(config.definitionModel.dataSource);
+           $scope.pieChartTypeHour = chartService.getChart('pieChart');
+           var hourChartOptions= {title: "Tweets count by hour"};
+           $scope.hourlyCountReportDataByHour =  $scope.pieChartTypeHour.processData("HOURcreated_at", "COUNTcreated_at", wData.data[0].list, $scope.pieChartTypeHour, hourChartOptions);
+           /*$dzupDashboard.getReport("twitter_stream", "41a864f1-3e57-4912-8f93-69dd40067a9a","hourlyCount").success(function (result) {
+                console.log(result)
+                $scope.pieChartTypeHour = chartService.getChart('pieChart');
+                var hourChartOptions= {title: "Tweets count by hour"};
+                $scope.hourlyCountReportDataByHour =  $scope.pieChartTypeHour.processData("HOURcreated_at", "COUNTcreated_at", result.list, $scope.pieChartTypeHour, hourChartOptions);
 
                 $scope.chart = chartService.getChart(config.definitionModel.chartType, $scope);
                 //var hourChartOptions = { title: "Tweets count by hour" };
@@ -92,7 +100,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                 // var hourDiscreteBarChartOptions = { title: "Tweets by hour", key: "Tweets by hour", xAxisLabel: "Hour", yAxisLabel: "Count" };
                 // $scope.hourlyCountReportDataByHourDiscreteBarChart = $scope.discreteBarChartHour.processData("HOURcreated_at", "COUNTcreated_at", result.list, $scope.discreteBarChartHour, hourDiscreteBarChartOptions);
 
-            });
+            });*/
         }
 
         $scope.schema = {
@@ -232,7 +240,12 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                             {
                                                 key: 'dataSource',
                                                 options: {
-                                                    callback: _.map(dzupDashboardWidgetHelper.getWidgetsByType("dataSource"), function (x) { return { value: x.wid, label: x.title } })
+                                                    callback: _.map(dzupDashboardWidgetHelper.getWidgetsByType("dataSource"),function(x){ return { value:x.wid,label:x.title}}),
+                                                    eventCallback: function(value){
+                                                        if(typeof value != 'undefined'){
+                                                            console.log("value: "+value);
+                                                        }
+                                                      }
                                                 },
                                                 feedback: false,
                                                 type: 'uiselect'
