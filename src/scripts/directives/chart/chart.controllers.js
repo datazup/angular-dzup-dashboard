@@ -56,16 +56,22 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
         };
 
 
-        if (config.changesApplied == true) {
-            config.changesApplied = false;
-            $dzupDashboard.getReport("twitter_stream", "41a864f1-3e57-4912-8f93-69dd40067a9a", "hourlyCount").success(function (result) {
 
-                $scope.chart = chartService.getChart(config.definitionModel.chartType);
+
+        if (typeof config.definitionModel.chartType != 'undefined') {
+            config.changesApplied = false;
+            $dzupDashboard.getReport("twitter_stream", "41a864f1-3e57-4912-8f93-69dd40067a9a", "hourlyAvgSentimentByCountryStateCity").success(function (result) {
+
+                $scope.chart = chartService.getChart(config.definitionModel.chartType, $scope);
                 //var hourChartOptions = { title: "Tweets count by hour" };
                 var chartOptions = { title: config.definitionModel.chartTitle };
-                $scope.populatedChart = $scope.chart.processData(config.definitionModel.xAxis, "COUNTcreated_at", result.list, $scope.chart, chartOptions);
+                $scope.populatedChart = $scope.chart.processData(config.definitionModel.xAxis, "COUNTcreated_at", result[0].list, $scope.chart, chartOptions);
 
 
+                $scope.columns = _.map(result[1].columns, function (x) { return { value: x, label: x } });
+                console.log("$scope.schema")
+                console.log($scope.schema)
+                $scope.schema.properties.xAxis.items = $scope.columns;
                 // $scope.pieChartTypeDay = chartService.getChart('pieChart');
                 // var dayChartOptions = { title: "Tweets count by day (in a month)" };
                 // $scope.hourlyCountReportDataByDay = $scope.pieChartTypeDay.processData("DAYcreated_at", "COUNTcreated_at", result.list, $scope.pieChartTypeDay, dayChartOptions);
@@ -92,10 +98,6 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
         $scope.schema = {
             type: 'object',
             properties: {
-                chartTitle: {
-                    type: 'string',
-                    title: 'Chart Title'
-                },
                 chartXLabel: {
                     type: 'string',
                     title: 'X Axis',
@@ -117,9 +119,9 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                     title: 'Y Axis Label',
                 },
                 xAxis: {
-                    type: 'select',
-                    //title: 'X Axis Propertie',
-                    title: 'X Axis Property',
+                    type: 'string',
+                    title: 'X Axis',
+                    format: "uiselect",
                     placeholder: 'Select X Axis Property',
                 },
 
@@ -191,6 +193,13 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
             }
         };
 
+        chartService.getChartSchemaProperties('discreteBarChart', $scope.schema.properties);
+
+
+        $scope.myVar = "var from chart controller";
+
+
+
         $scope.form = [
             {
                 type: 'tabs',
@@ -252,7 +261,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                         type: "section",
                                         htmlClass: "col-xs-12",
                                         condition: "model.chartType=='discreteBarChart'",
-                                        items: chartService.getChartOptionsForm("discreteBarChart")
+                                        items: chartService.getChartOptionsForm("discreteBarChart", $scope.myVar)
                                     },
                                     {
                                         type: "section",

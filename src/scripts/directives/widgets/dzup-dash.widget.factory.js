@@ -20,7 +20,9 @@ app.directive('widgetMainFormConfig', ['$compile', '$interpolate', '$templateReq
 
 app.factory('chartService', [function () {
     return {
-        getChart: function (chartType) {
+        $scope: null,
+        getChart: function (chartType, scope) {
+            $scope = scope;
             switch (chartType) {
                 case 'pieChart':
                     return this.getPieChart();
@@ -35,8 +37,11 @@ app.factory('chartService', [function () {
                     return null;
             }
         },
-        getChartProperties: function () {
-            return [{ "name": "Hour", "value": "HOURcreated_at" }, { "name": "Day", "value": "DAYcreated_at" }, { "name": "Month", "value": "MONTHcreated_at" }, { "name": "Year", "value": "YEARcreated_at" }];
+        getChartSchemaProperties: function (chartType, schemeProperties) {
+            schemeProperties.chartTitle = {
+                type: 'string',
+                title: 'Chart Titleeeeeeeee',
+            }
         },
         getChartOptionsForm: function (chartType) {
 
@@ -62,9 +67,10 @@ app.factory('chartService', [function () {
                     },
                     {
                         key: 'xAxis',
-                        type: 'select',
-                        titleMap: this.getChartProperties(),
-                        placeholder: 'Enter Chart Title Here'
+                        type: 'uiselect',
+                        options: {
+                            callback: function () { console.log("calllback") },
+                        },
 
                     },
                     {
