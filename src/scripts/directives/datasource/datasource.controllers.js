@@ -275,8 +275,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
             config.changesApplied  = false;
             dzupDashboardWidgetHelper.addDashboardWidget(widget);
 
-           $dzupDashboard.getReport(config.definitionModel.reportSource, "d2b2320c-7d09-49e5-bc81-f06e97dd0a4a",config.definitionModel.report).success(function (result) {
-
+           $dzupDashboard.getReport(config.definitionModel.reportSource, "41a864f1-3e57-4912-8f93-69dd40067a9a",config.definitionModel.report).success(function (result) {
                dzupDashboardWidgetHelper.setWidgetData(widget.wid, result)
            });
 

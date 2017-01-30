@@ -1,6 +1,6 @@
 var app = angular.module('dzupDash');
 
-app.directive('widgetMainFormConfig', ['$compile', '$interpolate','$templateRequest', '$dzupConfigUtils', function ($compile, $interpolate, $templateRequest, $dzupConfigUtils) {
+app.directive('widgetMainFormConfig', ['$compile', '$interpolate', '$templateRequest', '$dzupConfigUtils', function ($compile, $interpolate, $templateRequest, $dzupConfigUtils) {
 
     return {
         restrict: "E",
@@ -8,7 +8,7 @@ app.directive('widgetMainFormConfig', ['$compile', '$interpolate','$templateRequ
         }],
         link: function (scope, element, attrs) {
             var base = $dzupConfigUtils.templateUrlBase['dzup-dashboard'];
-            $templateRequest(base+"/templates/directives/widgets/widget.main.form.config.view.html").then(function (html) {
+            $templateRequest(base + "/templates/directives/widgets/widget.main.form.config.view.html").then(function (html) {
                 var template = angular.element(html);
                 var compiled = $compile(template)(scope);
                 element.replaceWith(compiled);
@@ -20,31 +20,177 @@ app.directive('widgetMainFormConfig', ['$compile', '$interpolate','$templateRequ
 
 app.factory('chartService', [function () {
     return {
-        getChart: function (chartType) {
-             switch(chartType) {
-                 case 'pieChart':
-                     return this.getPieChart();
-                     break;
-                 case 'lineChart':
-                     return this.getLineChart();
-                     break;
-                 case 'discreteBarChart':
-                      return this.getDiscreteBarChart();
-                      break;
-                 default:
-                     return null;
-             }
-
+        $scope: null,
+        setAxisData: function (axisData, scope) {
+            if (axisData.length != 0 && (typeof scope != 'undefined')) {
+                scope.axisData = axisData;
+                $scope = scope;
+            }
         },
-        getPieChart: function()
-        {
+        getChart: function (chartType) {
+            switch (chartType) {
+                case 'pieChart':
+                    return this.getPieChart();
+                    break;
+                case 'lineChart':
+                    return this.getLineChart();
+                    break;
+                case 'discreteBarChart':
+                    return this.getDiscreteBarChart();
+                    break;
+                default:
+                    return null;
+            }
+        },
+        updateChartSchemaProperties: function (chartType, schemeProperties) {
+            schemeProperties.chartTitle = {
+                type: 'string',
+                title: 'Chart Title From Service',
+            }
+            schemeProperties.xAxisLabel = {
+                type: 'string',
+                title: 'X Axis Lebel',
+            }
+            schemeProperties.yAxisLabel = {
+                type: 'string',
+                title: 'Y Axis Lebel',
+            }
+            schemeProperties.xAxis = {
+                type: 'string',
+                title: 'X Axis',
+                format: "uiselect",
+                placeholder: 'Select X Axis Property',
+            }
+            schemeProperties.yAxis = {
+                type: 'string',
+                title: 'Y Axis',
+                format: "uiselect",
+                placeholder: 'Select Y Axis Property',
+            }
+            schemeProperties.chartColor = {
+                type: 'string',
+                title: 'Chart Color',
+            }
+        },
+
+        getChartOptionsForm: function (chartType) {
+
+            if (chartType == "pieChart") {
+                return [
+                    {
+                        key: 'chartTitle',
+                        type: 'string',
+                        placeholder: 'Enter Chart Title Here'
+                    },
+                    {
+                        key: 'xAxis',
+                        type: 'uiselect',
+                        options: {
+                            callback: function () {
+                                if ((typeof $scope != 'undefined') && $scope != null && $scope.axisData !== null) {
+                                    return $scope.axisData
+                                };
+                            }
+                        },
+
+                    },
+                    {
+                        key: 'yAxis',
+                        type: 'uiselect',
+                        options: {
+                            callback: function () {
+                                if ((typeof $scope != 'undefined') && $scope != null && $scope.axisData !== null) {
+                                    return $scope.axisData
+                                };
+                            }
+                        },
+
+                    }
+                ]
+            }
+
+            if (chartType == "discreteBarChart") {
+                return [
+                    {
+                        key: 'chartTitle',
+                        placeholder: 'Enter Chart Title Here'
+                    },
+                    {
+                        key: 'xAxisLabel',
+                        placeholder: 'Enter X Axis Label Here'
+                    },
+                    {
+                        key: 'xAxis',
+                        type: 'uiselect',
+                        feedback: false,
+                        options: {
+                            callback: function () { console.log("calllback") },
+                        },
+
+                    },
+                    {
+                        key: 'yAxisLabel',
+                        placeholder: 'Enter Y Axis Label Here'
+                    },
+                    {
+                        key: 'yAxis',
+                        type: 'uiselect',
+                        feedback: false,
+                        options: {
+                            callback: function () { console.log("calllback") },
+                        },
+
+                    }
+                ]
+            }
+
+            if (chartType == "lineChart") {
+                return [
+                    {
+                        key: 'chartTitle',
+                        placeholder: 'Enter Chart Title Here'
+                    },
+                    {
+                        key: 'xAxisLabel',
+                        placeholder: 'Enter X Axis Label Here'
+                    },
+                    {
+                        key: 'xAxis',
+                        type: 'uiselect',
+                        feedback: false,
+                        options: {
+                            callback: function () { console.log("calllback") },
+                        },
+
+                    },
+                    {
+                        key: 'yAxisLabel',
+                        placeholder: 'Enter Y Axis Label Here'
+                    },
+                    {
+                        key: 'yAxis',
+                        type: 'uiselect',
+                        feedback: false,
+                        options: {
+                            callback: function () { console.log("calllback") },
+                        },
+
+                    },
+                    {
+                        key: 'chartColor',
+                        placeholder: 'Enter Chart Color Here'
+                    }
+                ]
+            }
+        },
+        getPieChart: function () {
             var pieChartType = {
                 chart: {
                     type: 'pieChart',
                     height: 350,
                     width: 350,
-                    x: function(d){return d.key;},
-                    y: function(d){return d.y;},
+                    x: function (d) { return d.key; },
+                    y: function (d) { return d.y; },
                     showLabels: true,
                     duration: 500,
                     labelThreshold: 0.01,
@@ -57,57 +203,54 @@ app.factory('chartService', [function () {
                             left: 0
                         }
                     },
-                    labelType:"value", //key, value, percent
+                    labelType: "value", //key, value, percent
                 },
                 title: {
                     enable: false,
                     text: "",
                 },
-                processData:function(groupByProperty, sumByProperty, data, chart, options)
-                {
-                    if(options && options.title)
-                    {
+                processData: function (groupByProperty, sumByProperty, data, chart, options) {
+                    if (options && options.title) {
                         chart.title.enable = true;
                         chart.title.text = options.title;
                     }
-                    return  _.chain(data)
-                       .groupBy(groupByProperty)
-                       .map(function(value, key) {
-                           return  _.reduce(value, function(result, currentObject) {
-                               return {
-                                   key:currentObject[groupByProperty],
-                                   y: result["y"] + currentObject[sumByProperty]
-                               }
-                           }, {
-                               y: 0
-                           });
-                       }).value();
+                    return _.chain(data)
+                        .groupBy(groupByProperty)
+                        .map(function (value, key) {
+                            return _.reduce(value, function (result, currentObject) {
+                                return {
+                                    key: currentObject[groupByProperty],
+                                    y: result["y"] + currentObject[sumByProperty]
+                                }
+                            }, {
+                                    y: 0
+                                });
+                        }).value();
                 }
             };
 
             return pieChartType;
         },
-        getLineChart: function()
-        {
+        getLineChart: function () {
             var lineChartType = {
                 chart: {
                     type: 'lineChart',
                     height: 450,
-                    width:450,
-                    margin : {
+                    width: 450,
+                    margin: {
                         top: 20,
                         right: 20,
                         bottom: 40,
                         left: 55
                     },
-                    x: function(d){ return d.x; },
-                    y: function(d){ return d.y; },
+                    x: function (d) { return d.x; },
+                    y: function (d) { return d.y; },
                     useInteractiveGuideline: true,
                     dispatch: {
-                        stateChange: function(e){ },
-                        changeState: function(e){ },
-                        tooltipShow: function(e){ },
-                        tooltipHide: function(e){ }
+                        stateChange: function (e) { },
+                        changeState: function (e) { },
+                        tooltipShow: function (e) { },
+                        tooltipHide: function (e) { }
                     },
                     xAxis: {
                         axisLabel: ''
@@ -116,7 +259,7 @@ app.factory('chartService', [function () {
                         axisLabel: '',
                         axisLabelDistance: -10
                     },
-                    callback: function(chart){
+                    callback: function (chart) {
                     }
                 },
                 title: {
@@ -139,115 +282,106 @@ app.factory('chartService', [function () {
                         'margin': '10px 13px 0px 7px'
                     }
                 },
-                processData:function(xAxis, yAxis, data, chart, options)
-                {
-                    if(options && options.title)
-                    {
+                processData: function (xAxis, yAxis, data, chart, options) {
+                    if (options && options.title) {
                         chart.title.enable = true;
                         chart.title.text = options.title;
                     }
-                    if(options.xAxisLabel)
-                    {
+                    if (options.xAxisLabel) {
                         chart.chart.xAxis.axisLabel = options.xAxisLabel;
                     }
-                    if(options.yAxisLabel)
-                    {
+                    if (options.yAxisLabel) {
                         chart.chart.yAxis.axisLabel = options.yAxisLabel;
                     }
 
                     var mappedData = _.chain(data)
-                                   .groupBy(xAxis)
-                                   .map(function(value, key) {
-                                       return  _.reduce(value, function(result, currentObject) {
-                                           return {
-                                               x: currentObject[xAxis],
-                                               y: result["y"] + currentObject[yAxis]
-                                           }
-                                       }, {
-                                           y: 0
-                                       });
-                                   }).value();
+                        .groupBy(xAxis)
+                        .map(function (value, key) {
+                            return _.reduce(value, function (result, currentObject) {
+                                return {
+                                    x: currentObject[xAxis],
+                                    y: result["y"] + currentObject[yAxis]
+                                }
+                            }, {
+                                    y: 0
+                                });
+                        }).value();
 
                     //_.map(_.sortBy(data,xAxis), function(object){return {x: object[xAxis], y:object[yAxis]}});
 
                     return [{
-                                values: mappedData,
-                                key: options.key,
-                                color: options.color
-                            }];
+                        values: mappedData,
+                        key: options.key,
+                        color: options.color
+                    }];
                 }
             };
 
             return lineChartType;
         },
-         getDiscreteBarChart: function()
-         {
-             var discreteBarChart = {
-                 chart: {
-                     type: 'discreteBarChart',
-                     height: 450,
-                     margin : {
-                         top: 20,
-                         right: 20,
-                         bottom: 50,
-                         left: 55
-                     },
-                     x: function(d){return d.x;}, //label
-                     y: function(d){return d.y;}, //value
-                     showValues: true,
-                     valueFormat: function(d){
-                         return d3.format(',.2f')(d);
-                     },
-                     duration: 500,
-                     xAxis: {
-                         axisLabel: 'X Axis'
-                     },
-                     yAxis: {
-                         axisLabel: 'Y Axis',
-                         axisLabelDistance: -10
-                     }
-                 },
-                  title: {
-                      enable: false,
-                      text: ''
-                  },
-                  processData:function(xAxis, yAxis, data, chart, options)
-                  {
-                      if(options && options.title)
-                      {
-                          chart.title.enable = true;
-                          chart.title.text = options.title;
-                      }
-                      if(options.xAxisLabel)
-                      {
-                          chart.chart.xAxis.axisLabel = options.xAxisLabel;
-                      }
-                      if(options.yAxisLabel)
-                      {
-                          chart.chart.yAxis.axisLabel = options.yAxisLabel;
-                      }
+        getDiscreteBarChart: function () {
+            var discreteBarChart = {
+                chart: {
+                    type: 'discreteBarChart',
+                    height: 450,
+                    margin: {
+                        top: 20,
+                        right: 20,
+                        bottom: 50,
+                        left: 55
+                    },
+                    x: function (d) { return d.x; }, //label
+                    y: function (d) { return d.y; }, //value
+                    showValues: true,
+                    valueFormat: function (d) {
+                        return d3.format(',.2f')(d);
+                    },
+                    duration: 500,
+                    xAxis: {
+                        axisLabel: 'X Axis'
+                    },
+                    yAxis: {
+                        axisLabel: 'Y Axis',
+                        axisLabelDistance: -10
+                    }
+                },
+                title: {
+                    enable: false,
+                    text: ''
+                },
+                processData: function (xAxis, yAxis, data, chart, options) {
+                    if (options && options.title) {
+                        chart.title.enable = true;
+                        chart.title.text = options.title;
+                    }
+                    if (options.xAxisLabel) {
+                        chart.chart.xAxis.axisLabel = options.xAxisLabel;
+                    }
+                    if (options.yAxisLabel) {
+                        chart.chart.yAxis.axisLabel = options.yAxisLabel;
+                    }
 
-                      var mappedData = _.chain(data)
-                                      .groupBy(xAxis)
-                                      .map(function(value, key) {
-                                          return  _.reduce(value, function(result, currentObject) {
-                                              return {
-                                                  x: currentObject[xAxis],
-                                                  y: result["y"] + currentObject[yAxis]
-                                              }
-                                          }, {
-                                              y: 0
-                                          });
-                                      }).value();
+                    var mappedData = _.chain(data)
+                        .groupBy(xAxis)
+                        .map(function (value, key) {
+                            return _.reduce(value, function (result, currentObject) {
+                                return {
+                                    x: currentObject[xAxis],
+                                    y: result["y"] + currentObject[yAxis]
+                                }
+                            }, {
+                                    y: 0
+                                });
+                        }).value();
 
-                      return [{
-                                  values: mappedData,
-                                  key: options.key
-                           }];
-                  }
-             };
-             return discreteBarChart;
-         },
+                    return [{
+                        values: mappedData,
+                        key: options.key
+                    }];
+                }
+            };
+            return discreteBarChart;
+        },
     };
 }]);
 
@@ -260,7 +394,7 @@ app.directive('widgetChildConfigFactory', ['$compile', '$interpolate', function 
 
             var chartType = scope.$eval(attrs.chartType);
             scope.chartType = chartType;
-            
+
             var tmpl = '<div class="edit-child-form"><form sf-schema="chartDefinition.schema" sf-form="chartDefinition.form" sf-options="{setSchemaDefaults:true, validateOnRender: true}" sf-model="config.chartDefinitionModel"></form></div>';
 
             var html = element.html();
@@ -272,7 +406,7 @@ app.directive('widgetChildConfigFactory', ['$compile', '$interpolate', function 
                     var compiled1 = $compile(tmpl)(scope);
                     element.append(compiled1);
                     $compile(element.contents())(scope);
-                }else{
+                } else {
                     var compiled1 = $compile('<div></div>')(scope);
                     element.append(compiled1);
                 }
@@ -293,23 +427,20 @@ app.directive('widgetChildConfigFactory', ['$compile', '$interpolate', function 
 
 app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard',function ($dzupDashboard) {
 
-    var widgets =  [];
-    var widgetsData =  [];
+    var widgets = [];
+    var widgetsData = [];
     return {
-        setDashboardWidgets: function(index, dashboard)
-        {
+        setDashboardWidgets: function (index, dashboard) {
             this.clear();
-            if(dashboard != null && dashboard.model != null && typeof dashboard.model != 'undefined' && typeof dashboard.model.rows != 'undefined')
-            {
+            if(dashboard != null && dashboard.model != null && typeof dashboard.model != 'undefined' && typeof dashboard.model.rows != 'undefined') {
 
-                for(i=0;i<dashboard.model.rows.length;i++){
+                for (i = 0; i < dashboard.model.rows.length; i++) {
                     var columns = dashboard.model.rows[i].columns;
-                    for(j=0;j<columns.length;j++){
+                    for (j = 0; j < columns.length; j++) {
                         var widgets = columns[j].widgets;
-                        if(typeof widgets != 'undefined')
-                        {
-                            for(s=0;s<widgets.length;s++){
-                            this.addDashboardWidget(widgets[s]);
+                        if (typeof widgets != 'undefined') {
+                            for (s = 0; s < widgets.length; s++) {
+                                this.addDashboardWidget(widgets[s]);
 
                             }
                         }
@@ -317,15 +448,15 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard',function ($dzupDashbo
                 }
             }
         },
-        setWidgetData:function (wid, data){
+        setWidgetData: function (wid, data) {
 
-            var WData = {wid:wid, data: data};
-            if(typeof WData != 'undefined'){
-                var index = _.indexOf(this.widgetsData, _.find(this.widgetsData, {wid: WData.wid}));
-                if(index != -1){ // widget array contains widget replace is
-                    this.widgetsData.splice(index, 1,WData);
+            var WData = { wid: wid, data: data };
+            if (typeof WData != 'undefined') {
+                var index = _.indexOf(this.widgetsData, _.find(this.widgetsData, { wid: WData.wid }));
+                if (index != -1) { // widget array contains widget replace is
+                    this.widgetsData.splice(index, 1, WData);
                 }
-                else{
+                else {
                     this.widgetsData.push(WData);
                 }
             }
@@ -356,28 +487,27 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard',function ($dzupDashbo
         },
         addDashboardWidget: function (widget) {
 
-            var index = _.indexOf(this.widgets, _.find(this.widgets, {wid: widget.wid}));
+            var index = _.indexOf(this.widgets, _.find(this.widgets, { wid: widget.wid }));
 
-            if(index != -1){ // widget array contains widget replace is
-                this.widgets.splice(index, 1,widget);
+            if (index != -1) { // widget array contains widget replace is
+                this.widgets.splice(index, 1, widget);
             }
-            else{
+            else {
                 this.widgets.push(widget);
             }
         },
-        clear: function()
-        {
+        clear: function () {
             this.widgets = [];
             this.widgetsData = [];
         },
-        getWidgets: function(){
-                return this.widgets;
+        getWidgets: function () {
+            return this.widgets;
         },
-        getWidgetsByType: function(widgetType){
-             return _.filter(this.widgets, function(item) {
-                         return  item.type == widgetType
-                    });
-        },
+        getWidgetsByType: function (widgetType) {
+            return _.filter(this.widgets, function (item) {
+                return item.type == widgetType
+            });
+        }
 
     };
 
