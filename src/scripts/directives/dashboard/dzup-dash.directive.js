@@ -14,12 +14,35 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                 $scope.dashboardList = [];
                 $scope.selectedDashboard = {};
 
-
                 $scope.selectDashboard = function (dashboard, index) {
-
                     $scope.selectedDashboard = dashboard;
                     dzupDashboardWidgetHelper.setDashboardWidgets(index,dashboard);
                 };
+
+                $dzupDashboard.getDashboards().success(function (result) {
+                   if(result != null && result.list.length > 0){
+                        var list = result.list;
+                        var selectedDashboard = list[0].dashboard;
+                        for(i=0;i<list.length;i++){
+                            var dashItem = result.list[i].dashboard;
+                            dashItem.title =  dashItem.title+" " + (i+1);
+                            dashItem.identifier = result.list[i].id;
+                            $scope.dashboardList.push({model:result.list[i].dashboard});
+
+                            /*for(rowItem = 0; rowItem<dashItem.rows.length;rowItem++) {
+                                var rowItems = dashItem.rows[rowItem].columns;
+                                for(colItems = 0; colItems<rowItems.length;colItems++){
+                                    var colItem =  rowItems[colItems].widgets;
+                                    for(widItem=0; widItem < colItem.length;widItem++){
+                                        console.log(colItem[widItem]);
+                                        dzupDashboardWidgetHelper.setWidgetData(colItem[widItem]);
+                                    }
+                                }
+                            }*/
+
+                        }
+                   }
+                });
 
                 $scope.indexOfItem = function (item) {
                     var index = _.indexOf($scope.dashboardList, item);
@@ -30,7 +53,7 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                     var dash = {
                         model: {
                             key: $scope.generateUUID(),
-                            title: "New Dashboard",
+                            title: "Dashboard ",
                             structure: "4-8"
                         }
                     };
@@ -53,8 +76,8 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                 $scope.addDashboard = function ($event)
                 {
                     var dash = $scope.getDashboardTemplate();
-
                     $scope.dashboardList.push(dash);
+
 
                     var self = this;
                     $timeout(function () {
@@ -97,7 +120,7 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                 }
 
                 $scope.create = function (dashItem) {
-                    $dzupDashboard.dataService.create(dashItem);
+                    $dzupDashboard.create(dashItem);
                        /* .success(function (result) {
                             $scope.updateInList(result);
                             $scope.success = "Successfully created";
@@ -108,7 +131,7 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                 };
 
                 $scope.update = function (dashItem) {
-                    $dzupDashboard.dataService.update(dashItem.id, dashItem)
+                    $dzupDashboard.create(dashItem)
                         .success(function (result) {
                             $scope.updateInList(result);
                             $scope.success = "Successfully updated";
@@ -146,34 +169,6 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                         $scope.error = 'Something wrong. Please try again!';
                     }
                 });
-
-             /*   $scope.$on('adfIsEditMode', function (event, name, model) {
-                                    var dashItem = _.find($scope.dashboardList, function (item) {
-                                        if (item.model.key === model.key) {
-                                            return item;
-                                        }
-                                    });
-                                    if (dashItem) {
-                                        $scope.saveOrUpdate(dashItem);
-                                    } else {
-                                        $scope.error = 'Something wrong. Please try again!';
-                                    }
-                                });*/
-
-              /*$timeout(function () {                    
-                    if ($scope.dashboardList.length==0){
-                        $scope.addDashboard(null);
-                    }
-                    
-                    if ($scope.dashboardList.length > 0) {
-                        $scope.selectDashboard($scope.dashboardList[0]);
-                        $scope.activeTabIndex = 0;
-                    }
-                }, 100);
-*/
-               
-
-
         }]
     }
 

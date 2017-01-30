@@ -291,7 +291,7 @@ app.directive('widgetChildConfigFactory', ['$compile', '$interpolate', function 
 }]);
 
 
-app.factory('dzupDashboardWidgetHelper', [function () {
+app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard',function ($dzupDashboard) {
 
     var widgets =  [];
     var widgetsData =  [];
@@ -299,7 +299,7 @@ app.factory('dzupDashboardWidgetHelper', [function () {
         setDashboardWidgets: function(index, dashboard)
         {
             this.clear();
-            if(typeof dashboard.model.rows != 'undefined')
+            if(dashboard != null && dashboard.model != null && typeof dashboard.model != 'undefined' && typeof dashboard.model.rows != 'undefined')
             {
 
                 for(i=0;i<dashboard.model.rows.length;i++){
@@ -316,8 +316,6 @@ app.factory('dzupDashboardWidgetHelper', [function () {
                     }
                 }
             }
-
-            console.log(this.widgets);
         },
         setWidgetData:function (wid, data){
 
@@ -333,11 +331,28 @@ app.factory('dzupDashboardWidgetHelper', [function () {
             }
         },
         getWidgetData: function(wid){
-            var index = _.indexOf(this.widgetsData, _.find(this.widgetsData, {wid: wid}));
+            var deferred = new $.Deferred();
+            var self = this;
+            var index = _.indexOf(self.widgetsData, _.find(self.widgetsData, {wid: wid}));
             if(index != -1)
-                return this.widgetsData[index];
-             else
-                return null;
+                  deferred.resolve(this.widgetsData[index]);
+            else {
+                index = _.indexOf(self.widgets, _.find(self.widgets, {wid:wid}));
+
+                 if(index != -1){
+                    var widget = self.widgets[index];
+                    $dzupDashboard.getReport(widget.config.definitionModel.reportSource, "d2b2320c-7d09-49e5-bc81-f06e97dd0a4a",widget.config.definitionModel.report).then(function (result) {
+
+                       self.setWidgetData(wid, result)
+                       deferred.resolve(self.getWidgetData(wid));
+                    });
+                }
+                else{
+                    deferred.resolve(null);
+                }
+
+            }
+            return deferred.promise();
         },
         addDashboardWidget: function (widget) {
 
@@ -349,8 +364,6 @@ app.factory('dzupDashboardWidgetHelper', [function () {
             else{
                 this.widgets.push(widget);
             }
-
-            console.log(this.widgets);
         },
         clear: function()
         {

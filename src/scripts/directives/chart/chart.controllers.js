@@ -58,10 +58,17 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
         {
 
            config.changesApplied  = false;
-           var wData = dzupDashboardWidgetHelper.getWidgetData(config.definitionModel.dataSource);
-           $scope.pieChartTypeHour = chartService.getChart('pieChart');
-           var hourChartOptions= {title: "Tweets count by hour"};
-           $scope.hourlyCountReportDataByHour =  $scope.pieChartTypeHour.processData("HOURcreated_at", "COUNTcreated_at", wData.data[0].list, $scope.pieChartTypeHour, hourChartOptions);
+           dzupDashboardWidgetHelper.getWidgetData(config.definitionModel.dataSource).then(function(wData){
+                $scope.pieChartTypeHour = chartService.getChart('pieChart');
+                var hourChartOptions= {title: "Tweets count by hour"};
+                if(typeof wData.data != 'undefined'){
+                    $scope.hourlyCountReportDataByHour =  $scope.pieChartTypeHour.processData("HOURcreated_at", "COUNTcreated_at", wData.data[0].list, $scope.pieChartTypeHour, hourChartOptions);
+                }
+                else{
+                    wData.then(function(pResult){ $scope.hourlyCountReportDataByHour =  $scope.pieChartTypeHour.processData("HOURcreated_at", "COUNTcreated_at", pResult.data.data[0].list, $scope.pieChartTypeHour, hourChartOptions);})
+                }
+           });
+
            /*$dzupDashboard.getReport("twitter_stream", "d2b2320c-7d09-49e5-bc81-f06e97dd0a4a","hourlyCount").success(function (result) {
                 console.log(result)
                 $scope.pieChartTypeHour = chartService.getChart('pieChart');

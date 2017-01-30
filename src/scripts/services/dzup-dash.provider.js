@@ -5,49 +5,64 @@ dzupDashboard.provider('$dzupDashboard', function () {
 
     provider.shouldUseOnlyCustomWidgets = false;
     this.host = "";
-    provider.setHost = function(value) {
-        this.host = value;
+    this.updateUrl = "";
+    this.dashboardsRetrievalUrl = "";
+
+    provider.setConf = function(conf) {
+        this.host = conf.host;
+        this.updateUrl = conf.updateUrl;
+        this.dashboardsRetrievalUrl = conf.dashboardsRetrievalUrl ;
     };
 
-    function WidServ($http,host){
-            this.create = function(dashboard) {
-               this.dashboards.push(dashboard);
-               return this.dashboards;
+    function WidServ($http,conf){
+            this.create = function(item) {
+                var item = {dashboard:item.model, id:item.model.identifier};
+                return $http.post(conf.host+ conf.updateUrl ,item);
             }
 
-            this.update = function(dashboard) {
-               this.dashboards.push(dashboard);
-              return this.dashboards;
+            this.update = function(item) {
+                  var item = {dashboard:item.model, id:item.model.identifier};
+                  return $http.post(conf.host+ conf.updateUrl ,item);
             }
 
-            this.remove = function(identifier) {
-             return  this.dashboards;
+            this.remove = function(identifier) {  //TODO: IMPLEMENT BACKEND
+                return $http({
+                        method: 'DELETE',
+                        url: conf.host + conf.updateUrl + '/{id}',
+                        params: { id:  identifier }
+                    });
             }
 
-            this.getDashboards = function(identifier) {
-              return  this.dashboards;
+            this.getDashboards = function() {
+
+                var result =  $http.get(conf.host + conf.dashboardsRetrievalUrl );
+                return result;
             }
 
             this.getReport = function(source, streamId, reportName){
                var s = encodeURIComponent(source);
                var sid = encodeURIComponent(streamId);
                var rn = encodeURIComponent(reportName);
-               return $http.get(host + 'analytic/query/report?reportName=' + rn + '&source='+s+ '&streamId='+sid);
+               return $http.get(conf.host + 'analytic/query/report' + '?reportName=' + rn + '&source='+s+ '&streamId='+sid);
             }
 
             this.getSources = function(){
-                 return $http.get(host + 'analytic/query/reports/sources');
+                 return $http.get(conf.host + 'analytic/query/reports/sources');
             }
 
             this.getReportsBySource = function(source){
                  var s = encodeURIComponent(source);
-                 return $http.get(host + 'analytic/query/reports/ddl?source='+s);
+                 return $http.get(conf.host + 'analytic/query/reports/ddl?source='+s);
             }
     }
 
     provider.$get = function($http) {
         var host = this.host;
-        return new WidServ($http, host);
+        var updateUrl = this.updateUrl;
+        var dashboardsRetrievalUrl = this.dashboardsRetrievalUrl;
+
+        var conf = { host:host, updateUrl:updateUrl, dashboardsRetrievalUrl:dashboardsRetrievalUrl}
+        return new WidServ($http, conf);
     };
 
     return provider;
