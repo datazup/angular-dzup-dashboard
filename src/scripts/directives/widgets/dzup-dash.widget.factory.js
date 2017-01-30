@@ -21,8 +21,13 @@ app.directive('widgetMainFormConfig', ['$compile', '$interpolate', '$templateReq
 app.factory('chartService', [function () {
     return {
         $scope: null,
-        getChart: function (chartType, scope) {
-            $scope = scope;
+        setAxisData: function (axisData, scope) {
+            if (axisData.length != 0 && (typeof scope != 'undefined')) {
+                scope.axisData = axisData;
+                $scope = scope;
+            }
+        },
+        getChart: function (chartType) {
             switch (chartType) {
                 case 'pieChart':
                     return this.getPieChart();
@@ -37,12 +42,37 @@ app.factory('chartService', [function () {
                     return null;
             }
         },
-        getChartSchemaProperties: function (chartType, schemeProperties) {
+        updateChartSchemaProperties: function (chartType, schemeProperties) {
             schemeProperties.chartTitle = {
                 type: 'string',
-                title: 'Chart Titleeeeeeeee',
+                title: 'Chart Title From Service',
+            }
+            schemeProperties.xAxisLabel = {
+                type: 'string',
+                title: 'X Axis Lebel',
+            }
+            schemeProperties.yAxisLabel = {
+                type: 'string',
+                title: 'Y Axis Lebel',
+            }
+            schemeProperties.xAxis = {
+                type: 'string',
+                title: 'X Axis',
+                format: "uiselect",
+                placeholder: 'Select X Axis Property',
+            }
+            schemeProperties.yAxis = {
+                type: 'string',
+                title: 'Y Axis',
+                format: "uiselect",
+                placeholder: 'Select Y Axis Property',
+            }
+            schemeProperties.chartColor = {
+                type: 'string',
+                title: 'Chart Color',
             }
         },
+
         getChartOptionsForm: function (chartType) {
 
             if (chartType == "pieChart") {
@@ -51,6 +81,30 @@ app.factory('chartService', [function () {
                         key: 'chartTitle',
                         type: 'string',
                         placeholder: 'Enter Chart Title Here'
+                    },
+                    {
+                        key: 'xAxis',
+                        type: 'uiselect',
+                        options: {
+                            callback: function () {
+                                if ((typeof $scope != 'undefined') && $scope != null && $scope.axisData !== null) {
+                                    return $scope.axisData
+                                };
+                            }
+                        },
+
+                    },
+                    {
+                        key: 'yAxis',
+                        type: 'uiselect',
+                        options: {
+                            callback: function () {
+                                if ((typeof $scope != 'undefined') && $scope != null && $scope.axisData !== null) {
+                                    return $scope.axisData
+                                };
+                            }
+                        },
+
                     }
                 ]
             }
@@ -62,20 +116,30 @@ app.factory('chartService', [function () {
                         placeholder: 'Enter Chart Title Here'
                     },
                     {
-                        key: 'chartXLabel',
+                        key: 'xAxisLabel',
                         placeholder: 'Enter X Axis Label Here'
                     },
                     {
                         key: 'xAxis',
                         type: 'uiselect',
+                        feedback: false,
                         options: {
                             callback: function () { console.log("calllback") },
                         },
 
                     },
                     {
-                        key: 'chartYLabel',
+                        key: 'yAxisLabel',
                         placeholder: 'Enter Y Axis Label Here'
+                    },
+                    {
+                        key: 'yAxis',
+                        type: 'uiselect',
+                        feedback: false,
+                        options: {
+                            callback: function () { console.log("calllback") },
+                        },
+
                     }
                 ]
             }
@@ -87,12 +151,30 @@ app.factory('chartService', [function () {
                         placeholder: 'Enter Chart Title Here'
                     },
                     {
-                        key: 'chartXLabel',
+                        key: 'xAxisLabel',
                         placeholder: 'Enter X Axis Label Here'
                     },
                     {
-                        key: 'chartYLabel',
+                        key: 'xAxis',
+                        type: 'uiselect',
+                        feedback: false,
+                        options: {
+                            callback: function () { console.log("calllback") },
+                        },
+
+                    },
+                    {
+                        key: 'yAxisLabel',
                         placeholder: 'Enter Y Axis Label Here'
+                    },
+                    {
+                        key: 'yAxis',
+                        type: 'uiselect',
+                        feedback: false,
+                        options: {
+                            callback: function () { console.log("calllback") },
+                        },
+
                     },
                     {
                         key: 'chartColor',
@@ -345,8 +427,8 @@ app.directive('widgetChildConfigFactory', ['$compile', '$interpolate', function 
 
 app.factory('dzupDashboardWidgetHelper', [function () {
 
-    var widgets =  [];
-    var widgetsData =  [];
+    var widgets = [];
+    var widgetsData = [];
     return {
         setDashboardWidgets: function (index, dashboard) {
             this.clear();
@@ -368,24 +450,24 @@ app.factory('dzupDashboardWidgetHelper', [function () {
 
             console.log(this.widgets);
         },
-        setWidgetData:function (wid, data){
+        setWidgetData: function (wid, data) {
 
-            var WData = {wid:wid, data: data};
-            if(typeof WData != 'undefined'){
-                var index = _.indexOf(this.widgetsData, _.find(this.widgetsData, {wid: WData.wid}));
-                if(index != -1){ // widget array contains widget replace is
-                    this.widgetsData.splice(index, 1,WData);
+            var WData = { wid: wid, data: data };
+            if (typeof WData != 'undefined') {
+                var index = _.indexOf(this.widgetsData, _.find(this.widgetsData, { wid: WData.wid }));
+                if (index != -1) { // widget array contains widget replace is
+                    this.widgetsData.splice(index, 1, WData);
                 }
-                else{
+                else {
                     this.widgetsData.push(WData);
                 }
             }
         },
-        getWidgetData: function(wid){
-            var index = _.indexOf(this.widgetsData, _.find(this.widgetsData, {wid: wid}));
-            if(index != -1)
+        getWidgetData: function (wid) {
+            var index = _.indexOf(this.widgetsData, _.find(this.widgetsData, { wid: wid }));
+            if (index != -1)
                 return this.widgetsData[index];
-             else
+            else
                 return null;
         },
         addDashboardWidget: function (widget) {
@@ -399,7 +481,7 @@ app.factory('dzupDashboardWidgetHelper', [function () {
                 this.widgets.push(widget);
             }
 
-            console.log(this.widgets);
+            //console.log(this.widgets);
         },
         clear: function () {
             this.widgets = [];
