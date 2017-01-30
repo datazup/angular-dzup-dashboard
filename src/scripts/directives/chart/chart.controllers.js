@@ -16,7 +16,31 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
         $scope.chartDefinition = {};
         $scope.chartType = null;
         $scope.model = {};
+        $scope.wData = [];
+        $scope.reportColumns = [];
 
+        // FUNCTIONS
+        $scope.setChartData = function(injectValue, result){
+             if(typeof result.data.length == 'undefined')
+             {
+                result = result.data;
+             }
+            $scope.wData = result.data[0].list;
+            $scope.reportColumns = _.map(result.data[1].columns, function (x) { return { value: x, label: x } });
+            $scope.injectAxisDdlValues(injectValue);
+
+            if(typeof $scope.chart == 'undefined'){
+                $scope.chart = chartService.getChart(config.definitionModel.chartType);
+                $scope.chartOptions = {
+                    title: config.definitionModel.chartTitle,
+                    xAxisLabel: config.definitionModel.xAxisLabel,
+                    yAxisLabel: config.definitionModel.yAxisLabel,
+                    color: config.definitionModel.chartColor,
+                };
+            }
+
+            $scope.populatedChart = $scope.chart.processData(config.definitionModel.xAxis, config.definitionModel.yAxis, $scope.wData, $scope.chart, $scope.chartOptions);
+        };
         $scope.injectAxisDdlValues = function(injectValue){
                 if (injectValue == true) {
                     $timeout(function () {
@@ -36,44 +60,25 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                 $scope.chartDefinition = {};
             }
         };
-        $scope.wData = [];
-        $scope.reportColumns = [];
+
         $scope.getReportColumns = function (value, injectValue) {
 
-            var wData = dzupDashboardWidgetHelper.getWidgetData(value);
-
              dzupDashboardWidgetHelper.getWidgetData(value).then(function(result){
-                if(typeof result.data != 'undefined'){
-                    $scope.wData = result.data.data[0].list;
-                    $scope.reportColumns = _.map(result.data.data[1].columns, function (x) { return { value: x, label: x } });
-                    $scope.injectAxisDdlValues(injectValue);
+                if(result ==null) return;
+
+                if( result.data != null && typeof result.data != 'undefined'){
+                    $scope.setChartData(injectValue,result);
                 }
-                else{
+                else {
                     result.then(function(pResult){
-                        $scope.wData = pResult.data.data[0].list;
-                        $scope.reportColumns = _.map(pResult.data.data[1].columns, function (x) { return { value: x, label: x } });
-                        $scope.injectAxisDdlValues(injectValue);
+                        $scope.setChartData(injectValue,pResult.data);
                     });
                 }
            });
 
-
-
-            // var repCol = _.map(wData.data[1].columns, function (x) { return { value: x, label: x } });
-            //1 .$scope.reportColumns = _.map($scope.wData.data[1].columns, function (x) { return { value: x, label: x } });
-
-            //chartService.setAxisData($scope.reportColumns);
-
             return $scope.reportColumns;
         }
 
-         if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined') {
-            chartService.setAxisData($scope.getReportColumns(config.definitionModel.dataSource, false), $scope);
-        }
-
-
-        $scope.config.definitionModel = $scope.config.definitionModel || {};
-        $scope.loadChildModelByChartType($scope.config.definitionModel.chartType);
         $scope.createReport = function () {
             var modalInstance = $uibModal.open({
                 templateUrl: $dzupConfigUtils.templateUrlBase['dzup-dashboard'] + '/templates/reports/report.modal.view.html',
@@ -94,11 +99,6 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
             });
         };
 
-        if (chartService.axisData != null) {
-            console.log(chartService.axisData);
-        }
-
-        $scope.chartTypes = [];
         $scope.getChartTypes = function (injectValue) {
 
             $scope.chartTypes = [{ value: '', label: 'Charts' }, { value: 'pieChart', label: 'Pie Chart' }, { value: 'discreteBarChart', label: 'Bar Chart' }, { value: 'lineChart', label: 'Line Chart' }];
@@ -112,38 +112,28 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
             return $scope.chartTypes;
         }
 
+        if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined') {
+            chartService.setAxisData($scope.getReportColumns(config.definitionModel.dataSource, false), $scope);
+        }
+        // END OF FUNCTIONS
+
+        $scope.config.definitionModel = $scope.config.definitionModel || {};
+        $scope.loadChildModelByChartType($scope.config.definitionModel.chartType);
+
+        if (chartService.axisData != null) {
+            console.log(chartService.axisData);
+        }
+
+        $scope.chartTypes = [];
+
         if ($scope.chartTypes.length == 0) {
             $scope.getChartTypes(false);
         }
 
-
-        if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined' && typeof $scope.wData != 'undefined') {
-
-            console.log(chartService.axisData);
-
-            $scope.getChartTypes(false);
-
-            $scope.getReportColumns(config.definitionModel.dataSource, false);
-        }
-
-
-        if (config.changesApplied == true && typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined'
+        if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined'
             && typeof config.definitionModel.xAxis != 'undefined' && typeof config.definitionModel.xAxis != 'undefined') {
 
             config.changesApplied = false;
-
-            chartService.setAxisData($scope.reportColumns);
-            console.log(chartService.axisData);
-
-            $scope.chart = chartService.getChart(config.definitionModel.chartType);
-            var chartOptions = {
-                title: config.definitionModel.chartTitle,
-                xAxisLabel: config.definitionModel.xAxisLabel,
-                yAxisLabel: config.definitionModel.yAxisLabel,
-                color: config.definitionModel.chartColor,
-            };
-
-            $scope.populatedChart = $scope.chart.processData(config.definitionModel.xAxis, config.definitionModel.yAxis, $scope.wData, $scope.chart, chartOptions);
         }
 
         $scope.schema = {

@@ -15,6 +15,7 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                 $scope.selectedDashboard = {};
 
                 $scope.selectDashboard = function (dashboard, index) {
+                    console.log("Hi, you selected me?");
                     $scope.selectedDashboard = dashboard;
                     dzupDashboardWidgetHelper.setDashboardWidgets(index,dashboard);
                 };
@@ -25,7 +26,7 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                         var selectedDashboard = list[0].dashboard;
                         for(i=0;i<list.length;i++){
                             var dashItem = result.list[i].dashboard;
-                            dashItem.title =  dashItem.title+" " + (i+1);
+                            dashItem.title =  "Dashboard " + (i+1);
                             dashItem.identifier = result.list[i].id;
                             $scope.dashboardList.push({model:result.list[i].dashboard});
 
@@ -121,13 +122,6 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
 
                 $scope.create = function (dashItem) {
                     $dzupDashboard.create(dashItem);
-                       /* .success(function (result) {
-                            $scope.updateInList(result);
-                            $scope.success = "Successfully created";
-                        })
-                        .error(function (data, status) {
-                            $scope.error = data.message;
-                        });*/
                 };
 
                 $scope.update = function (dashItem) {
