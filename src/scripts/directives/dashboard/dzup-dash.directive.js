@@ -15,7 +15,6 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                 $scope.selectedDashboard = {};
 
                 $scope.selectDashboard = function (dashboard, index) {
-                    console.log("Hi, you selected me?");
                     $scope.selectedDashboard = dashboard;
                     dzupDashboardWidgetHelper.setDashboardWidgets(index,dashboard);
                 };
@@ -23,24 +22,12 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                 $dzupDashboard.getDashboards().success(function (result) {
                    if(result != null && result.list.length > 0){
                         var list = result.list;
-                        var selectedDashboard = list[0].dashboard;
+
                         for(i=0;i<list.length;i++){
                             var dashItem = result.list[i].dashboard;
                             dashItem.title =  "Dashboard " + (i+1);
                             dashItem.identifier = result.list[i].id;
                             $scope.dashboardList.push({model:result.list[i].dashboard});
-
-                            /*for(rowItem = 0; rowItem<dashItem.rows.length;rowItem++) {
-                                var rowItems = dashItem.rows[rowItem].columns;
-                                for(colItems = 0; colItems<rowItems.length;colItems++){
-                                    var colItem =  rowItems[colItems].widgets;
-                                    for(widItem=0; widItem < colItem.length;widItem++){
-                                        console.log(colItem[widItem]);
-                                        dzupDashboardWidgetHelper.setWidgetData(colItem[widItem]);
-                                    }
-                                }
-                            }*/
-
                         }
                    }
                 });

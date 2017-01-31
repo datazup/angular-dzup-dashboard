@@ -8,7 +8,7 @@
                             <i class="fa fa-times" aria-hidden="true"></i>
                         </span>
             </uib-tab-heading>
-            <adf-dashboard name="{{dashboard.key}}" structure="{{dashboard.model.structure}}" categories="true" adf-model="dashboard.model" />
+            <dzup-dashboard-item dashboard="selectedDashboard"></dzup-dashboard-item>
         </uib-tab>
         <uib-tab select="addDashboard()" index="$index">
             <uib-tab-heading>
