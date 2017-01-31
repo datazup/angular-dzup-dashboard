@@ -1,6 +1,6 @@
 var dzupDashboard = angular.module('dzupDash');
 // not in use
-dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 'dzupDashboardWidgetHelper', function ($dzupDashboard, $dzupConfigUtils,dzupDashboardWidgetHelper) {
+dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 'dzupDashboardWidgetHelper', function ($dzupDashboard, $dzupConfigUtils, dzupDashboardWidgetHelper) {
 
     return {
         restrict: "E",
@@ -8,7 +8,7 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
         templateUrl: $dzupConfigUtils.templateUrlBase['dzup-dashboard'] + '/templates/dashboard.main.view.html',
         controller: ['$rootScope', '$scope', '$timeout', '$dzupConfigUtils',
             function ($rootScope, $scope, $timeout, $dzupConfigUtils) {
-                
+
                 $scope.tabUrl = $dzupConfigUtils.templateUrlBase['dzup-dashboard'] + '/templates/dashboard.tab.template.view.html';
 
                 $scope.dashboardList = [];
@@ -16,20 +16,22 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
 
                 $scope.selectDashboard = function (dashboard, index) {
                     $scope.selectedDashboard = dashboard;
-                    dzupDashboardWidgetHelper.setDashboardWidgets(index,dashboard);
+                    dzupDashboardWidgetHelper.setDashboardWidgets(index, dashboard);
                 };
 
                 $dzupDashboard.getDashboards().success(function (result) {
-                   if(result != null && result.list.length > 0){
+                    if (result != null && result.list.length > 0) {
                         var list = result.list;
-
+                        
                         for(i=0;i<list.length;i++){
+
                             var dashItem = result.list[i].dashboard;
-                            dashItem.title =  "Dashboard " + (i+1);
+                            dashItem.title = "Dashboard " + (i + 1);
                             dashItem.identifier = result.list[i].id;
+
                             $scope.dashboardList.push({model:result.list[i].dashboard});
                         }
-                   }
+                    }
                 });
 
                 $scope.indexOfItem = function (item) {
@@ -61,8 +63,7 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                     return uuid;
                 }
 
-                $scope.addDashboard = function ($event)
-                {
+                $scope.addDashboard = function ($event) {
                     var dash = $scope.getDashboardTemplate();
                     $scope.dashboardList.push(dash);
 
@@ -123,19 +124,19 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                 };
 
                 $scope.saveOrUpdate = function (dashItem) {
-                     if (dashItem.id && (typeof dashItem.id != "undefined")) {
+                    if (dashItem.id && (typeof dashItem.id != "undefined")) {
                         $scope.update(dashItem);
                     } else {
                         $scope.create(dashItem);
                     }
                 };
 
-                $scope.$on('adfWidgetAdded',function(event,name,model,widget){
-                     dzupDashboardWidgetHelper.addDashboardWidget(widget);
+                $scope.$on('adfWidgetAdded', function (event, name, model, widget) {
+                    dzupDashboardWidgetHelper.addDashboardWidget(widget);
                 });
 
-                $scope.$on('adfWidgetRemovedFromColumn',function(root){
-                     dzupDashboardWidgetHelper.setDashboardWidgets(-1, root.currentScope.selectedDashboard);
+                $scope.$on('adfWidgetRemovedFromColumn', function (root) {
+                    dzupDashboardWidgetHelper.setDashboardWidgets(-1, root.currentScope.selectedDashboard);
                 });
 
                 $scope.$on('adfDashboardChanged', function (event, name, model) {
@@ -150,7 +151,7 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                         $scope.error = 'Something wrong. Please try again!';
                     }
                 });
-        }]
+            }]
     }
 
 }]);
