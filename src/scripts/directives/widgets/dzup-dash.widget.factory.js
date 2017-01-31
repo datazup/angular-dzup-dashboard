@@ -20,13 +20,6 @@ app.directive('widgetMainFormConfig', ['$compile', '$interpolate', '$templateReq
 
 app.factory('chartService', [function () {
     return {
-        $scope: null,
-        setAxisData: function (axisData, scope) {
-            if (axisData.length != 0 && (typeof scope != 'undefined')) {
-                scope.axisData = axisData;
-                $scope = scope;
-            }
-        },
         getChart: function (chartType) {
             switch (chartType) {
                 case 'pieChart':
@@ -45,7 +38,7 @@ app.factory('chartService', [function () {
         updateChartSchemaProperties: function (chartType, schemeProperties) {
             schemeProperties.chartTitle = {
                 type: 'string',
-                title: 'Chart Title From Service',
+                title: 'Chart Title',
             }
             schemeProperties.xAxisLabel = {
                 type: 'string',
@@ -70,117 +63,6 @@ app.factory('chartService', [function () {
             schemeProperties.chartColor = {
                 type: 'string',
                 title: 'Chart Color',
-            }
-        },
-
-        getChartOptionsForm: function (chartType) {
-
-            if (chartType == "pieChart") {
-                return [
-                    {
-                        key: 'chartTitle',
-                        type: 'string',
-                        placeholder: 'Enter Chart Title Here'
-                    },
-                    {
-                        key: 'xAxis',
-                        type: 'uiselect',
-                        options: {
-                            callback: function () {
-                                if ((typeof $scope != 'undefined') && $scope != null && $scope.axisData !== null) {
-                                    return $scope.axisData
-                                };
-                            }
-                        },
-
-                    },
-                    {
-                        key: 'yAxis',
-                        type: 'uiselect',
-                        options: {
-                            callback: function () {
-                                if ((typeof $scope != 'undefined') && $scope != null && $scope.axisData !== null) {
-                                    return $scope.axisData
-                                };
-                            }
-                        },
-
-                    }
-                ]
-            }
-
-            if (chartType == "discreteBarChart") {
-                return [
-                    {
-                        key: 'chartTitle',
-                        placeholder: 'Enter Chart Title Here'
-                    },
-                    {
-                        key: 'xAxisLabel',
-                        placeholder: 'Enter X Axis Label Here'
-                    },
-                    {
-                        key: 'xAxis',
-                        type: 'uiselect',
-                        feedback: false,
-                        options: {
-                            callback: function () { console.log("calllback") },
-                        },
-
-                    },
-                    {
-                        key: 'yAxisLabel',
-                        placeholder: 'Enter Y Axis Label Here'
-                    },
-                    {
-                        key: 'yAxis',
-                        type: 'uiselect',
-                        feedback: false,
-                        options: {
-                            callback: function () { console.log("calllback") },
-                        },
-
-                    }
-                ]
-            }
-
-            if (chartType == "lineChart") {
-                return [
-                    {
-                        key: 'chartTitle',
-                        placeholder: 'Enter Chart Title Here'
-                    },
-                    {
-                        key: 'xAxisLabel',
-                        placeholder: 'Enter X Axis Label Here'
-                    },
-                    {
-                        key: 'xAxis',
-                        type: 'uiselect',
-                        feedback: false,
-                        options: {
-                            callback: function () { console.log("calllback") },
-                        },
-
-                    },
-                    {
-                        key: 'yAxisLabel',
-                        placeholder: 'Enter Y Axis Label Here'
-                    },
-                    {
-                        key: 'yAxis',
-                        type: 'uiselect',
-                        feedback: false,
-                        options: {
-                            callback: function () { console.log("calllback") },
-                        },
-
-                    },
-                    {
-                        key: 'chartColor',
-                        placeholder: 'Enter Chart Color Here'
-                    }
-                ]
             }
         },
         getPieChart: function () {
@@ -425,14 +307,14 @@ app.directive('widgetChildConfigFactory', ['$compile', '$interpolate', function 
 }]);
 
 
-app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard',function ($dzupDashboard) {
+app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashboard) {
 
     var widgets = [];
     var widgetsData = [];
     return {
         setDashboardWidgets: function (index, dashboard) {
             this.clear();
-            if(dashboard != null && dashboard.model != null && typeof dashboard.model != 'undefined' && typeof dashboard.model.rows != 'undefined') {
+            if (dashboard != null && dashboard.model != null && typeof dashboard.model != 'undefined' && typeof dashboard.model.rows != 'undefined') {
 
                 for (i = 0; i < dashboard.model.rows.length; i++) {
                     var columns = dashboard.model.rows[i].columns;
@@ -461,24 +343,24 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard',function ($dzupDashbo
                 }
             }
         },
-        getWidgetData: function(wid){
+        getWidgetData: function (wid) {
             var deferred = new $.Deferred();
             var self = this;
-            var index = _.indexOf(self.widgetsData, _.find(self.widgetsData, {wid: wid}));
-            if(index != -1)
-                  deferred.resolve(this.widgetsData[index]);
+            var index = _.indexOf(self.widgetsData, _.find(self.widgetsData, { wid: wid }));
+            if (index != -1)
+                deferred.resolve(this.widgetsData[index]);
             else {
-                index = _.indexOf(self.widgets, _.find(self.widgets, {wid:wid}));
+                index = _.indexOf(self.widgets, _.find(self.widgets, { wid: wid }));
 
-                 if(index != -1){
+                if (index != -1) {
                     var widget = self.widgets[index];
-                    $dzupDashboard.getReport(widget.config.definitionModel.reportSource, "d2b2320c-7d09-49e5-bc81-f06e97dd0a4a",widget.config.definitionModel.report).then(function (result) {
+                    $dzupDashboard.getReport(widget.config.definitionModel.reportSource, "41a864f1-3e57-4912-8f93-69dd40067a9a", widget.config.definitionModel.report).then(function (result) {
 
-                       self.setWidgetData(wid, result)
-                       deferred.resolve(self.getWidgetData(wid));
+                        self.setWidgetData(wid, result)
+                        deferred.resolve(self.getWidgetData(wid));
                     });
                 }
-                else{
+                else {
                     deferred.resolve(null);
                 }
 

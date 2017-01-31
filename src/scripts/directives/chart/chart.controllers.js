@@ -20,16 +20,15 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
         $scope.reportColumns = [];
 
         // FUNCTIONS
-        $scope.setChartData = function(injectValue, result){
-             if(typeof result.data.length == 'undefined')
-             {
+        $scope.setChartData = function (injectValue, result) {
+            if (typeof result.data.length == 'undefined') {
                 result = result.data;
-             }
+            }
             $scope.wData = result.data[0].list;
             $scope.reportColumns = _.map(result.data[1].columns, function (x) { return { value: x, label: x } });
             $scope.injectAxisDdlValues(injectValue);
 
-            if(typeof $scope.chart == 'undefined'){
+            if (typeof $scope.chart == 'undefined') {
                 $scope.chart = chartService.getChart(config.definitionModel.chartType);
                 $scope.chartOptions = {
                     title: config.definitionModel.chartTitle,
@@ -41,15 +40,15 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
 
             $scope.populatedChart = $scope.chart.processData(config.definitionModel.xAxis, config.definitionModel.yAxis, $scope.wData, $scope.chart, $scope.chartOptions);
         };
-        $scope.injectAxisDdlValues = function(injectValue){
-                if (injectValue == true) {
-                    $timeout(function () {
-                        //the code which needs to run after dom rendering
-                        $scope.schema.properties.xAxis.items = $scope.reportColumns;
-                        $scope.schema.properties.yAxis.items = $scope.reportColumns;
+        $scope.injectAxisDdlValues = function (injectValue) {
+            if (injectValue == true) {
+                $timeout(function () {
+                    //the code which needs to run after dom rendering
+                    $scope.schema.properties.xAxis.items = $scope.reportColumns;
+                    $scope.schema.properties.yAxis.items = $scope.reportColumns;
 
-                    })
-                }
+                })
+            }
         }
         $scope.loadChildModelByChartType = function (chartType) {
             $scope.chartType = chartType;
@@ -63,18 +62,18 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
 
         $scope.getReportColumns = function (value, injectValue) {
 
-             dzupDashboardWidgetHelper.getWidgetData(value).then(function(result){
-                if(result ==null) return;
+            dzupDashboardWidgetHelper.getWidgetData(value).then(function (result) {
+                if (result == null) return;
 
-                if( result.data != null && typeof result.data != 'undefined'){
-                    $scope.setChartData(injectValue,result);
+                if (result.data != null && typeof result.data != 'undefined') {
+                    $scope.setChartData(injectValue, result);
                 }
                 else {
-                    result.then(function(pResult){
-                        $scope.setChartData(injectValue,pResult.data);
+                    result.then(function (pResult) {
+                        $scope.setChartData(injectValue, pResult.data);
                     });
                 }
-           });
+            });
 
             return $scope.reportColumns;
         }
@@ -113,8 +112,9 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
         }
 
         if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined') {
-            chartService.setAxisData($scope.getReportColumns(config.definitionModel.dataSource, false), $scope);
+            $scope.reportColumns = $scope.getReportColumns(config.definitionModel.dataSource, false);
         }
+
         // END OF FUNCTIONS
 
         $scope.config.definitionModel = $scope.config.definitionModel || {};
@@ -228,7 +228,6 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                     objectid: 4226,
                                                 },
                                                 type: 'uiselect',
-                                                //feedback: false,
                                             }
                                         ]
                                     },
@@ -266,19 +265,103 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                         type: "section",
                                         htmlClass: "col-xs-12",
                                         condition: "model.chartType=='pieChart'",
-                                        items: chartService.getChartOptionsForm("pieChart")
+                                        items: [
+                                            {
+                                                key: 'chartTitle',
+                                                type: 'string',
+                                                placeholder: 'Enter Chart Title Here'
+                                            },
+                                            {
+                                                key: 'xAxis',
+                                                type: 'uiselect',
+                                                options: {
+                                                    callback: $scope.reportColumns
+                                                },
+                                            },
+                                            {
+                                                key: 'yAxis',
+                                                type: 'uiselect',
+                                                options: {
+                                                    callback: $scope.reportColumns
+                                                },
+                                            }
+                                        ]
                                     },
                                     {
                                         type: "section",
                                         htmlClass: "col-xs-12",
                                         condition: "model.chartType=='discreteBarChart'",
-                                        items: chartService.getChartOptionsForm("discreteBarChart")
+                                        items: [
+                                            {
+                                                key: 'chartTitle',
+                                                placeholder: 'Enter Chart Title Here'
+                                            },
+                                            {
+                                                key: 'xAxisLabel',
+                                                placeholder: 'Enter X Axis Label Here'
+                                            },
+                                            {
+                                                key: 'xAxis',
+                                                type: 'uiselect',
+                                                feedback: false,
+                                                options: {
+                                                    callback: $scope.reportColumns
+                                                },
+
+                                            },
+                                            {
+                                                key: 'yAxisLabel',
+                                                placeholder: 'Enter Y Axis Label Here'
+                                            },
+                                            {
+                                                key: 'yAxis',
+                                                type: 'uiselect',
+                                                feedback: false,
+                                                options: {
+                                                    callback: $scope.reportColumns
+                                                },
+
+                                            }
+                                        ]
                                     },
                                     {
                                         type: "section",
                                         htmlClass: "col-xs-12",
                                         condition: "model.chartType=='lineChart'",
-                                        items: chartService.getChartOptionsForm("lineChart")
+                                        items: [
+                                            {
+                                                key: 'chartTitle',
+                                                placeholder: 'Enter Chart Title Here'
+                                            },
+                                            {
+                                                key: 'xAxisLabel',
+                                                placeholder: 'Enter X Axis Label Here'
+                                            },
+                                            {
+                                                key: 'xAxis',
+                                                type: 'uiselect',
+                                                feedback: false,
+                                                options: {
+                                                    callback: $scope.reportColumns
+                                                },
+                                            },
+                                            {
+                                                key: 'yAxisLabel',
+                                                placeholder: 'Enter Y Axis Label Here'
+                                            },
+                                            {
+                                                key: 'yAxis',
+                                                type: 'uiselect',
+                                                feedback: false,
+                                                options: {
+                                                    callback: $scope.reportColumns
+                                                },
+                                            },
+                                            {
+                                                key: 'chartColor',
+                                                placeholder: 'Enter Chart Color Here'
+                                            }
+                                        ]
                                     }
                                 ]
                             }
