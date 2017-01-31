@@ -22,7 +22,7 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                 $dzupDashboard.getDashboards().success(function (result) {
                     if (result != null && result.list.length > 0) {
                         var list = result.list;
-                        
+
                         for(i=0;i<list.length;i++){
 
                             var dashItem = result.list[i].dashboard;
@@ -77,22 +77,16 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                     $scope.selectDashboard(dash);
                 };
 
-                $scope.removeDashboard = function (dashboard) {
-
+                $scope.removeDashboard = function (dashboard, $event) {
+                    $event.preventDefault();
                     var index = $scope.indexOfItem(dashboard);
                     if (index === -1) {
                         $scope.error = "Something wrong. Cannot find dashboard in collection";
                     } else {
                         $scope.dashboardList.splice(index, 1);
-                        if (dashboard.id) {
-                            $dzupDashboard.dataService.remove(dashboard.id)
-                                .success(function (result) {
-                                    $scope.success = "Successfully removed from database";
-                                    $scope.refresh();
-                                })
-                                .error(function (data, status) {
-                                    $scope.error = data.message;
-                                });
+                        var id = dashboard.model.identifier;
+                        if (id) {
+                            $dzupDashboard.remove(id);
                         }
                     }
                 };

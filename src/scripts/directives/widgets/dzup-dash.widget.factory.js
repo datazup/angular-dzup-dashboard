@@ -354,7 +354,7 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
 
                 if (index != -1) {
                     var widget = self.widgets[index];
-                    $dzupDashboard.getReport(widget.config.definitionModel.reportSource, "41a864f1-3e57-4912-8f93-69dd40067a9a", widget.config.definitionModel.report).then(function (result) {
+                    $dzupDashboard.getReport(widget.config.definitionModel.reportSource, "d2b2320c-7d09-49e5-bc81-f06e97dd0a4a", widget.config.definitionModel.report).then(function (result) {
 
                         self.setWidgetData(wid, result)
                         deferred.resolve(self.getWidgetData(wid));

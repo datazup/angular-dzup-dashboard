@@ -4,7 +4,7 @@
         <uib-tab dzup-resolve-attr="template-url=tabUrl" select="selectDashboard(dashboard, $index)" data-ng-repeat="dashboard in dashboardList track by dashboard.model.key | orderBy: 'dashboard.createdAt'" index="$index">
             <uib-tab-heading>
                 {{ dashboard.model.title }}
-                <span title="Click to remove" class="remove-tab" ng-click="removeDashboard(dashboard);$event.stopPropagation();">
+                <span title="Click to remove" class="remove-tab" ng-click="removeDashboard(dashboard, $event);">
                             <i class="fa fa-times" aria-hidden="true"></i>
                         </span>
             </uib-tab-heading>

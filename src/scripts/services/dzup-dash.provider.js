@@ -25,10 +25,10 @@ dzupDashboard.provider('$dzupDashboard', function () {
                   return $http.post(conf.host+ conf.updateUrl ,item);
             }
 
-            this.remove = function(identifier) {  //TODO: IMPLEMENT BACKEND
+            this.remove = function(identifier) { 
                 return $http({
                         method: 'DELETE',
-                        url: conf.host + conf.updateUrl + '/{id}',
+                        url: conf.host + conf.updateUrl,
                         params: { id:  identifier }
                     });
             }
