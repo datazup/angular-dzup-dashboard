@@ -12,31 +12,46 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
     function ($scope, $timeout, $uibModal, $dzupConfigUtils, config, widget, dzupDashboardWidgetHelper, $dzupDashboard) {
         $scope.config = config;
         $scope.widget = widget;
-
         $scope.AvailableReports = [];
+        $scope.AvailableStreams = [];
+
         $scope.getAvailableReports =function(value, injectValue)
         {
             $scope.AvailableReports = $dzupDashboard.getReportsBySource(value).success(function (result) { return result;})
-                    .then(function(result){
-                        $scope.AvailableReports = _.map(result.data, function(x){ return { value:x, label:x } });
-                        if(injectValue == true)
-                        {
-                            $timeout(function(){
-                                //the code which needs to run after dom rendering
-                                $scope.schema.properties.report.items = $scope.AvailableReports;
-                            })
-                        }
-
-                        return $scope.AvailableReports;
-
-                    });
+                .then(function(result){
+                    $scope.AvailableReports = _.map(result.data, function(x){ return { value:x, label:x } });
+                    if(injectValue == true)
+                    {
+                        $timeout(function(){ //the code which needs to run after dom rendering
+                            $scope.schema.properties.report.items = $scope.AvailableReports;
+                        })
+                    }
+                    return $scope.AvailableReports;
+                });
         }
 
-        if(typeof config.definitionModel != 'undefined' && typeof config.definitionModel.reportSource != 'undefined'){
-            $scope.getAvailableReports(config.definitionModel.reportSource, false);
-        }
+        $scope.getAvailableStreams =function(value, injectValue)
+        {
+            var execCall = null;
+            if( value === 'scheduled') {
+                execCall = $dzupDashboard.getScheduledStreams;
+            }
+            else {
+                execCall = $dzupDashboard.getRegularStreams;
+            }
 
-        $scope.config.definitionModel = $scope.config.definitionModel || {};
+            $scope.AvailableStreams = execCall().success(function (result) { return result;})
+                .then(function(result){
+                    $scope.AvailableStreams = _.map(result.data.list, function(x){ return { value:x.streamId, label:x.keyword } });
+                    if(injectValue == true)
+                    {
+                        $timeout(function(){ //the code which needs to run after dom rendering
+                            $scope.schema.properties.stream.items = $scope.AvailableStreams;
+                        })
+                    }
+                    return $scope.AvailableStreams;
+            });
+        }
 
         $scope.createReport = function () {
             var modalInstance = $uibModal.open({
@@ -45,7 +60,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                 resolve: {
                     report: function(){
                         return {};
-                    }  
+                    }
                 },
                 size: 'lg'
             });
@@ -58,9 +73,24 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
             });
         };
 
-        $scope.AvailableSources = $dzupDashboard.getSources().success(function (result) {
+
+        if(typeof config.definitionModel != 'undefined' && typeof config.definitionModel.reportSource != 'undefined'){
+            $scope.getAvailableReports(config.definitionModel.reportSource, false);
+        }
+
+        if(typeof config.definitionModel != 'undefined' && typeof config.definitionModel.streamType != 'undefined'){
+            $scope.getAvailableStreams(config.definitionModel.streamType, false);
+        }
+
+        $scope.config.definitionModel = $scope.config.definitionModel || {};
+
+        $scope.StreamTypes = [{value:"scheduled", label:"Scheduled" },{value:"regular", label:"Regular" }]
+
+        $scope.AvailableSources = [{value:"twitter_stream", label:"Twitter stream" },{value:"user_log", label:"User Log" }]
+
+        /*$scope.AvailableSources = $dzupDashboard.getSources().success(function (result) {
               return result;}).then(function(result){
-              return _.map(result.data, function(x){ return { value:x, label:x } });});
+              return _.map(result.data, function(x){ return { value:x, label:x } });});*/
 
         $scope.schema = {
             type: 'object',
@@ -78,6 +108,20 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                     format: "uiselect",
                     placeholder: 'Select Report',
                     description: 'Existing report that will be data source for the charts'
+                },
+                streamType: {
+                    type: 'string',
+                    title: 'Stream Type',
+                    format: "uiselect",
+                    placeholder: 'Select Stream Type',
+                    description: ''
+                },
+                stream: {
+                    type: 'string',
+                    title: 'Stream',
+                    format: "uiselect",
+                    placeholder: 'Select Stream',
+                    description: ''
                 },
                 totalMetric: {
                     type: 'string',
@@ -155,8 +199,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                                                     if(typeof value != 'undefined'){
                                                                         $scope.getAvailableReports(value,true);
                                                                     }
-                                                                  },
-                                                        objectid: 4226
+                                                        }
                                                    }
                                             },
                                         ]
@@ -174,6 +217,39 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                                 type: 'uiselect'
                                             }
                                         ]
+                                    },
+                                    {
+                                        type: "section",
+                                        htmlClass: "col-xs-6",
+                                        items: [
+                                            {
+                                                key: 'streamType',
+                                                options: {
+                                                    callback: $scope.StreamTypes,
+                                                    eventCallback: function(value){
+                                                       if(typeof value != 'undefined'){
+                                                           $scope.getAvailableStreams(value,true);
+                                                       }
+                                                    }
+                                                },
+                                                feedback: false,
+                                                type: 'uiselect'
+                                            }
+                                        ]
+                                    },
+                                    {
+                                         type: "section",
+                                         htmlClass: "col-xs-6",
+                                         items: [
+                                             {
+                                                 key: 'stream',
+                                                 options: {
+                                                     callback: $scope.AvailableStreams
+                                                 },
+                                                 feedback: false,
+                                                 type: 'uiselect'
+                                             }
+                                         ]
                                     }
                                 ]
                             },
@@ -275,7 +351,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
             config.changesApplied  = false;
             dzupDashboardWidgetHelper.addDashboardWidget(widget);
 
-           $dzupDashboard.getReport(config.definitionModel.reportSource, "d2b2320c-7d09-49e5-bc81-f06e97dd0a4a",config.definitionModel.report).success(function (result) {
+           $dzupDashboard.getReport(config.definitionModel.reportSource, config.definitionModel.stream, config.definitionModel.report).success(function (result) {
                dzupDashboardWidgetHelper.setWidgetData(widget.wid, result)
            });
 

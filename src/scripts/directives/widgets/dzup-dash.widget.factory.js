@@ -69,8 +69,8 @@ app.factory('chartService', [function () {
             var pieChartType = {
                 chart: {
                     type: 'pieChart',
-                    height: 350,
-                    width: 350,
+                    height: 500,
+                    width: 500,
                     x: function (d) { return d.key; },
                     y: function (d) { return d.y; },
                     showLabels: true,
@@ -107,7 +107,7 @@ app.factory('chartService', [function () {
                             }, {
                                     y: 0
                                 });
-                        }).value();
+                        }).sortBy('key').reverse().slice(1,20).value();
                 }
             };
 
@@ -354,7 +354,7 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
 
                 if (index != -1) {
                     var widget = self.widgets[index];
-                    $dzupDashboard.getReport(widget.config.definitionModel.reportSource, "d2b2320c-7d09-49e5-bc81-f06e97dd0a4a", widget.config.definitionModel.report).then(function (result) {
+                    $dzupDashboard.getReport(widget.config.definitionModel.reportSource, widget.config.definitionModel.stream, widget.config.definitionModel.report).then(function (result) {
 
                         self.setWidgetData(wid, result)
                         deferred.resolve(self.getWidgetData(wid));

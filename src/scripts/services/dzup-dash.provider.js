@@ -7,11 +7,21 @@ dzupDashboard.provider('$dzupDashboard', function () {
     this.host = "";
     this.updateUrl = "";
     this.dashboardsRetrievalUrl = "";
+    this.scheduledUrl = "";
+    this.regularUrl = "";
+    this.reportsBySourcesUrl = "";
+    this.sourcesUrl = "";
+    this.reportsUrl = "";
 
     provider.setConf = function(conf) {
         this.host = conf.host;
         this.updateUrl = conf.updateUrl;
-        this.dashboardsRetrievalUrl = conf.dashboardsRetrievalUrl ;
+        this.dashboardsRetrievalUrl = conf.dashboardsRetrievalUrl;
+        this.scheduledUrl  = conf.scheduledUrl;
+        this.regularUrl  = conf.regularUrl;
+        this.reportsBySourcesUrl = conf.reportsBySourcesUrl;
+        this.sourcesUrl = conf.sourcesUrl;
+        this.reportsUrl = conf.reportsUrl;
     };
 
     function WidServ($http,conf){
@@ -25,7 +35,7 @@ dzupDashboard.provider('$dzupDashboard', function () {
                   return $http.post(conf.host+ conf.updateUrl ,item);
             }
 
-            this.remove = function(identifier) { 
+            this.remove = function(identifier) {
                 return $http({
                         method: 'DELETE',
                         url: conf.host + conf.updateUrl,
@@ -43,25 +53,37 @@ dzupDashboard.provider('$dzupDashboard', function () {
                var s = encodeURIComponent(source);
                var sid = encodeURIComponent(streamId);
                var rn = encodeURIComponent(reportName);
-               return $http.get(conf.host + 'analytic/query/report' + '?reportName=' + rn + '&source='+s+ '&streamId='+sid);
+               return $http.get(conf.host + conf.reportsUrl + '?reportName=' + rn + '&source='+s+ '&streamId='+sid);
             }
 
             this.getSources = function(){
-                 return $http.get(conf.host + 'analytic/query/reports/sources');
+                 return $http.get(conf.host + conf.sourcesUrl);
             }
 
             this.getReportsBySource = function(source){
                  var s = encodeURIComponent(source);
-                 return $http.get(conf.host + 'analytic/query/reports/ddl?source='+s);
+                 return $http.get(conf.host + conf.reportsBySourcesUrl  +'?source='+s);
             }
+
+             this.getScheduledStreams = function(){
+                 return $http.get(conf.host +  conf.scheduledUrl );
+             }
+
+             this.getRegularStreams = function(){
+                 return $http.get(conf.host +  conf.regularUrl );
+             }
     }
 
     provider.$get = function($http) {
-        var host = this.host;
-        var updateUrl = this.updateUrl;
-        var dashboardsRetrievalUrl = this.dashboardsRetrievalUrl;
-
-        var conf = { host:host, updateUrl:updateUrl, dashboardsRetrievalUrl:dashboardsRetrievalUrl}
+        var conf = { host:this.host,
+                     updateUrl:this.updateUrl,
+                     dashboardsRetrievalUrl:this.dashboardsRetrievalUrl,
+                     scheduledUrl:this.scheduledUrl,
+                     regularUrl:this.regularUrl,
+                     reportsBySourcesUrl:this.reportsBySourcesUrl,
+                     sourcesUrl:this.sourcesUrl,
+                     reportsUrl:this.reportsUrl
+                    }
         return new WidServ($http, conf);
     };
 
