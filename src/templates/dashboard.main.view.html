@@ -6,9 +6,11 @@
                 {{ dashboard.model.title }}
                 <span title="Click to remove" class="remove-tab" ng-click="removeDashboard(dashboard, $event);">
                             <i class="fa fa-times" aria-hidden="true"></i>
-                        </span>
+                </span>
             </uib-tab-heading>
-            <dzup-dashboard-item ng-show="selectedDashboard.model == dashboard.model" dashboard="selectedDashboard"></dzup-dashboard-item>
+            <div ng-if="selectedDashboard == dashboard">
+                <dzup-dashboard-item  dashboard="selectedDashboard"></dzup-dashboard-item>
+            </div>
         </uib-tab>
         <uib-tab select="addDashboard()" index="$index">
             <uib-tab-heading>
