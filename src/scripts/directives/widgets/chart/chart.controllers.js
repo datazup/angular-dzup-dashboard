@@ -146,7 +146,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
         }
         // END OF FUNCTIONS
 
-        if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined') {
+        if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined' && config.definitionModel.dataSource!= null) {
            $scope.reportColumns = $scope.getReportColumns(config.definitionModel.dataSource, false);
         }
 
@@ -173,12 +173,14 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                     title: 'Chart Type',
                     format: "uiselect",
                     placeholder: 'Select Chart Type',
+                    default:null
                 },
                 dataSource: {
                     type: 'string',
                     title: 'Data Source',
                     format: "uiselect",
-                    placeholder: 'Select Data Source'
+                    placeholder: 'Select Data Source',
+                    default:null
                 },
                 totalMetric: {
                     type: 'string',

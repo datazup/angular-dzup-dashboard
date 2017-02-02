@@ -73,12 +73,13 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
             });
         };
 
-
-        if(typeof config.definitionModel != 'undefined' && typeof config.definitionModel.reportSource != 'undefined'){
+        if(typeof config.definitionModel != 'undefined' && typeof config.definitionModel.reportSource != 'undefined'
+           && config.definitionModel.reportSource!=null){
             $scope.getAvailableReports(config.definitionModel.reportSource, false);
         }
 
-        if(typeof config.definitionModel != 'undefined' && typeof config.definitionModel.streamType != 'undefined'){
+        if(typeof config.definitionModel != 'undefined' && typeof config.definitionModel.streamType != 'undefined'
+           && config.definitionModel.streamType != null){
             $scope.getAvailableStreams(config.definitionModel.streamType, false);
         }
 
@@ -96,32 +97,36 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
             type: 'object',
             properties: {
                 reportSource: {
-                    type: 'string',
+                    type: 'array',
                     title: 'Report Source',
                     description: 'Report source defines stream data from which we want report to build',
                     format: "uiselect",
-                    placeholder: 'Select report source'
+                    placeholder: 'Select report source',
+                    default:null
                 },
                 report: {
                     type: 'string',
                     title: 'Report',
                     format: "uiselect",
                     placeholder: 'Select Report',
-                    description: 'Existing report that will be data source for the charts'
+                    description: 'Existing report that will be data source for the charts',
+                    default:null
                 },
                 streamType: {
                     type: 'string',
                     title: 'Stream Type',
                     format: "uiselect",
                     placeholder: 'Select Stream Type',
-                    description: ''
+                    description: '',
+                    default:null
                 },
                 stream: {
                     type: 'string',
                     title: 'Stream',
                     format: "uiselect",
                     placeholder: 'Select Stream',
-                    description: ''
+                    description: '',
+                    default:null
                 },
                 totalMetric: {
                     type: 'string',
@@ -200,7 +205,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                                                         $scope.getAvailableReports(value,true);
                                                                     }
                                                         }
-                                                   }
+                                                }
                                             },
                                         ]
                                     },
@@ -346,7 +351,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
         ];
 
         if(config.changesApplied == true && typeof config.definitionModel != 'undefined' && typeof config.definitionModel.reportSource != 'undefined'
-         && typeof config.definitionModel.report != 'undefined')
+         && typeof config.definitionModel.report != 'undefined' && config.definitionModel.reportSource!= null && config.definitionModel.report!=null)
         {
             config.changesApplied  = false;
             dzupDashboardWidgetHelper.addDashboardWidget(widget);

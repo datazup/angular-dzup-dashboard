@@ -53,12 +53,14 @@ app.factory('chartService', [function () {
                 title: 'X Axis',
                 format: "uiselect",
                 placeholder: 'Select X Axis Property',
+                default:null
             }
             schemeProperties.yAxis = {
                 type: 'string',
                 title: 'Y Axis',
                 format: "uiselect",
                 placeholder: 'Select Y Axis Property',
+                default:null
             }
             schemeProperties.chartColor = {
                 type: 'string',
@@ -254,7 +256,7 @@ app.factory('chartService', [function () {
                             }, {
                                     y: 0
                                 });
-                        }).sortBy('x').reverse().slice(1,20).value();
+                        }).sortBy('y').reverse().slice(1,20).value();
 
                     return [{
                         values: mappedData,
