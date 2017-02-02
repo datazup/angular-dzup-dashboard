@@ -64,6 +64,38 @@ app.factory('chartService', [function () {
                 type: 'string',
                 title: 'Chart Color',
             }
+            schemeProperties.sort = {
+                title: "Sort Data",
+                description: "",
+                type: "boolean",
+                default: false
+            }
+            schemeProperties.ascDesc = {
+                title: ' ',
+                type: "string",
+                enum: [
+                    "Ascending",
+                    "descending"
+                ]
+            }
+            schemeProperties.ascDescByAxis = {
+                title: ' ',
+                type: "string",
+                enum: [
+                    "X Axis",
+                    "Y Axis"
+                ]
+            }
+            schemeProperties.from = {
+                title: "From",
+                default: 1,
+                type: "number"
+            }
+            schemeProperties.to = {
+                title: "To",
+                default: 20,
+                type: "number"
+            }
         },
         getPieChart: function () {
             var pieChartType = {
@@ -107,7 +139,7 @@ app.factory('chartService', [function () {
                             }, {
                                     y: 0
                                 });
-                        }).sortBy('key').reverse().slice(1,20).value();
+                        }).sortBy('key').reverse().slice(1, 20).value();
                 }
             };
 
@@ -254,7 +286,7 @@ app.factory('chartService', [function () {
                             }, {
                                     y: 0
                                 });
-                        }).sortBy('x').reverse().slice(1,20).value();
+                        }).sortBy('x').reverse().slice(1, 20).value();
 
                     return [{
                         values: mappedData,

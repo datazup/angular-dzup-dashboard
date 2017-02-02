@@ -1,6 +1,6 @@
 var app = angular.module('dzupDash');
 
-app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfigUtils', 'config', 'widget' ,'chartService', 'dzupDashboardWidgetHelper',
+app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfigUtils', 'config', 'widget', 'chartService', 'dzupDashboardWidgetHelper',
     function ($scope, $timeout, $dzupConfigUtils, config, widget, chartService, dzupDashboardWidgetHelper) {
         $scope.config = config;
         $scope.widget = widget;
@@ -26,7 +26,7 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
 
 
         if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined') {
-                dzupDashboardWidgetHelper.getWidgetData(config.definitionModel.dataSource).then(function (result) {
+            dzupDashboardWidgetHelper.getWidgetData(config.definitionModel.dataSource).then(function (result) {
                 if (result == null) return;
 
                 if (result.data != null && typeof result.data != 'undefined') {
@@ -147,7 +147,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
         // END OF FUNCTIONS
 
         if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined') {
-           $scope.reportColumns = $scope.getReportColumns(config.definitionModel.dataSource, false);
+            $scope.reportColumns = $scope.getReportColumns(config.definitionModel.dataSource, false);
         }
 
         $scope.config.definitionModel = $scope.config.definitionModel || {};
@@ -173,12 +173,14 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                     title: 'Chart Type',
                     format: "uiselect",
                     placeholder: 'Select Chart Type',
+                    default:null
                 },
                 dataSource: {
                     type: 'string',
                     title: 'Data Source',
                     format: "uiselect",
-                    placeholder: 'Select Data Source'
+                    placeholder: 'Select Data Source',
+                    default:null
                 },
                 totalMetric: {
                     type: 'string',
@@ -313,6 +315,85 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                 options: {
                                                     callback: $scope.reportColumns
                                                 },
+                                            },
+                                            {
+                                                type: 'section',
+                                                htmlClass: "row",
+                                                items: [
+                                                    {
+                                                        type: "section",
+                                                        htmlClass: "col-xs-6",
+                                                        items: [
+                                                            {
+                                                                key: 'sort',
+                                                                onChange: function (modelValue, form) {
+                                                                    config.definitionModel.ascDesc = 'asc';
+                                                                    config.definitionModel.ascDescByAxis = 'xAxis';
+                                                                }
+                                                            },
+                                                            {
+                                                                key: 'ascDesc',
+                                                                htmlClass:'sort-options-radio',
+                                                                condition: "model.sort==true",
+                                                                type: 'radios-inline',
+                                                                titleMap: [
+                                                                    {
+                                                                        value: 'asc',
+                                                                        "name": 'Ascending'
+                                                                    },
+                                                                    {
+                                                                        value: 'desc',
+                                                                        "name": 'Descending'
+                                                                    }
+                                                                ]
+                                                            },
+                                                            {
+                                                                key: 'ascDescByAxis',
+                                                                htmlClass:'sort-options-radio',
+                                                                condition: "model.sort==true",
+                                                                type: 'radios-inline',
+                                                                titleMap: [
+                                                                    {
+                                                                        value: 'xAxis',
+                                                                        "name": 'X Axis'
+                                                                    },
+                                                                    {
+                                                                        value: 'yAxis',
+                                                                        "name": 'Y Axis'
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        type: "section",
+                                                        htmlClass: "col-xs-6",
+                                                        items: [
+                                                            {
+                                                                "type": "help",
+                                                                "helpvalue": "<h5>Take ...</h5>"
+                                                            },
+                                                            {
+                                                                type: "section",
+                                                                htmlClass: "col-xs-6",
+                                                                items: [
+                                                                    {
+                                                                        key: 'from'
+                                                                    }
+                                                                ]
+                                                            },
+                                                            {
+                                                                type: "section",
+                                                                htmlClass: "col-xs-6",
+                                                                items: [
+                                                                    {
+                                                                        key: 'to'
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
                                             }
                                         ]
                                     },
@@ -399,5 +480,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                 ]
             }
         ];
+
+        //console.log($scope.definitionModel.sort);
     }
 ]);
