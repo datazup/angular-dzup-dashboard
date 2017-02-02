@@ -27,10 +27,13 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                         for(i=0;i<list.length;i++){
 
                             var dashItem = result.list[i].dashboard;
-                            dashItem.title = "Dashboard " + (i + 1);
+                            //dashItem.title = "Dashboard " + (i + 1);
                             dashItem.identifier = result.list[i].id;
 
-                            $scope.dashboardList.push({model:result.list[i].dashboard});
+                            $scope.dashboardList.push({model:dashItem});
+
+                            if(i==(list.length-1))
+                                $scope.selectedDashboard = dashItem;
                         }
                     }
                 });
@@ -65,17 +68,18 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                 }
 
                 $scope.addDashboard = function ($event) {
-                    var dash = $scope.getDashboardTemplate();
-                    $scope.dashboardList.push(dash);
 
+                        if(typeof $event != 'undefined'){
+                            var dash = $scope.getDashboardTemplate();
+                            $scope.dashboardList.push(dash);
+                            $scope.selectDashboard(dash);
+                        }
 
-                    var self = this;
-                    $timeout(function () {
-                        var activeIndex = $scope.dashboardList.length;
-                        self.$parent.tabset.select(activeIndex);
-                    }, 10);
-
-                    $scope.selectDashboard(dash);
+                        var self = this;
+                        $timeout(function () {
+                            var activeIndex = $scope.dashboardList.length;
+                            self.$parent.tabset.select(activeIndex);
+                        }, 10);
                 };
 
                 $scope.removeDashboard = function (dashboard, $event) {

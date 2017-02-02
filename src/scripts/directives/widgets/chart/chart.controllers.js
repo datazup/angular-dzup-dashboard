@@ -146,9 +146,9 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
         }
         // END OF FUNCTIONS
 
-        /*if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined') {
-            $scope.reportColumns = $scope.getReportColumns(config.definitionModel.dataSource, false);
-        }*/
+        if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined') {
+           $scope.reportColumns = $scope.getReportColumns(config.definitionModel.dataSource, false);
+        }
 
         $scope.config.definitionModel = $scope.config.definitionModel || {};
         $scope.loadChildModelByChartType($scope.config.definitionModel.chartType);

@@ -254,7 +254,7 @@ app.factory('chartService', [function () {
                             }, {
                                     y: 0
                                 });
-                        }).value();
+                        }).sortBy('x').reverse().slice(1,20).value();
 
                     return [{
                         values: mappedData,

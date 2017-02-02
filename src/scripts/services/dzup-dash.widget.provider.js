@@ -64,7 +64,7 @@ dzupDashboard.provider('$dzupDashboardWidget', [function () {
                     description: 'Chart Configuration',
                     category: 'Chart',
                     controller: 'DzupGenericChartController',
-                    templateUrl: configProvider.templateUrlBase['dzup-dashboard'] + '/templates/directives/chart/empty.view.html',
+                    templateUrl: configProvider.templateUrlBase['dzup-dashboard'] + '/templates/directives/chart/view.html',
                     frameless: true,
                     edit: {
                         templateUrl: configProvider.templateUrlBase['dzup-dashboard'] + '/templates/directives/chart/edit.view.html',
