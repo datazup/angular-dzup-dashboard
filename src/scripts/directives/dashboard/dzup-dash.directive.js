@@ -15,7 +15,9 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                 $scope.selectedDashboard = {};
 
                 $scope.selectDashboard = function (dashboard, index) {
+
                     $scope.selectedDashboard = dashboard;
+                   $scope.updateInList(dashboard);
                     dzupDashboardWidgetHelper.setDashboardWidgets(index, dashboard);
                 };
 

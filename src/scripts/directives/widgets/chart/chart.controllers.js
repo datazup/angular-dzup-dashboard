@@ -1,9 +1,44 @@
 var app = angular.module('dzupDash');
 
-app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfigUtils', 'config', 'widget',
-    function ($scope, $timeout, $dzupConfigUtils, config, widget) {
+app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfigUtils', 'config', 'widget' ,'chartService', 'dzupDashboardWidgetHelper',
+    function ($scope, $timeout, $dzupConfigUtils, config, widget, chartService, dzupDashboardWidgetHelper) {
         $scope.config = config;
         $scope.widget = widget;
+
+        $scope.setChartData = function (result) {
+            if (typeof result.data.length == 'undefined') {
+                result = result.data;
+            }
+            var wData = result.data[0].list;
+
+            if (typeof $scope.chart == 'undefined') {
+                $scope.chart = chartService.getChart(config.definitionModel.chartType);
+                $scope.chartOptions = {
+                    title: config.definitionModel.chartTitle,
+                    xAxisLabel: config.definitionModel.xAxisLabel,
+                    yAxisLabel: config.definitionModel.yAxisLabel,
+                    color: config.definitionModel.chartColor,
+                };
+            }
+
+            $scope.populatedChart = $scope.chart.processData(config.definitionModel.xAxis, config.definitionModel.yAxis, wData, $scope.chart, $scope.chartOptions);
+        };
+
+
+        if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined') {
+                dzupDashboardWidgetHelper.getWidgetData(config.definitionModel.dataSource).then(function (result) {
+                if (result == null) return;
+
+                if (result.data != null && typeof result.data != 'undefined') {
+                    $scope.setChartData(result);
+                }
+                else {
+                    result.then(function (pResult) {
+                        $scope.setChartData(pResult.data);
+                    });
+                }
+            });
+        }
     }
 ]);
 
@@ -16,7 +51,6 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
         $scope.chartDefinition = {};
         $scope.chartType = null;
         $scope.model = {};
-        $scope.wData = [];
         $scope.reportColumns = [];
 
         // FUNCTIONS
@@ -24,7 +58,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
             if (typeof result.data.length == 'undefined') {
                 result = result.data;
             }
-            $scope.wData = result.data[0].list;
+            var wData = result.data[0].list;
             $scope.reportColumns = _.map(result.data[1].columns, function (x) { return { value: x, label: x } });
             $scope.injectAxisDdlValues(injectValue);
 
@@ -38,7 +72,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                 };
             }
 
-            $scope.populatedChart = $scope.chart.processData(config.definitionModel.xAxis, config.definitionModel.yAxis, $scope.wData, $scope.chart, $scope.chartOptions);
+            $scope.populatedChart = $scope.chart.processData(config.definitionModel.xAxis, config.definitionModel.yAxis, wData, $scope.chart, $scope.chartOptions);
         };
         $scope.injectAxisDdlValues = function (injectValue) {
             if (injectValue == true) {
@@ -110,19 +144,14 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
             }
             return $scope.chartTypes;
         }
-
-        if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined') {
-            $scope.reportColumns = $scope.getReportColumns(config.definitionModel.dataSource, false);
-        }
-
         // END OF FUNCTIONS
+
+        /*if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined') {
+            $scope.reportColumns = $scope.getReportColumns(config.definitionModel.dataSource, false);
+        }*/
 
         $scope.config.definitionModel = $scope.config.definitionModel || {};
         $scope.loadChildModelByChartType($scope.config.definitionModel.chartType);
-
-        if (chartService.axisData != null) {
-            console.log(chartService.axisData);
-        }
 
         $scope.chartTypes = [];
 

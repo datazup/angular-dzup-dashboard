@@ -1,14 +1,14 @@
 <div class="dzup-dashboard-container">
 
     <uib-tabset active="activeTabIndex">        
-        <uib-tab dzup-resolve-attr="template-url=tabUrl" select="selectDashboard(dashboard, $index)" data-ng-repeat="dashboard in dashboardList track by dashboard.model.key | orderBy: 'dashboard.createdAt'" index="$index">
+        <uib-tab select="selectDashboard(dashboard, $index)" data-ng-repeat="dashboard in dashboardList track by dashboard.model.key | orderBy: 'dashboard.createdAt'" index="$index">
             <uib-tab-heading>
                 {{ dashboard.model.title }}
                 <span title="Click to remove" class="remove-tab" ng-click="removeDashboard(dashboard, $event);">
                             <i class="fa fa-times" aria-hidden="true"></i>
                         </span>
             </uib-tab-heading>
-            <dzup-dashboard-item dashboard="selectedDashboard"></dzup-dashboard-item>
+            <dzup-dashboard-item ng-show="selectedDashboard.model == dashboard.model" dashboard="selectedDashboard"></dzup-dashboard-item>
         </uib-tab>
         <uib-tab select="addDashboard()" index="$index">
             <uib-tab-heading>

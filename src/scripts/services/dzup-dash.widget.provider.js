@@ -57,26 +57,13 @@ dzupDashboard.provider('$dzupDashboardWidget', [function () {
                        return true;
                     }
                 },
-                config: null,
-                commonSchema: {
-                    schema: {
-                        type: 'object',
-                        properties: {
-                            reportSource: {
-                                type: 'string',
-                                description: 'Report Source used to define source for the report stream',
-                                title: 'Report Source'
-                            }
-                        }
-                    },
-                    form: ['reportSource']
-                }
+                config: null
             },
             chartConf: {
                     title: 'Chart Configuration',
                     description: 'Chart Configuration',
                     category: 'Chart',
-                    controller: 'DzupGenericChartEditController',
+                    controller: 'DzupGenericChartController',
                     templateUrl: configProvider.templateUrlBase['dzup-dashboard'] + '/templates/directives/chart/empty.view.html',
                     frameless: true,
                     edit: {
@@ -88,21 +75,7 @@ dzupDashboard.provider('$dzupDashboardWidget', [function () {
                         return true;
                         }
                     },
-                    config: null,
-                    commonSchema: {
-                        schema: {
-                            type: 'object',
-                            properties: {
-                                reportSource: {
-                                    type: 'string',
-                                    description: 'Chart definition',
-                                    title: 'Chart',
-                                    enum: ['twitter_stream', 'user_log']
-                                }
-                            }
-                        },
-                        form: ['reportSource']
-                    }
+                    config: null
                 }
         }
         return ds;
@@ -135,21 +108,5 @@ dzupDashboard.provider('$dzupDashboardWidget', [function () {
     return service;
 
 }]);
-/*
-
-dzupDashboard.factory('dzupDashboardReport', [function () {
-
-    var reportSources = {
-        twitter_stream: {
-
-        }
-    }
-
-    return {
-
-    };
-
-}]);
-*/
 
 
