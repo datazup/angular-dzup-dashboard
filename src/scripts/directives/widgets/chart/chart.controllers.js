@@ -18,10 +18,17 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
                     xAxisLabel: config.definitionModel.xAxisLabel,
                     yAxisLabel: config.definitionModel.yAxisLabel,
                     color: config.definitionModel.chartColor,
+                    xAxis: config.definitionModel.xAxis,
+                    yAxis: config.definitionModel.yAxis,
+                    sort: config.definitionModel.sort,
+                    sortOrder: config.definitionModel.sortOrder,
+                    sortBy: config.definitionModel.sortBy,
+                    from: config.definitionModel.from,
+                    to: config.definitionModel.to
                 };
             }
 
-            $scope.populatedChart = $scope.chart.processData(config.definitionModel.xAxis, config.definitionModel.yAxis, wData, $scope.chart, $scope.chartOptions);
+            $scope.populatedChart = chartService.getChartData(wData, $scope.chart, $scope.chartOptions);
         };
 
 
@@ -69,10 +76,17 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                     xAxisLabel: config.definitionModel.xAxisLabel,
                     yAxisLabel: config.definitionModel.yAxisLabel,
                     color: config.definitionModel.chartColor,
+                    xAxis: config.definitionModel.xAxis,
+                    yAxis: config.definitionModel.yAxis,
+                    sort: config.definitionModel.sort,
+                    sortOrder: config.definitionModel.sortOrder,
+                    sortBy: config.definitionModel.sortBy,
+                    from: config.definitionModel.from,
+                    to: config.definitionModel.to
                 };
             }
 
-            $scope.populatedChart = $scope.chart.processData(config.definitionModel.xAxis, config.definitionModel.yAxis, wData, $scope.chart, $scope.chartOptions);
+            $scope.populatedChart = chartService.getChartData(wData, $scope.chart, $scope.chartOptions);
         };
         $scope.injectAxisDdlValues = function (injectValue) {
             if (injectValue == true) {
@@ -328,12 +342,12 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                             {
                                                                 key: 'sort',
                                                                 onChange: function (modelValue, form) {
-                                                                    config.definitionModel.ascDesc = 'asc';
-                                                                    config.definitionModel.ascDescByAxis = 'xAxis';
+                                                                    config.definitionModel.sortOrder = 'asc';
+                                                                    config.definitionModel.sortBy = 'x';
                                                                 }
                                                             },
                                                             {
-                                                                key: 'ascDesc',
+                                                                key: 'sortOrder',
                                                                 htmlClass:'sort-options-radio',
                                                                 condition: "model.sort==true",
                                                                 type: 'radios-inline',
@@ -349,17 +363,17 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                                 ]
                                                             },
                                                             {
-                                                                key: 'ascDescByAxis',
+                                                                key: 'sortBy',
                                                                 htmlClass:'sort-options-radio',
                                                                 condition: "model.sort==true",
                                                                 type: 'radios-inline',
                                                                 titleMap: [
                                                                     {
-                                                                        value: 'xAxis',
+                                                                        value: 'x',
                                                                         "name": 'X Axis'
                                                                     },
                                                                     {
-                                                                        value: 'yAxis',
+                                                                        value: 'y',
                                                                         "name": 'Y Axis'
                                                                     }
                                                                 ]
@@ -432,6 +446,85 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                     callback: $scope.reportColumns
                                                 },
 
+                                            },
+                                            {
+                                                type: 'section',
+                                                htmlClass: "row",
+                                                items: [
+                                                    {
+                                                        type: "section",
+                                                        htmlClass: "col-xs-6",
+                                                        items: [
+                                                            {
+                                                                key: 'sort',
+                                                                onChange: function (modelValue, form) {
+                                                                    config.definitionModel.sortOrder = 'asc';
+                                                                    config.definitionModel.sortBy = 'x';
+                                                                }
+                                                            },
+                                                            {
+                                                                key: 'sortOrder',
+                                                                htmlClass:'sort-options-radio',
+                                                                condition: "model.sort==true",
+                                                                type: 'radios-inline',
+                                                                titleMap: [
+                                                                    {
+                                                                        value: 'asc',
+                                                                        "name": 'Ascending'
+                                                                    },
+                                                                    {
+                                                                        value: 'desc',
+                                                                        "name": 'Descending'
+                                                                    }
+                                                                ]
+                                                            },
+                                                            {
+                                                                key: 'sortBy',
+                                                                htmlClass:'sort-options-radio',
+                                                                condition: "model.sort==true",
+                                                                type: 'radios-inline',
+                                                                titleMap: [
+                                                                    {
+                                                                        value: 'x',
+                                                                        "name": 'X Axis'
+                                                                    },
+                                                                    {
+                                                                        value: 'y',
+                                                                        "name": 'Y Axis'
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        type: "section",
+                                                        htmlClass: "col-xs-6",
+                                                        items: [
+                                                            {
+                                                                "type": "help",
+                                                                "helpvalue": "<h5>Take ...</h5>"
+                                                            },
+                                                            {
+                                                                type: "section",
+                                                                htmlClass: "col-xs-6",
+                                                                items: [
+                                                                    {
+                                                                        key: 'from'
+                                                                    }
+                                                                ]
+                                                            },
+                                                            {
+                                                                type: "section",
+                                                                htmlClass: "col-xs-6",
+                                                                items: [
+                                                                    {
+                                                                        key: 'to'
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
                                             }
                                         ]
                                     },
@@ -471,6 +564,85 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                             {
                                                 key: 'chartColor',
                                                 placeholder: 'Enter Chart Color Here'
+                                            },
+                                            {
+                                                type: 'section',
+                                                htmlClass: "row",
+                                                items: [
+                                                    {
+                                                        type: "section",
+                                                        htmlClass: "col-xs-6",
+                                                        items: [
+                                                            {
+                                                                key: 'sort',
+                                                                onChange: function (modelValue, form) {
+                                                                    config.definitionModel.sortOrder = 'asc';
+                                                                    config.definitionModel.sortBy = 'x';
+                                                                }
+                                                            },
+                                                            {
+                                                                key: 'sortOrder',
+                                                                htmlClass:'sort-options-radio',
+                                                                condition: "model.sort==true",
+                                                                type: 'radios-inline',
+                                                                titleMap: [
+                                                                    {
+                                                                        value: 'asc',
+                                                                        "name": 'Ascending'
+                                                                    },
+                                                                    {
+                                                                        value: 'desc',
+                                                                        "name": 'Descending'
+                                                                    }
+                                                                ]
+                                                            },
+                                                            {
+                                                                key: 'sortBy',
+                                                                htmlClass:'sort-options-radio',
+                                                                condition: "model.sort==true",
+                                                                type: 'radios-inline',
+                                                                titleMap: [
+                                                                    {
+                                                                        value: 'x',
+                                                                        "name": 'X Axis'
+                                                                    },
+                                                                    {
+                                                                        value: 'y',
+                                                                        "name": 'Y Axis'
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        type: "section",
+                                                        htmlClass: "col-xs-6",
+                                                        items: [
+                                                            {
+                                                                "type": "help",
+                                                                "helpvalue": "<h5>Take ...</h5>"
+                                                            },
+                                                            {
+                                                                type: "section",
+                                                                htmlClass: "col-xs-6",
+                                                                items: [
+                                                                    {
+                                                                        key: 'from'
+                                                                    }
+                                                                ]
+                                                            },
+                                                            {
+                                                                type: "section",
+                                                                htmlClass: "col-xs-6",
+                                                                items: [
+                                                                    {
+                                                                        key: 'to'
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
                                             }
                                         ]
                                     }

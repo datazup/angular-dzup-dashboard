@@ -53,14 +53,14 @@ app.factory('chartService', [function () {
                 title: 'X Axis',
                 format: "uiselect",
                 placeholder: 'Select X Axis Property',
-                default:null
+                default: null
             }
             schemeProperties.yAxis = {
                 type: 'string',
                 title: 'Y Axis',
                 format: "uiselect",
                 placeholder: 'Select Y Axis Property',
-                default:null
+                default: null
             }
             schemeProperties.chartColor = {
                 type: 'string',
@@ -72,7 +72,7 @@ app.factory('chartService', [function () {
                 type: "boolean",
                 default: false
             }
-            schemeProperties.ascDesc = {
+            schemeProperties.sortOrder = {
                 title: ' ',
                 type: "string",
                 enum: [
@@ -80,7 +80,7 @@ app.factory('chartService', [function () {
                     "descending"
                 ]
             }
-            schemeProperties.ascDescByAxis = {
+            schemeProperties.sortBy = {
                 title: ' ',
                 type: "string",
                 enum: [
@@ -97,6 +97,59 @@ app.factory('chartService', [function () {
                 title: "To",
                 default: 20,
                 type: "number"
+            }
+        },
+        getMappedChartData: function (data, chartOptions) {
+
+            var from = parseInt(chartOptions.from);
+            var to = parseInt(chartOptions.to);
+
+            var mappedData = _.chain(data)
+                .groupBy(chartOptions.xAxis)
+                .map(function (value, key) {
+                    return _.reduce(value, function (result, currentObject) {
+                        return {
+                            x: currentObject[chartOptions.xAxis],
+                            y: result["y"] + currentObject[chartOptions.yAxis]
+                        }
+                    }, {
+                            y: 0
+                        });
+                });
+
+
+            if (chartOptions.sort == true && chartOptions.sortOrder == 'asc') {
+                return mappedData.sortBy(chartOptions.sortBy).slice(from, to).value();
+            } else if (chartOptions.sort == true && chartOptions.sortOrder == 'desc') {
+                return mappedData.sortBy(chartOptions.sortBy).reverse().slice(from, to).value();
+            } else {
+                return mappedData.slice(from, to).value();
+            }
+        },
+        getChartData: function (data, chart, options) {
+
+            if (options && options.title) {
+                chart.title.enable = true;
+                chart.title.text = options.title;
+            }
+            if (options.xAxisLabel) {
+                chart.chart.xAxis.axisLabel = options.xAxisLabel;
+            }
+            if (options.yAxisLabel) {
+                chart.chart.yAxis.axisLabel = options.yAxisLabel;
+            }
+
+            if (chart.chart.type == 'pieChart') {
+                return this.getMappedChartData(data, options);
+            }
+
+            if (chart.chart.type == 'lineChart' || chart.chart.type == 'discreteBarChart') {
+
+                return [{
+                    values: this.getMappedChartData(data, options),
+                    key: options.key,
+                    color: options.color
+                }];
             }
         },
         getPieChart: function () {
@@ -125,24 +178,6 @@ app.factory('chartService', [function () {
                     enable: false,
                     text: "",
                 },
-                processData: function (groupByProperty, sumByProperty, data, chart, options) {
-                    if (options && options.title) {
-                        chart.title.enable = true;
-                        chart.title.text = options.title;
-                    }
-                    return _.chain(data)
-                        .groupBy(groupByProperty)
-                        .map(function (value, key) {
-                            return _.reduce(value, function (result, currentObject) {
-                                return {
-                                    key: currentObject[groupByProperty],
-                                    y: result["y"] + currentObject[sumByProperty]
-                                }
-                            }, {
-                                    y: 0
-                                });
-                        }).sortBy('key').reverse().slice(1, 20).value();
-                }
             };
 
             return pieChartType;
@@ -197,39 +232,6 @@ app.factory('chartService', [function () {
                         'text-align': 'justify',
                         'margin': '10px 13px 0px 7px'
                     }
-                },
-                processData: function (xAxis, yAxis, data, chart, options) {
-                    if (options && options.title) {
-                        chart.title.enable = true;
-                        chart.title.text = options.title;
-                    }
-                    if (options.xAxisLabel) {
-                        chart.chart.xAxis.axisLabel = options.xAxisLabel;
-                    }
-                    if (options.yAxisLabel) {
-                        chart.chart.yAxis.axisLabel = options.yAxisLabel;
-                    }
-
-                    var mappedData = _.chain(data)
-                        .groupBy(xAxis)
-                        .map(function (value, key) {
-                            return _.reduce(value, function (result, currentObject) {
-                                return {
-                                    x: currentObject[xAxis],
-                                    y: result["y"] + currentObject[yAxis]
-                                }
-                            }, {
-                                    y: 0
-                                });
-                        }).value();
-
-                    //_.map(_.sortBy(data,xAxis), function(object){return {x: object[xAxis], y:object[yAxis]}});
-
-                    return [{
-                        values: mappedData,
-                        key: options.key,
-                        color: options.color
-                    }];
                 }
             };
 
@@ -264,37 +266,6 @@ app.factory('chartService', [function () {
                 title: {
                     enable: false,
                     text: ''
-                },
-                processData: function (xAxis, yAxis, data, chart, options) {
-                    if (options && options.title) {
-                        chart.title.enable = true;
-                        chart.title.text = options.title;
-                    }
-                    if (options.xAxisLabel) {
-                        chart.chart.xAxis.axisLabel = options.xAxisLabel;
-                    }
-                    if (options.yAxisLabel) {
-                        chart.chart.yAxis.axisLabel = options.yAxisLabel;
-                    }
-
-                    var mappedData = _.chain(data)
-                        .groupBy(xAxis)
-                        .map(function (value, key) {
-                            return _.reduce(value, function (result, currentObject) {
-                                return {
-                                    x: currentObject[xAxis],
-                                    y: result["y"] + currentObject[yAxis]
-                                }
-                            }, {
-                                    y: 0
-                                });
-                        }).sortBy('y').reverse().slice(1,20).value();
-
-
-                    return [{
-                        values: mappedData,
-                        key: options.key
-                    }];
                 }
             };
             return discreteBarChart;
