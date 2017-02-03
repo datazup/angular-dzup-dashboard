@@ -313,11 +313,6 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                         condition: "model.chartType=='pieChart'",
                                         items: [
                                             {
-                                                key: 'chartTitle',
-                                                type: 'string',
-                                                placeholder: 'Enter Chart Title Here'
-                                            },
-                                            {
                                                 key: 'xAxis',
                                                 type: 'uiselect',
                                                 options: {
@@ -354,11 +349,11 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                                 titleMap: [
                                                                     {
                                                                         value: 'asc',
-                                                                        "name": 'Ascending'
+                                                                        name: 'Ascending'
                                                                     },
                                                                     {
                                                                         value: 'desc',
-                                                                        "name": 'Descending'
+                                                                        name: 'Descending'
                                                                     }
                                                                 ]
                                                             },
@@ -369,12 +364,12 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                                 type: 'radios-inline',
                                                                 titleMap: [
                                                                     {
-                                                                        value: 'x',
-                                                                        "name": 'X Axis'
+                                                                        value: 'X',
+                                                                        name: 'X Axis'
                                                                     },
                                                                     {
-                                                                        value: 'y',
-                                                                        "name": 'Y Axis'
+                                                                        value: 'Y',
+                                                                        name: 'Y Axis'
                                                                     }
                                                                 ]
                                                             }
@@ -417,10 +412,6 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                         htmlClass: "col-xs-12",
                                         condition: "model.chartType=='discreteBarChart'",
                                         items: [
-                                            {
-                                                key: 'chartTitle',
-                                                placeholder: 'Enter Chart Title Here'
-                                            },
                                             {
                                                 key: 'xAxisLabel',
                                                 placeholder: 'Enter X Axis Label Here'
@@ -470,11 +461,11 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                                 titleMap: [
                                                                     {
                                                                         value: 'asc',
-                                                                        "name": 'Ascending'
+                                                                        name: 'Ascending'
                                                                     },
                                                                     {
                                                                         value: 'desc',
-                                                                        "name": 'Descending'
+                                                                        name: 'Descending'
                                                                     }
                                                                 ]
                                                             },
@@ -486,11 +477,11 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                                 titleMap: [
                                                                     {
                                                                         value: 'x',
-                                                                        "name": 'X Axis'
+                                                                        name: 'X Axis'
                                                                     },
                                                                     {
                                                                         value: 'y',
-                                                                        "name": 'Y Axis'
+                                                                        name: 'Y Axis'
                                                                     }
                                                                 ]
                                                             }
@@ -533,10 +524,6 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                         htmlClass: "col-xs-12",
                                         condition: "model.chartType=='lineChart'",
                                         items: [
-                                            {
-                                                key: 'chartTitle',
-                                                placeholder: 'Enter Chart Title Here'
-                                            },
                                             {
                                                 key: 'xAxisLabel',
                                                 placeholder: 'Enter X Axis Label Here'
@@ -588,11 +575,11 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                                 titleMap: [
                                                                     {
                                                                         value: 'asc',
-                                                                        "name": 'Ascending'
+                                                                        name: 'Ascending'
                                                                     },
                                                                     {
                                                                         value: 'desc',
-                                                                        "name": 'Descending'
+                                                                        name: 'Descending'
                                                                     }
                                                                 ]
                                                             },
@@ -604,11 +591,11 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                                 titleMap: [
                                                                     {
                                                                         value: 'x',
-                                                                        "name": 'X Axis'
+                                                                        name: 'X Axis'
                                                                     },
                                                                     {
                                                                         value: 'y',
-                                                                        "name": 'Y Axis'
+                                                                        name: 'Y Axis'
                                                                     }
                                                                 ]
                                                             }

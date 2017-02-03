@@ -158,7 +158,7 @@ app.factory('chartService', [function () {
                     type: 'pieChart',
                     height: 500,
                     width: 500,
-                    x: function (d) { return d.key; },
+                    x: function (d) { return d.x; },
                     y: function (d) { return d.y; },
                     showLabels: true,
                     duration: 500,
