@@ -52,9 +52,12 @@ dzupDashboard.provider('$dzupDashboardWidget', [function () {
                     templateUrl: configProvider.templateUrlBase['dzup-dashboard'] + '/templates/directives/datasource/edit.view.html',
                     controller: 'DzupGenericDataSourceEditController',
                     immediate: true,
-                    apply: function($http, config){
-                           config.changesApplied = true;
-                       return true;
+                    apply: function(definition,widget,$http, config){
+                        
+                        var schema =tv4.getSchema('dataSourceSchema');
+                        var result = tv4.validateResult(config.definitionModel, schema);
+                        config.changesApplied = true;
+                        return result.valid;
                     }
                 },
                 config: null

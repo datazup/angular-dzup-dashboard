@@ -97,12 +97,21 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
             type: 'object',
             properties: {
                 reportSource: {
-                    type: 'array',
+                    type: 'string',
                     title: 'Report Source',
                     description: 'Report source defines stream data from which we want report to build',
                     format: "uiselect",
                     placeholder: 'Select report source',
-                    default:null
+                    default:null,
+                    required: true,
+                    validationMessage: {
+                        302: "Report Source is required.",
+                        0: "Report Source is required."
+                    },
+                    validationError:{code: {
+                       302: "Report Source is required.",
+                       0: "Report Source is required."
+                   }}
                 },
                 report: {
                     type: 'string',
@@ -110,7 +119,8 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                     format: "uiselect",
                     placeholder: 'Select Report',
                     description: 'Existing report that will be data source for the charts',
-                    default:null
+                    default:null,
+                    required: true
                 },
                 streamType: {
                     type: 'string',
@@ -118,7 +128,8 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                     format: "uiselect",
                     placeholder: 'Select Stream Type',
                     description: '',
-                    default:null
+                    default:null,
+                    required: true
                 },
                 stream: {
                     type: 'string',
@@ -126,7 +137,8 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                     format: "uiselect",
                     placeholder: 'Select Stream',
                     description: '',
-                    default:null
+                    default:null,
+                    required: true
                 },
                 totalMetric: {
                     type: 'string',
@@ -137,6 +149,11 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                     type: 'boolean',
                     title: 'Is DateRange Filter enabled',
                     description: 'Use this to enable/disable showing/filtering by date range'
+                },
+                areFilterFiledsEnabled: {
+                    type: 'boolean',
+                    title: 'Are Filter Fields enabled',
+                    description: ''
                 },
                 dateRangeFilterType: {
                     type: 'string',
@@ -340,15 +357,47 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                     {
                                         type: 'section',
                                         htmlClass: 'col-xs-12',
-                                        items: ['filterFields']
+                                        items: [
+                                            {
+                                                key: 'areFilterFiledsEnabled',
+                                                type: 'checkbox'
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                type: 'section',
+                                htmlClass: 'row',
+                                items: [
+                                    {
+                                        type: 'section',
+                                        htmlClass: 'col-xs-12',
+                                        items: [
+                                                    {
+                                                        type: 'section',
+                                                        htmlClass: 'row',
+                                                        items: [
+                                                            {
+                                                                type: 'section',
+                                                                htmlClass: 'col-xs-12',
+                                                                items: ['filterFields'],
+                                                                condition: 'model.areFilterFiledsEnabled',
+                                                                startEmpty:'true'
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
                                     }
                                 ]
                             }
+
                         ]
                     }
                 ]
             }
         ];
+        tv4.addSchema('dataSourceSchema', $scope.schema);
 
         if(config.changesApplied == true && typeof config.definitionModel != 'undefined' && typeof config.definitionModel.reportSource != 'undefined'
          && typeof config.definitionModel.report != 'undefined' && config.definitionModel.reportSource!= null && config.definitionModel.report!=null)
