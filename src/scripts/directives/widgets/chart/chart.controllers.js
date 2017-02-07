@@ -641,6 +641,6 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
             }
         ];
 
-        //console.log($scope.definitionModel.sort);
+        tv4.addSchema('chartSchema', $scope.schema);
     }
 ]);

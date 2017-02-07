@@ -53,10 +53,11 @@ dzupDashboard.provider('$dzupDashboardWidget', [function () {
                     controller: 'DzupGenericDataSourceEditController',
                     immediate: true,
                     apply: function(definition,widget,$http, config){
-                        
-                        var schema =tv4.getSchema('dataSourceSchema');
-                        var result = tv4.validateResult(config.definitionModel, schema);
                         config.changesApplied = true;
+
+                        var schema =tv4.getSchema('dataSourceSchema');
+                        var result = tv4.validateMultiple(config.definitionModel, schema, true);
+
                         return result.valid;
                     }
                 },
@@ -73,9 +74,13 @@ dzupDashboard.provider('$dzupDashboardWidget', [function () {
                         templateUrl: configProvider.templateUrlBase['dzup-dashboard'] + '/templates/directives/chart/edit.view.html',
                         controller: 'DzupGenericChartEditController',
                         immediate: true,
-                        apply: function($http, config){
+                        apply: function(definition,widget,$http, config){
                             config.changesApplied = true;
-                        return true;
+
+                            var schema =tv4.getSchema('chartSchema');
+                            var result = tv4.validateMultiple(config.definitionModel, schema, true);
+
+                            return result.valid;
                         }
                     },
                     config: null

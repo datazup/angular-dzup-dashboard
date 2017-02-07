@@ -42,25 +42,29 @@ app.factory('chartService', [function () {
             }
             schemeProperties.xAxisLabel = {
                 type: 'string',
-                title: 'X Axis Lebel',
+                title: 'X Axis Label'
             }
             schemeProperties.yAxisLabel = {
                 type: 'string',
-                title: 'Y Axis Lebel',
+                title: 'Y Axis Label'
             }
             schemeProperties.xAxis = {
                 type: 'string',
                 title: 'X Axis',
                 format: "uiselect",
                 placeholder: 'Select X Axis Property',
-                default: null
+                default: null,
+                required: true,
+                validationMessage: "Required"
             }
             schemeProperties.yAxis = {
                 type: 'string',
                 title: 'Y Axis',
                 format: "uiselect",
                 placeholder: 'Select Y Axis Property',
-                default: null
+                default: null,
+                required: true,
+                validationMessage: "Required"
             }
             schemeProperties.chartColor = {
                 type: 'string',
@@ -74,19 +78,11 @@ app.factory('chartService', [function () {
             }
             schemeProperties.sortOrder = {
                 title: ' ',
-                type: "string",
-                enum: [
-                    "Ascending",
-                    "descending"
-                ]
+                type: "string"
             }
             schemeProperties.sortBy = {
                 title: ' ',
-                type: "string",
-                enum: [
-                    "X Axis",
-                    "Y Axis"
-                ]
+                type: "string"
             }
             schemeProperties.from = {
                 title: "From",

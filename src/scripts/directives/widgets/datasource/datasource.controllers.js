@@ -103,15 +103,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                     format: "uiselect",
                     placeholder: 'Select report source',
                     default:null,
-                    required: true,
-                    validationMessage: {
-                        302: "Report Source is required.",
-                        0: "Report Source is required."
-                    },
-                    validationError:{code: {
-                       302: "Report Source is required.",
-                       0: "Report Source is required."
-                   }}
+                    required: true
                 },
                 report: {
                     type: 'string',
@@ -153,7 +145,8 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                 areFilterFiledsEnabled: {
                     type: 'boolean',
                     title: 'Are Filter Fields enabled',
-                    description: ''
+                    description: '',
+                    default:false,
                 },
                 dateRangeFilterType: {
                     type: 'string',
@@ -382,7 +375,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                                                 type: 'section',
                                                                 htmlClass: 'col-xs-12',
                                                                 items: ['filterFields'],
-                                                                condition: 'model.areFilterFiledsEnabled',
+                                                                condition: 'model.areFilterFiledsEnabled==true',
                                                                 startEmpty:'true'
                                                             }
                                                         ]
@@ -392,7 +385,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                 ]
                             }
 
-                        ]
+                        ],startEmpty:'true'
                     }
                 ]
             }
