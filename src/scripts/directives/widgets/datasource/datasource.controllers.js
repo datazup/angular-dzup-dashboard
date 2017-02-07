@@ -404,5 +404,10 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
 
         }
 
+        if(typeof config.definitionModel.areFilterFiledsEnabled == 'undefined')
+        {
+            config.definitionModel.areFilterFiledsEnabled = false;
+        }
+
     }
 ]);
