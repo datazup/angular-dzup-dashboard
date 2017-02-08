@@ -8,21 +8,19 @@ app.controller('DzupGenericDataSourceController', ['$scope', '$timeout', '$dzupC
 ]);
 
 
-app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$uibModal', '$dzupConfigUtils', 'config', 'widget', 'dzupDashboardWidgetHelper','$dzupDashboard',
+app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$uibModal', '$dzupConfigUtils', 'config', 'widget', 'dzupDashboardWidgetHelper', '$dzupDashboard',
     function ($scope, $timeout, $uibModal, $dzupConfigUtils, config, widget, dzupDashboardWidgetHelper, $dzupDashboard) {
         $scope.config = config;
         $scope.widget = widget;
         $scope.AvailableReports = [];
         $scope.AvailableStreams = [];
 
-        $scope.getAvailableReports =function(value, injectValue)
-        {
-            $scope.AvailableReports = $dzupDashboard.getReportsBySource(value).success(function (result) { return result;})
-                .then(function(result){
-                    $scope.AvailableReports = _.map(result.data, function(x){ return { value:x, label:x } });
-                    if(injectValue == true)
-                    {
-                        $timeout(function(){ //the code which needs to run after dom rendering
+        $scope.getAvailableReports = function (value, injectValue) {
+            $scope.AvailableReports = $dzupDashboard.getReportsBySource(value).success(function (result) { return result; })
+                .then(function (result) {
+                    $scope.AvailableReports = _.map(result.data, function (x) { return { value: x, label: x } });
+                    if (injectValue == true) {
+                        $timeout(function () { //the code which needs to run after dom rendering
                             $scope.schema.properties.report.items = $scope.AvailableReports;
                         })
                     }
@@ -30,27 +28,25 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                 });
         }
 
-        $scope.getAvailableStreams =function(value, injectValue)
-        {
+        $scope.getAvailableStreams = function (value, injectValue) {
             var execCall = null;
-            if( value === 'scheduled') {
+            if (value === 'scheduled') {
                 execCall = $dzupDashboard.getScheduledStreams;
             }
             else {
                 execCall = $dzupDashboard.getRegularStreams;
             }
 
-            $scope.AvailableStreams = execCall().success(function (result) { return result;})
-                .then(function(result){
-                    $scope.AvailableStreams = _.map(result.data.list, function(x){ return { value:x.streamId, label:x.keyword } });
-                    if(injectValue == true)
-                    {
-                        $timeout(function(){ //the code which needs to run after dom rendering
+            $scope.AvailableStreams = execCall().success(function (result) { return result; })
+                .then(function (result) {
+                    $scope.AvailableStreams = _.map(result.data.list, function (x) { return { value: x.streamId, label: x.keyword } });
+                    if (injectValue == true) {
+                        $timeout(function () { //the code which needs to run after dom rendering
                             $scope.schema.properties.stream.items = $scope.AvailableStreams;
                         })
                     }
                     return $scope.AvailableStreams;
-            });
+                });
         }
 
         $scope.createReport = function () {
@@ -58,7 +54,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                 templateUrl: $dzupConfigUtils.templateUrlBase['dzup-dashboard'] + '/templates/reports/report.modal.view.html',
                 controller: 'ReportCreateEditController',
                 resolve: {
-                    report: function(){
+                    report: function () {
                         return {};
                     }
                 },
@@ -73,21 +69,21 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
             });
         };
 
-        if(typeof config.definitionModel != 'undefined' && typeof config.definitionModel.reportSource != 'undefined'
-           && config.definitionModel.reportSource!=null){
+        if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.reportSource != 'undefined'
+            && config.definitionModel.reportSource != null) {
             $scope.getAvailableReports(config.definitionModel.reportSource, false);
         }
 
-        if(typeof config.definitionModel != 'undefined' && typeof config.definitionModel.streamType != 'undefined'
-           && config.definitionModel.streamType != null){
+        if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.streamType != 'undefined'
+            && config.definitionModel.streamType != null) {
             $scope.getAvailableStreams(config.definitionModel.streamType, false);
         }
 
         $scope.config.definitionModel = $scope.config.definitionModel || {};
 
-        $scope.StreamTypes = [{value:"scheduled", label:"Scheduled" },{value:"regular", label:"Regular" }]
+        $scope.StreamTypes = [{ value: "scheduled", label: "Scheduled" }, { value: "regular", label: "Regular" }]
 
-        $scope.AvailableSources = [{value:"twitter_stream", label:"Twitter stream" },{value:"user_log", label:"User Log" }]
+        $scope.AvailableSources = [{ value: "twitter_stream", label: "Twitter stream" }, { value: "user_log", label: "User Log" }]
 
         /*$scope.AvailableSources = $dzupDashboard.getSources().success(function (result) {
               return result;}).then(function(result){
@@ -102,7 +98,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                     description: 'Report source defines stream data from which we want report to build',
                     format: "uiselect",
                     placeholder: 'Select report source',
-                    default:null,
+                    default: null,
                     required: true
                 },
                 report: {
@@ -111,7 +107,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                     format: "uiselect",
                     placeholder: 'Select Report',
                     description: 'Existing report that will be data source for the charts',
-                    default:null,
+                    default: null,
                     required: true
                 },
                 streamType: {
@@ -120,7 +116,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                     format: "uiselect",
                     placeholder: 'Select Stream Type',
                     description: '',
-                    default:null,
+                    default: null,
                     required: true
                 },
                 stream: {
@@ -129,7 +125,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                     format: "uiselect",
                     placeholder: 'Select Stream',
                     description: '',
-                    default:null,
+                    default: null,
                     required: true
                 },
                 totalMetric: {
@@ -146,7 +142,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                     type: 'boolean',
                     title: 'Are Filter Fields enabled',
                     description: '',
-                    default:false,
+                    default: false,
                 },
                 dateRangeFilterType: {
                     type: 'string',
@@ -180,26 +176,23 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                     }
                 },
                 filterFields: {
-                    type: 'array',
-                    title: 'Filter Fields',
+                    type: "array",
                     description: 'Use this to define fields that will be shown on report to filter the data',
                     items: {
-                        type: 'string',
-                        title: 'Field'
-                    }
-                },
-                filterFields: {
-                      type: "array",
-                      items: {
-                       type: "object",
+                        type: "object",
+                        required: [
+                            "field"
+                        ],
                         properties: {
-                          field: {
-                            title: "Field",
-                            type: "string"
-                          }
+                            field: {
+                                title: "Field",
+                                type: "string",
+                            },
+
                         }
-                      }
-                    }
+                    },
+
+                }
             }
         };
         $scope.form = [
@@ -221,12 +214,12 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                                 key: 'reportSource',
                                                 type: 'uiselect',
                                                 options: {
-                                                        callback:$scope.AvailableSources,
-                                                        eventCallback: function(value){
-                                                                    if(typeof value != 'undefined'){
-                                                                        $scope.getAvailableReports(value,true);
-                                                                    }
+                                                    callback: $scope.AvailableSources,
+                                                    eventCallback: function (value) {
+                                                        if (typeof value != 'undefined') {
+                                                            $scope.getAvailableReports(value, true);
                                                         }
+                                                    }
                                                 }
                                             },
                                         ]
@@ -253,10 +246,10 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                                 key: 'streamType',
                                                 options: {
                                                     callback: $scope.StreamTypes,
-                                                    eventCallback: function(value){
-                                                       if(typeof value != 'undefined'){
-                                                           $scope.getAvailableStreams(value,true);
-                                                       }
+                                                    eventCallback: function (value) {
+                                                        if (typeof value != 'undefined') {
+                                                            $scope.getAvailableStreams(value, true);
+                                                        }
                                                     }
                                                 },
                                                 feedback: false,
@@ -265,18 +258,18 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                         ]
                                     },
                                     {
-                                         type: "section",
-                                         htmlClass: "col-xs-6",
-                                         items: [
-                                             {
-                                                 key: 'stream',
-                                                 options: {
-                                                     callback: $scope.AvailableStreams
-                                                 },
-                                                 feedback: false,
-                                                 type: 'uiselect'
-                                             }
-                                         ]
+                                        type: "section",
+                                        htmlClass: "col-xs-6",
+                                        items: [
+                                            {
+                                                key: 'stream',
+                                                options: {
+                                                    callback: $scope.AvailableStreams
+                                                },
+                                                feedback: false,
+                                                type: 'uiselect'
+                                            }
+                                        ]
                                     }
                                 ]
                             },
@@ -361,18 +354,18 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                             },
                             {
                                 key: "filterFields",
-                                title:"Field Filters",
+                                title: "Field Filters",
                                 add: "Add",
                                 style: {
-                                  "add": "btn-success"
+                                    "add": "btn-success"
                                 },
                                 items: [
-                                  "filterFields[].field"
+                                    "filterFields[].field"
                                 ],
-                                startEmpty: true,
+                                //startEmpty: true,
                                 condition: "model.areFilterFiledsEnabled == true",
-                                remove:null
-                             }
+                                remove: null
+                            }
 
                         ]
                     }
@@ -381,15 +374,14 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
         ];
         tv4.addSchema('dataSourceSchema', $scope.schema);
 
-        if(config.changesApplied == true && typeof config.definitionModel != 'undefined' && typeof config.definitionModel.reportSource != 'undefined'
-         && typeof config.definitionModel.report != 'undefined' && config.definitionModel.reportSource!= null && config.definitionModel.report!=null)
-        {
-            config.changesApplied  = false;
+        if (config.changesApplied == true && typeof config.definitionModel != 'undefined' && typeof config.definitionModel.reportSource != 'undefined'
+            && typeof config.definitionModel.report != 'undefined' && config.definitionModel.reportSource != null && config.definitionModel.report != null) {
+            config.changesApplied = false;
             dzupDashboardWidgetHelper.addDashboardWidget(widget);
 
-           $dzupDashboard.getReport(config.definitionModel.reportSource, config.definitionModel.stream, config.definitionModel.report).success(function (result) {
-               dzupDashboardWidgetHelper.setWidgetData(widget.wid, result)
-           });
+            $dzupDashboard.getReport(config.definitionModel.reportSource, config.definitionModel.stream, config.definitionModel.report).success(function (result) {
+                dzupDashboardWidgetHelper.setWidgetData(widget.wid, result)
+            });
 
         }
 
