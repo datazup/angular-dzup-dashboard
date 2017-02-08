@@ -187,7 +187,19 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                         type: 'string',
                         title: 'Field'
                     }
-                }
+                },
+                filterFields: {
+                      type: "array",
+                      items: {
+                       type: "object",
+                        properties: {
+                          field: {
+                            title: "Field",
+                            type: "string"
+                          }
+                        }
+                      }
+                    }
             }
         };
         $scope.form = [
@@ -344,48 +356,25 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                         title: 'Field Filters',
                         items: [
                             {
-                                type: 'section',
-                                htmlClass: 'row',
-                                items: [
-                                    {
-                                        type: 'section',
-                                        htmlClass: 'col-xs-12',
-                                        items: [
-                                            {
-                                                key: 'areFilterFiledsEnabled',
-                                                type: 'checkbox'
-                                            }
-                                        ]
-                                    }
-                                ]
+                                key: 'areFilterFiledsEnabled',
+                                type: 'checkbox'
                             },
                             {
-                                type: 'section',
-                                htmlClass: 'row',
+                                key: "filterFields",
+                                title:"Field Filters",
+                                add: "Add",
+                                style: {
+                                  "add": "btn-success"
+                                },
                                 items: [
-                                    {
-                                        type: 'section',
-                                        htmlClass: 'col-xs-12',
-                                        items: [
-                                                    {
-                                                        type: 'section',
-                                                        htmlClass: 'row',
-                                                        items: [
-                                                            {
-                                                                type: 'section',
-                                                                htmlClass: 'col-xs-12',
-                                                                items: ['filterFields'],
-                                                                condition: 'model.areFilterFiledsEnabled==true',
-                                                                startEmpty:'true'
-                                                            }
-                                                        ]
-                                                    }
-                                                ]
-                                    }
-                                ]
-                            }
+                                  "filterFields[].field"
+                                ],
+                                startEmpty: true,
+                                condition: "model.areFilterFiledsEnabled == true",
+                                remove:null
+                             }
 
-                        ],startEmpty:'true'
+                        ]
                     }
                 ]
             }
@@ -402,11 +391,6 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                dzupDashboardWidgetHelper.setWidgetData(widget.wid, result)
            });
 
-        }
-
-        if(typeof config.definitionModel.areFilterFiledsEnabled == 'undefined')
-        {
-            config.definitionModel.areFilterFiledsEnabled = false;
         }
 
     }
