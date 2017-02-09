@@ -95,8 +95,8 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                 reportSource: {
                     type: 'string',
                     title: 'Report Source',
-                    description: 'Report source defines stream data from which we want report to build',
                     format: "uiselect",
+                    description: 'Report source defines stream data from which we want report to build',
                     placeholder: 'Select report source',
                     default: null,
                     required: true
@@ -146,7 +146,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                 },
                 dateRangeFilterType: {
                     type: 'string',
-                    title: 'Date Rage Filter Type',
+                    title: 'Date Range Filter Type',
                     enum: ['FIELDS', 'DATEFIELD']
                 },
                 dateRangeFilterField: {
@@ -192,6 +192,13 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                         }
                     },
 
+                },
+                dateRange:{
+                    type: 'string',
+                    title: 'Date',
+                    format:'datepicker',
+                    placeholder:'Start Date - End Date',
+                    dateformat:'DD/MM/YYYY'
                 }
             }
         };
@@ -207,70 +214,95 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                 htmlClass: "row",
                                 items: [
                                     {
-                                        type: "section",
-                                        htmlClass: "col-xs-6",
-                                        items: [
+                                        type: 'section',
+                                        htmlClass: "col-xs-12",
+                                        items:[
                                             {
-                                                key: 'reportSource',
-                                                type: 'uiselect',
-                                                options: {
-                                                    callback: $scope.AvailableSources,
-                                                    eventCallback: function (value) {
-                                                        if (typeof value != 'undefined') {
-                                                            $scope.getAvailableReports(value, true);
-                                                        }
+                                                type:'section',
+                                                htmlClass:'row',
+                                                items:[
+                                                    {
+                                                        type: "section",
+                                                        htmlClass: "col-xs-6",
+                                                        items: [
+                                                            {
+                                                                key: 'reportSource',
+                                                                options: {
+                                                                    callback: $scope.AvailableSources,
+                                                                    eventCallback: function (value) {
+                                                                        if (typeof value != 'undefined') {
+                                                                            $scope.getAvailableReports(value, true);
+                                                                        }
+                                                                    }
+                                                                },
+                                                                feedback: false,
+                                                                type: 'uiselect'
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        type: "section",
+                                                        htmlClass: "col-xs-6",
+                                                        items: [
+                                                            {
+                                                                key: 'report',
+                                                                options: {
+                                                                    callback: $scope.AvailableReports
+                                                                },
+                                                                feedback: false,
+                                                                type: 'uiselect'
+                                                            }
+                                                        ]
                                                     }
-                                                }
-                                            },
-                                        ]
-                                    },
-                                    {
-                                        type: "section",
-                                        htmlClass: "col-xs-6",
-                                        items: [
-                                            {
-                                                key: 'report',
-                                                options: {
-                                                    callback: $scope.AvailableReports
-                                                },
-                                                feedback: false,
-                                                type: 'uiselect'
+                                                ]
                                             }
                                         ]
                                     },
                                     {
-                                        type: "section",
-                                        htmlClass: "col-xs-6",
-                                        items: [
+                                        type: 'section',
+                                        htmlClass: "col-xs-12",
+                                        items:[
                                             {
-                                                key: 'streamType',
-                                                options: {
-                                                    callback: $scope.StreamTypes,
-                                                    eventCallback: function (value) {
-                                                        if (typeof value != 'undefined') {
-                                                            $scope.getAvailableStreams(value, true);
-                                                        }
+                                                type:'section',
+                                                htmlClass:'row',
+                                                items:[
+                                                    {
+                                                        type: "section",
+                                                        htmlClass: "col-xs-6",
+                                                        items: [
+                                                            {
+                                                                key: 'streamType',
+                                                                options: {
+                                                                    callback: $scope.StreamTypes,
+                                                                    eventCallback: function (value) {
+                                                                        if (typeof value != 'undefined') {
+                                                                            $scope.getAvailableStreams(value, true);
+                                                                        }
+                                                                    }
+                                                                },
+                                                                feedback: false,
+                                                                type: 'uiselect'
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        type: "section",
+                                                        htmlClass: "col-xs-6",
+                                                        items: [
+                                                            {
+                                                                key: 'stream',
+                                                                options: {
+                                                                    callback: $scope.AvailableStreams
+                                                                },
+                                                                feedback: false,
+                                                                type: 'uiselect'
+                                                            }
+                                                        ]
                                                     }
-                                                },
-                                                feedback: false,
-                                                type: 'uiselect'
+                                                ]
                                             }
                                         ]
                                     },
-                                    {
-                                        type: "section",
-                                        htmlClass: "col-xs-6",
-                                        items: [
-                                            {
-                                                key: 'stream',
-                                                options: {
-                                                    callback: $scope.AvailableStreams
-                                                },
-                                                feedback: false,
-                                                type: 'uiselect'
-                                            }
-                                        ]
-                                    }
                                 ]
                             },
                             {
@@ -307,6 +339,11 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                             {
                                                 key: 'isDateRangeFilterEnabled',
                                                 type: 'checkbox'
+                                            },
+                                            {
+                                                key:'dateRange',
+                                                type:'datepicker'
+
                                             }
                                         ]
                                     }
@@ -373,6 +410,8 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
             }
         ];
         tv4.addSchema('dataSourceSchema', $scope.schema);
+
+        console.log(config.definitionModel.dateRange);
 
         if (config.changesApplied == true && typeof config.definitionModel != 'undefined' && typeof config.definitionModel.reportSource != 'undefined'
             && typeof config.definitionModel.report != 'undefined' && config.definitionModel.reportSource != null && config.definitionModel.report != null) {
