@@ -128,52 +128,11 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                     default: null,
                     required: true
                 },
-                totalMetric: {
-                    type: 'string',
-                    title: 'Total Metric',
-                    description: 'Source metric used to prepare Total and Filtered values'
-                },
-                isDateRangeFilterEnabled: {
-                    type: 'boolean',
-                    title: 'Is DateRange Filter enabled',
-                    description: 'Use this to enable/disable showing/filtering by date range'
-                },
                 areFilterFiledsEnabled: {
                     type: 'boolean',
-                    title: 'Are Filter Fields enabled',
+                    title: 'Enable Filter Fields',
                     description: '',
                     default: false,
-                },
-                dateRangeFilterType: {
-                    type: 'string',
-                    title: 'Date Range Filter Type',
-                    enum: ['FIELDS', 'DATEFIELD']
-                },
-                dateRangeFilterField: {
-                    type: 'string',
-                    title: 'Date Range Filter Field'
-                },
-                dateRangeFieldsMap: {
-                    title: 'Date Range Filter Fields',
-                    type: 'object',
-                    properties: {
-                        year: {
-                            type: 'string',
-                            title: 'YEAR'
-                        },
-                        month: {
-                            type: 'string',
-                            title: 'MONTH'
-                        },
-                        day: {
-                            type: 'string',
-                            title: 'DAY'
-                        },
-                        hour: {
-                            type: 'string',
-                            title: 'HOUR'
-                        }
-                    }
                 },
                 filterFields: {
                     type: "array",
@@ -326,19 +285,20 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                         ]
                     },
                     {
-                        title: 'Date Range Filters',
+                        title: 'Filters',
                         items: [
                             {
-                                type: 'section',
-                                htmlClass: 'row',
-                                items: [
+                                type:'section',
+                                htmlClass:'row',
+                                items:[
+                                    
                                     {
-                                        type: 'section',
-                                        htmlClass: 'col-xs-12',
-                                        items: [
+                                        type:'section',
+                                        htmlClass:'col-xs-12',
+                                        items:[
                                             {
-                                                key: 'isDateRangeFilterEnabled',
-                                                type: 'checkbox'
+                                                type: "help",
+                                                helpvalue: "<h5>Date Range Filter</h5>"
                                             },
                                             {
                                                 key:'dateRange',
@@ -346,62 +306,37 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
 
                                             }
                                         ]
-                                    }
-                                ]
-                            },
-                            {
-                                type: 'section',
-                                htmlClass: 'row',
-                                items: [
-                                    {
-                                        type: 'section',
-                                        htmlClass: 'col-xs-6',
-                                        items: [
-                                            {
-                                                key: 'dateRangeFilterType',
-                                                condition: 'model.isDateRangeFilterEnabled'
-                                            }
-                                        ]
                                     },
+                                    
                                     {
-                                        type: 'section',
-                                        htmlClass: 'col-xs-6',
-                                        items: [
+                                        type:'section',
+                                        htmlClass:'col-xs-12',
+                                        items:[
                                             {
-                                                key: 'dateRangeFieldsMap',
-                                                condition: "model.isDateRangeFilterEnabled && model.dateRangeFilterType=='FIELDS'"
+                                                type: "help",
+                                                helpvalue: "<h5>Filter Fields</h5>"
                                             },
                                             {
-                                                key: 'dateRangeFilterField',
-                                                condition: "model.isDateRangeFilterEnabled && model.dateRangeFilterType=='DATEFIELD'"
+                                                key: 'areFilterFiledsEnabled',
+                                                type: 'checkbox'
+                                            },
+                                            {
+                                                key: "filterFields",
+                                                title: " ",
+                                                add: "Add",
+                                                style: {
+                                                    "add": "btn-success"
+                                                },
+                                                items: [
+                                                    "filterFields[].field"
+                                                ],
+                                                //startEmpty: true,
+                                                condition: "model.areFilterFiledsEnabled == true",
+                                                remove: true
                                             }
                                         ]
                                     }
                                 ]
-                            }
-
-                        ]
-                    },
-                    {
-                        title: 'Field Filters',
-                        items: [
-                            {
-                                key: 'areFilterFiledsEnabled',
-                                type: 'checkbox'
-                            },
-                            {
-                                key: "filterFields",
-                                title: "Field Filters",
-                                add: "Add",
-                                style: {
-                                    "add": "btn-success"
-                                },
-                                items: [
-                                    "filterFields[].field"
-                                ],
-                                //startEmpty: true,
-                                condition: "model.areFilterFiledsEnabled == true",
-                                remove: null
                             }
 
                         ]

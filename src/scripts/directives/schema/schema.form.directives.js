@@ -640,8 +640,8 @@ function (schemaFormProvider, schemaFormDecoratorsProvider,sfPathProvider) {
             schemaFormProvider.defaults.string.unshift(datepicker);
 
             //Add to the bootstrap directive
-            schemaFormDecoratorsProvider.addMapping('bootstrapDecorator', 'datepicker', 'templates/directives/datasource/edit.view.html');
-            schemaFormDecoratorsProvider.createDirective('datepicker', 'templates/directives/datasource/edit.view.html');
+            schemaFormDecoratorsProvider.addMapping('bootstrapDecorator', 'datepicker', 'templates/directives/datasource/empty.view.html');
+            schemaFormDecoratorsProvider.createDirective('datepicker', 'templates/directives/datasource/empty.view.html');
 
 }])
 .directive('datepicker', function() {

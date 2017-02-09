@@ -196,56 +196,6 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                     format: "uiselect",
                     placeholder: 'Select Data Source',
                     default:null
-                },
-                totalMetric: {
-                    type: 'string',
-                    title: 'Total Metric',
-                    description: 'Source metric used to prepare Total and Filtered values'
-                },
-                isDateRangeFilterEnabled: {
-                    type: 'boolean',
-                    title: 'Is DateRange Filter enabled',
-                    description: 'Use this to enable/disable showing/filtering by date range'
-                },
-                dateRangeFilterType: {
-                    type: 'string',
-                    title: 'Date Rage Filter Type',
-                    enum: ['FIELDS', 'DATEFIELD']
-                },
-                dateRangeFilterField: {
-                    type: 'string',
-                    title: 'Date Range Filter Field'
-                },
-                dateRangeFieldsMap: {
-                    title: 'Date Range Filter Fields',
-                    type: 'object',
-                    properties: {
-                        year: {
-                            type: 'string',
-                            title: 'YEAR'
-                        },
-                        month: {
-                            type: 'string',
-                            title: 'MONTH'
-                        },
-                        day: {
-                            type: 'string',
-                            title: 'DAY'
-                        },
-                        hour: {
-                            type: 'string',
-                            title: 'HOUR'
-                        }
-                    }
-                },
-                filterFields: {
-                    type: 'array',
-                    title: 'Filter Fields',
-                    description: 'Use this to define fields that will be shown on report to filter the data',
-                    items: {
-                        type: 'string',
-                        title: 'Field'
-                    }
                 }
             }
         };
@@ -273,6 +223,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                     callback: $scope.chartTypes,
                                                     objectid: 4226,
                                                 },
+                                                feedback: false,
                                                 type: 'uiselect',
                                             }
                                         ]
@@ -380,8 +331,8 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                         htmlClass: "col-xs-6",
                                                         items: [
                                                             {
-                                                                "type": "help",
-                                                                "helpvalue": "<h5>Take ...</h5>"
+                                                                type: "help",
+                                                                helpvalue: "<h5>Take ...</h5>"
                                                             },
                                                             {
                                                                 type: "section",
