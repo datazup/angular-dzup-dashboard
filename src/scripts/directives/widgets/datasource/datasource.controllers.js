@@ -267,6 +267,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                             {
                                 type: 'section',
                                 htmlClass: 'row',
+                                condition: "false",
                                 items: [
                                     {
                                         type: "section",
