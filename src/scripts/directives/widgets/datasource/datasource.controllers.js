@@ -14,6 +14,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
         $scope.widget = widget;
         $scope.AvailableReports = [];
         $scope.AvailableStreams = [];
+        $scope.ReportPropeties = [];
 
         $scope.getAvailableReports = function (value, injectValue) {
             $scope.AvailableReports = $dzupDashboard.getReportsBySource(value).success(function (result) { return result; })
@@ -49,6 +50,24 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                 });
         }
 
+        $scope.getReportPropeties = function () {
+            dzupDashboardWidgetHelper.getWidgetReportColumns(
+                config.definitionModel.reportSource,
+                config.definitionModel.stream,
+                config.definitionModel.report)
+                .then(function (result) {
+                    $scope.ReportPropeties = result.columns;
+                    console.log($scope.ReportPropeties);
+
+                    $timeout(function () { //the code which needs to run after dom rendering
+                        $scope.schema.properties.filterFields.items.properties.fieldProperty.items = $scope.ReportPropeties;
+                    })
+
+                    return $scope.ReportPropeties;
+
+                });
+        }
+
         $scope.createReport = function () {
             var modalInstance = $uibModal.open({
                 templateUrl: $dzupConfigUtils.templateUrlBase['dzup-dashboard'] + '/templates/reports/report.modal.view.html',
@@ -81,13 +100,17 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
 
         $scope.config.definitionModel = $scope.config.definitionModel || {};
 
-        $scope.StreamTypes = [{ value: "scheduled", label: "Scheduled" }, { value: "regular", label: "Regular" }]
+        $scope.StreamTypes = [{ value: "scheduled", label: "Scheduled" }, { value: "regular", label: "Regular" }];
 
-        $scope.AvailableSources = [{ value: "twitter_stream", label: "Twitter stream" }, { value: "user_log", label: "User Log" }]
+        $scope.AvailableSources = [{ value: "twitter_stream", label: "Twitter stream" }, { value: "user_log", label: "User Log" }];
 
-        /*$scope.AvailableSources = $dzupDashboard.getSources().success(function (result) {
-              return result;}).then(function(result){
-              return _.map(result.data, function(x){ return { value:x, label:x } });});*/
+        $scope.FieldFilterOperators = [
+            { value: "equal", label: "Equal" },
+            { value: "nonequal", label: "Non-Equal" },
+            { value: "gt", label: "Greater Than" },
+            { value: "lt", label: "Less Than" },
+            { value: "contains", label: "Contains" },
+            { value: "notcontains", label: "Does Not Contain" }];
 
         $scope.schema = {
             type: 'object',
@@ -143,21 +166,39 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                             "field"
                         ],
                         properties: {
-                            field: {
-                                title: "Field",
-                                type: "string",
+                            fieldProperty: {
+                                type: 'string',
+                                title: 'Report Property',
+                                format: "uiselect",
+                                placeholder: 'Select Property',
+                                description: '',
+                                default: null,
+                                required: true
                             },
-
+                            fieldOperator: {
+                                type: 'string',
+                                title: 'Operator',
+                                format: "uiselect",
+                                placeholder: 'Select Operator',
+                                description: '',
+                                default: null,
+                                required: true
+                            },
+                            fieldVlaue: {
+                                type: "string",
+                                title: "Valued",
+                                required: true
+                            }
                         }
                     },
 
                 },
-                dateRange:{
+                dateRange: {
                     type: 'string',
                     title: 'Date',
-                    format:'datepicker',
-                    placeholder:'Start Date - End Date',
-                    dateformat:'DD/MM/YYYY'
+                    format: 'datepicker',
+                    placeholder: 'Start Date - End Date',
+                    dateformat: 'DD/MM/YYYY'
                 }
             }
         };
@@ -175,11 +216,11 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                     {
                                         type: 'section',
                                         htmlClass: "col-xs-12",
-                                        items:[
+                                        items: [
                                             {
-                                                type:'section',
-                                                htmlClass:'row',
-                                                items:[
+                                                type: 'section',
+                                                htmlClass: 'row',
+                                                items: [
                                                     {
                                                         type: "section",
                                                         htmlClass: "col-xs-6",
@@ -220,11 +261,11 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                     {
                                         type: 'section',
                                         htmlClass: "col-xs-12",
-                                        items:[
+                                        items: [
                                             {
-                                                type:'section',
-                                                htmlClass:'row',
-                                                items:[
+                                                type: 'section',
+                                                htmlClass: 'row',
+                                                items: [
                                                     {
                                                         type: "section",
                                                         htmlClass: "col-xs-6",
@@ -289,37 +330,42 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                         title: 'Filters',
                         items: [
                             {
-                                type:'section',
-                                htmlClass:'row',
-                                items:[
-                                    
+                                type: 'section',
+                                htmlClass: 'row',
+                                items: [
+
                                     {
-                                        type:'section',
-                                        htmlClass:'col-xs-12',
-                                        items:[
+                                        type: 'section',
+                                        htmlClass: 'col-xs-12',
+                                        items: [
                                             {
                                                 type: "help",
                                                 helpvalue: "<h5>Date Range Filter</h5>"
                                             },
                                             {
-                                                key:'dateRange',
-                                                type:'datepicker'
+                                                key: 'dateRange',
+                                                type: 'datepicker'
 
                                             }
                                         ]
                                     },
-                                    
+
                                     {
-                                        type:'section',
-                                        htmlClass:'col-xs-12',
-                                        items:[
+                                        type: 'section',
+                                        htmlClass: 'col-xs-12',
+                                        items: [
                                             {
                                                 type: "help",
                                                 helpvalue: "<h5>Filter Fields</h5>"
                                             },
                                             {
                                                 key: 'areFilterFiledsEnabled',
-                                                type: 'checkbox'
+                                                type: 'checkbox',
+                                                onChange: function (value) {
+                                                    if (value) {
+                                                        $scope.getReportPropeties();
+                                                    }
+                                                }
                                             },
                                             {
                                                 key: "filterFields",
@@ -329,7 +375,42 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                                     "add": "btn-success"
                                                 },
                                                 items: [
-                                                    "filterFields[].field"
+                                                    {
+                                                        type: 'section',
+                                                        htmlClass: 'row',
+                                                        items: [
+                                                            {
+                                                                type: 'section',
+                                                                htmlClass: 'col-xs-12',
+                                                                items: [
+                                                                    {
+                                                                        key: 'filterFields[].fieldProperty',
+                                                                        htmlClass: 'col-xs-4',
+                                                                        options: {
+                                                                            callback: $scope.ReportPropeties,
+                                                                        },
+                                                                        feedback: false,
+                                                                        type: 'uiselect'
+                                                                    },
+                                                                    {
+                                                                        key: 'filterFields[].fieldOperator',
+                                                                        htmlClass: 'col-xs-4',
+                                                                        options: {
+                                                                            callback: $scope.FieldFilterOperators,
+                                                                        },
+                                                                        feedback: false,
+                                                                        type: 'uiselect'
+                                                                    },
+                                                                    {
+                                                                        key: 'filterFields[].fieldValue',
+                                                                        title: 'Value',
+                                                                        htmlClass: 'col-xs-4',
+                                                                        placeholder: 'Enter Value'
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ]
+                                                    }
                                                 ],
                                                 //startEmpty: true,
                                                 condition: "model.areFilterFiledsEnabled == true",
@@ -346,8 +427,6 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
             }
         ];
         tv4.addSchema('dataSourceSchema', $scope.schema);
-
-        console.log(config.definitionModel.dateRange);
 
         if (config.changesApplied == true && typeof config.definitionModel != 'undefined' && typeof config.definitionModel.reportSource != 'undefined'
             && typeof config.definitionModel.report != 'undefined' && config.definitionModel.reportSource != null && config.definitionModel.report != null) {

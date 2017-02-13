@@ -357,7 +357,6 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                 if (index != -1) {
                     var widget = self.widgets[index];
                     $dzupDashboard.getReport(widget.config.definitionModel.reportSource, widget.config.definitionModel.stream, widget.config.definitionModel.report).then(function (result) {
-
                         self.setWidgetData(wid, result)
                         deferred.resolve(self.getWidgetData(wid));
                     });
@@ -368,6 +367,17 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
 
             }
             return deferred.promise();
+        },
+        getWidgetReportColumns: function (reportSource, stream, report) {
+
+            var deferred = new $.Deferred();
+
+            $dzupDashboard.getReport(reportSource, stream, report).then(function (result) {
+                deferred.resolve(result.data[1]);
+            });
+
+            return deferred.promise();
+
         },
         addDashboardWidget: function (widget) {
 
