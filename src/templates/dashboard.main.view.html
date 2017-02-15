@@ -4,12 +4,12 @@
         <uib-tab select="selectDashboard(dashboard, $index)" data-ng-repeat="dashboard in dashboardList track by dashboard.model.key | orderBy: 'dashboard.createdAt'" index="$index">
             <uib-tab-heading>
                 {{ dashboard.model.title }}
-                <span title="Click to remove" class="remove-tab" ng-click="removeDashboard(dashboard, $event);">
+                <span ng-if="dashboard.model.staticDashboard != true" title="Click to remove" class="remove-tab" ng-click="removeDashboard(dashboard, $event);">
                             <i class="fa fa-times" aria-hidden="true"></i>
                 </span>
             </uib-tab-heading>
-            <div ng-if="selectedDashboard == dashboard">
-                <dzup-dashboard-item  dashboard="selectedDashboard"></dzup-dashboard-item>
+            <div ng-if="selectedDashboard == dashboard" ng-class="dashboard.model.staticDashboard ? 'static-dashboard' : ''">
+                <dzup-dashboard-item  dashboard="selectedDashboard"</dzup-dashboard-item>
             </div>
         </uib-tab>
         <uib-tab select=" addDashboard($event)" index="$index">

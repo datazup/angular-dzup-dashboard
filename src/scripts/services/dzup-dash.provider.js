@@ -12,6 +12,7 @@ dzupDashboard.provider('$dzupDashboard', function () {
     this.reportsBySourcesUrl = "";
     this.sourcesUrl = "";
     this.reportsUrl = "";
+    this.staticDashboards = null;
 
     provider.setConf = function(conf) {
         this.host = conf.host;
@@ -22,6 +23,7 @@ dzupDashboard.provider('$dzupDashboard', function () {
         this.reportsBySourcesUrl = conf.reportsBySourcesUrl;
         this.sourcesUrl = conf.sourcesUrl;
         this.reportsUrl = conf.reportsUrl;
+        this.staticDashboards = conf.staticDashboards;
     };
 
     function WidServ($http,conf){
@@ -47,6 +49,10 @@ dzupDashboard.provider('$dzupDashboard', function () {
 
                 var result =  $http.get(conf.host + conf.dashboardsRetrievalUrl );
                 return result;
+            }
+
+            this.getStaticDashboards = function() {
+                return conf.staticDashboards;
             }
 
             this.getReport = function(source, streamId, reportName){
@@ -86,7 +92,8 @@ dzupDashboard.provider('$dzupDashboard', function () {
                      regularUrl:this.regularUrl,
                      reportsBySourcesUrl:this.reportsBySourcesUrl,
                      sourcesUrl:this.sourcesUrl,
-                     reportsUrl:this.reportsUrl
+                     reportsUrl:this.reportsUrl,
+                     staticDashboards:this.staticDashboards
                     }
         return new WidServ($http, conf);
     };

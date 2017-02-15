@@ -20,12 +20,30 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                     dzupDashboardWidgetHelper.setDashboardWidgets(index, dashboard);
                 };
 
+                // Init dashboard load
                 $dzupDashboard.getDashboards().success(function (result) {
+
+                    var staticDashboards = $dzupDashboard.getStaticDashboards();
+                    if (staticDashboards != null && staticDashboards.length > 0) {
+
+                        for(j=0;j<staticDashboards.length;j++){
+                            staticDashboards[j].key = $scope.generateUUID();
+                            var staticDashItem = staticDashboards[j];
+                            staticDashItem.identifier = $scope.generateUUID();
+                            staticDashItem.staticDashboard = true;
+
+                            $scope.dashboardList.push({model:staticDashItem});
+
+                            if((result == null || result.list.length == 0) && j==(staticDashboards.length-1))
+                                $scope.selectedDashboard = staticDashItem;
+                        }
+                    }
+
                     if (result != null && result.list.length > 0) {
                         var list = result.list;
 
                         for(i=0;i<list.length;i++){
-                            //result.list[i].dashboard.key =$scope.generateUUID();
+                            result.list[i].dashboard.key =$scope.generateUUID();
                             var dashItem = result.list[i].dashboard;
                             //dashItem.title = "Dashboard " + (i + 1);
                             dashItem.identifier = result.list[i].id;
@@ -84,6 +102,9 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
 
                 $scope.removeDashboard = function (dashboard, $event) {
                     $event.preventDefault();
+
+                    if(dashboard.staticDashboard)return;
+
                     var index = $scope.indexOfItem(dashboard);
                     if (index === -1) {
                         $scope.error = "Something wrong. Cannot find dashboard in collection";
@@ -112,6 +133,8 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                 };
 
                 $scope.update = function (dashItem) {
+                    if(dashItem.model.staticDashboard == true)return;
+
                     $dzupDashboard.create(dashItem)
                         .success(function (result) {
                             $scope.updateInList(result);
@@ -123,6 +146,8 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                 };
 
                 $scope.saveOrUpdate = function (dashItem) {
+                    if(dashItem.model.staticDashboard == true)return;
+
                     if (dashItem.id && (typeof dashItem.id != "undefined")) {
                         $scope.update(dashItem);
                     } else {
