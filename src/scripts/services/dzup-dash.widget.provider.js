@@ -53,10 +53,13 @@ dzupDashboard.provider('$dzupDashboardWidget', [function () {
                     controller: 'DzupGenericDataSourceEditController',
                     immediate: true,
                     apply: function(definition,widget,$http, config){
+
                         config.changesApplied = true;
 
                         var schema =tv4.getSchema('dataSourceSchema');
                         var result = tv4.validateMultiple(config.definitionModel, schema, true);
+
+                        config.definitionModel.validateForm();
 
                         return result.valid;
                     }
@@ -79,6 +82,8 @@ dzupDashboard.provider('$dzupDashboardWidget', [function () {
 
                             var schema =tv4.getSchema('chartSchema');
                             var result = tv4.validateMultiple(config.definitionModel, schema, true);
+
+                            config.definitionModel.validateForm();
 
                             return result.valid;
                         }

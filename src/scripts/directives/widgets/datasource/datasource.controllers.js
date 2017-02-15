@@ -51,7 +51,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
         }
 
         $scope.getReportPropeties = function () {
-            dzupDashboardWidgetHelper.getWidgetReportColumns(
+            $scope.ReportPropeties = dzupDashboardWidgetHelper.getWidgetReportColumns(
                 config.definitionModel.reportSource,
                 config.definitionModel.stream,
                 config.definitionModel.report)
@@ -122,7 +122,8 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                     description: 'Report source defines stream data from which we want report to build',
                     placeholder: 'Select report source',
                     default: null,
-                    required: true
+                    validationMessage:'Required'
+                    //required: true
                 },
                 report: {
                     type: 'string',
@@ -131,7 +132,8 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                     placeholder: 'Select Report',
                     description: 'Existing report that will be data source for the charts',
                     default: null,
-                    required: true
+                    validationMessage:'Required'
+                    //required: true
                 },
                 streamType: {
                     type: 'string',
@@ -140,7 +142,8 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                     placeholder: 'Select Stream Type',
                     description: '',
                     default: null,
-                    required: true
+                    validationMessage:'Required'
+                    //required: true
                 },
                 stream: {
                     type: 'string',
@@ -149,7 +152,8 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                     placeholder: 'Select Stream',
                     description: '',
                     default: null,
-                    required: true
+                    validationMessage:'Required'
+                    //required: true
                 },
                 areFilterFiledsEnabled: {
                     type: 'boolean',
@@ -162,9 +166,6 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                     description: 'Use this to define fields that will be shown on report to filter the data',
                     items: {
                         type: "object",
-                        required: [
-                            "field"
-                        ],
                         properties: {
                             fieldProperty: {
                                 type: 'string',
@@ -173,7 +174,8 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                 placeholder: 'Select Property',
                                 description: '',
                                 default: null,
-                                required: true
+                                validationMessage:'Required'
+                                //required: true
                             },
                             fieldOperator: {
                                 type: 'string',
@@ -182,12 +184,13 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                 placeholder: 'Select Operator',
                                 description: '',
                                 default: null,
-                                required: true
+                                validationMessage:'Required'
+                                // required: true,
                             },
                             fieldVlaue: {
                                 type: "string",
                                 title: "Valued",
-                                required: true
+                                // required: true
                             }
                         }
                     },
@@ -198,10 +201,18 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                     title: 'Date',
                     format: 'datepicker',
                     placeholder: 'Start Date - End Date',
-                    dateformat: 'DD/MM/YYYY'
+                    dateformat: 'DD/MM/YYYY',
                 }
-            }
+            },
+            required: [
+                "reportSource",
+                "report",
+                "stream",
+                "streamType",
+                "fieldVlaue"
+            ]
         };
+
         $scope.form = [
             {
                 type: 'tabs',
@@ -345,7 +356,9 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                             {
                                                 key: 'dateRange',
                                                 type: 'datepicker'
-
+                                            },
+                                            {
+                                                key: 'title'
                                             }
                                         ]
                                     },
@@ -423,10 +436,16 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
 
                         ]
                     }
+
                 ]
-            }
+            },
+
         ];
         tv4.addSchema('dataSourceSchema', $scope.schema);
+
+        config.definitionModel.validateForm = function (){
+            $scope.$broadcast('schemaFormValidate');
+        }
 
         if (config.changesApplied == true && typeof config.definitionModel != 'undefined' && typeof config.definitionModel.reportSource != 'undefined'
             && typeof config.definitionModel.report != 'undefined' && config.definitionModel.reportSource != null && config.definitionModel.report != null) {
