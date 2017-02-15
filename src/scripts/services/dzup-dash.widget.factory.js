@@ -54,7 +54,6 @@ app.factory('chartService', [function () {
                 format: "uiselect",
                 placeholder: 'Select X Axis Property',
                 default: null,
-                required: true,
                 validationMessage: "Required"
             }
             schemeProperties.yAxis = {
@@ -63,7 +62,6 @@ app.factory('chartService', [function () {
                 format: "uiselect",
                 placeholder: 'Select Y Axis Property',
                 default: null,
-                required: true,
                 validationMessage: "Required"
             }
             schemeProperties.chartColor = {
@@ -384,7 +382,6 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
             });
 
             return deferred.promise();
-
         },
         addDashboardWidget: function (widget) {
 

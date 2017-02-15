@@ -187,16 +187,25 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                     title: 'Chart Type',
                     format: "uiselect",
                     placeholder: 'Select Chart Type',
-                    default:null
+                    default:null,
+                    validationMessage: "Required"
                 },
                 dataSource: {
                     type: 'string',
                     title: 'Data Source',
                     format: "uiselect",
                     placeholder: 'Select Data Source',
-                    default:null
+                    default:null,
+                    validationMessage: "Required"
                 }
-            }
+            },
+            required: [
+                "chartType",
+                "dataSource",
+                "xAxis",
+                "yAxis",
+            ]
+
         };
 
         chartService.updateChartSchemaProperties('discreteBarChart', $scope.schema.properties);
@@ -265,12 +274,14 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                             {
                                                 key: 'xAxis',
                                                 type: 'uiselect',
+                                                feedback: false,
                                                 options: {
                                                     callback: $scope.reportColumns
                                                 },
                                             },
                                             {
                                                 key: 'yAxis',
+                                                feedback: false,
                                                 type: 'uiselect',
                                                 options: {
                                                     callback: $scope.reportColumns
@@ -592,5 +603,9 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
         ];
 
         tv4.addSchema('chartSchema', $scope.schema);
+
+        config.definitionModel.validateForm = function (){
+            $scope.$broadcast('schemaFormValidate');
+        }
     }
 ]);
