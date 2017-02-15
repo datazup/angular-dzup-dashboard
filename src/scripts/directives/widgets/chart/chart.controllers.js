@@ -349,7 +349,8 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                                 htmlClass: "col-xs-6",
                                                                 items: [
                                                                     {
-                                                                        key: 'from'
+                                                                        key: 'from',
+                                                                        feedback: false,
                                                                     }
                                                                 ]
                                                             },
@@ -358,7 +359,8 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                                 htmlClass: "col-xs-6",
                                                                 items: [
                                                                     {
-                                                                        key: 'to'
+                                                                        key: 'to',
+                                                                        feedback: false,
                                                                     }
                                                                 ]
                                                             }
@@ -461,7 +463,8 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                                 htmlClass: "col-xs-6",
                                                                 items: [
                                                                     {
-                                                                        key: 'from'
+                                                                        key: 'from',
+                                                                        feedback: false,
                                                                     }
                                                                 ]
                                                             },
@@ -470,7 +473,8 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                                 htmlClass: "col-xs-6",
                                                                 items: [
                                                                     {
-                                                                        key: 'to'
+                                                                        key: 'to',
+                                                                        feedback: false,
                                                                     }
                                                                 ]
                                                             }
@@ -575,7 +579,8 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                                 htmlClass: "col-xs-6",
                                                                 items: [
                                                                     {
-                                                                        key: 'from'
+                                                                        key: 'from',
+                                                                        feedback: false,
                                                                     }
                                                                 ]
                                                             },
@@ -584,7 +589,8 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                                 htmlClass: "col-xs-6",
                                                                 items: [
                                                                     {
-                                                                        key: 'to'
+                                                                        key: 'to',
+                                                                        feedback: false,
                                                                     }
                                                                 ]
                                                             }
