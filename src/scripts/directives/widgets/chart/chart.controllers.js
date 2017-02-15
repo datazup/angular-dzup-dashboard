@@ -274,12 +274,14 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                             {
                                                 key: 'xAxis',
                                                 type: 'uiselect',
+                                                feedback: false,
                                                 options: {
                                                     callback: $scope.reportColumns
                                                 },
                                             },
                                             {
                                                 key: 'yAxis',
+                                                feedback: false,
                                                 type: 'uiselect',
                                                 options: {
                                                     callback: $scope.reportColumns
