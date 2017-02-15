@@ -250,7 +250,8 @@ app.factory('chartService', [function () {
                     },
                     duration: 500,
                     xAxis: {
-                        axisLabel: 'X Axis'
+                        axisLabel: 'X Axis',
+                        rotateLabels: 45
                     },
                     yAxis: {
                         axisLabel: 'Y Axis',
@@ -313,6 +314,7 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
     var widgetsData = [];
     return {
         setDashboardWidgets: function (index, dashboard) {
+
             this.clear();
             if (dashboard != null && dashboard.model != null && typeof dashboard.model != 'undefined' && typeof dashboard.model.rows != 'undefined') {
 
@@ -323,7 +325,6 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                         if (typeof widgets != 'undefined') {
                             for (s = 0; s < widgets.length; s++) {
                                 this.addDashboardWidget(widgets[s]);
-
                             }
                         }
                     }
@@ -342,6 +343,12 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                     this.widgetsData.push(WData);
                 }
             }
+        },
+        removeWidgetData: function(wid){
+             var index = _.indexOf(this.widgetsData, _.find(this.widgetsData, { wid: wid }));
+             if (index != -1) { // widget array contains widget replace is
+                 this.widgetsData.splice(index, 1);
+             }
         },
         getWidgetData: function (wid) {
             var deferred = new $.Deferred();

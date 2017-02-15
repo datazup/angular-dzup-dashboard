@@ -32,6 +32,25 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
         };
 
 
+        $scope.$on('widgetStreamChanged', function(event, data) {
+        if(config.definitionModel.dataSource != data) return;
+
+        if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined') {
+                                 dzupDashboardWidgetHelper.getWidgetData(config.definitionModel.dataSource).then(function (result) {
+                                     if (result == null) return;
+
+                                     if (result.data != null && typeof result.data != 'undefined') {
+                                         $scope.setChartData(result);
+                                     }
+                                     else {
+                                         result.then(function (pResult) {
+                                             $scope.setChartData(pResult.data);
+                                         });
+                                     }
+                                 });
+                             }
+        });
+
         if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined') {
             dzupDashboardWidgetHelper.getWidgetData(config.definitionModel.dataSource).then(function (result) {
                 if (result == null) return;
@@ -125,26 +144,6 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
 
             return $scope.reportColumns;
         }
-
-        $scope.createReport = function () {
-            var modalInstance = $uibModal.open({
-                templateUrl: $dzupConfigUtils.templateUrlBase['dzup-dashboard'] + '/templates/reports/report.modal.view.html',
-                controller: 'ReportCreateEditController',
-                resolve: {
-                    report: function () {
-                        return {};
-                    }
-                },
-                size: 'lg'
-            });
-
-            modalInstance.result.then(function (importedData) {
-                if (importedData) {
-                    $scope.innerModel.properties = importedData;
-                }
-            }, function () {
-            });
-        };
 
         $scope.getChartTypes = function (injectValue) {
 

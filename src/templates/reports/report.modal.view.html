@@ -1,10 +1,21 @@
 <section>
     <div class="modal-header">
-        <h4 class="modal-title" ng-bind="getTitle()"></h4>
-        <p class="text-muted small" ng-bind="getDescription()" />
+        <h4 class="modal-title" ng-bind="title"></h4>
+        <p class="text-muted small" ng-bind="description" />
+        <div class="row">
+            <div class="col-xs-6">
+                <select id="selectedReport" data-live-search="true" ng-options="report as (report.name +' | ' +report.reportId) for report in previousReports track by report.reportId"
+                        class="form-control selectpicker with-search" data-live-search="true" title="Select a report in the list or search..." selectpicker
+                        ng-model="previousReports.selected" >
+                </select>
+            </div>
+            <div class="col-xs-3">
+                <button class="btn btn-primary" type="button" ng-click="">New Report</button>
+            </div>
+        </div>
     </div>
     <div class="modal-body">
-       <dzup-expression-report is-read-only='infoConfig.isReadOnly' model='infoConfig.inputSchemaInfo'></dzup-expression-report>
+        <form sf-schema="schema" sf-form="form" sf-model="model" sf-options="{setSchemaDefaults:true, validateOnRender: true}"></form>
     </div>
     <div class="modal-footer">
         <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
