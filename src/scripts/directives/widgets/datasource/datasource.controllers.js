@@ -214,10 +214,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
             },
             required: [
                 "reportSource",
-                "report",
-                "stream",
-                "streamType",
-                "fieldVlaue"
+                "report"
             ]
         };
 
@@ -301,104 +298,102 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                             }
                         ]
                     },
-                    {
-                        title: 'Filters',
-                        items: [
-                            {
-                                type: 'section',
-                                htmlClass: 'row',
-                                items: [
+                    // {
+                    //     title: 'Filters',
+                    //     condition:'false',
+                    //     items: [
+                    //         {
+                    //             type: 'section',
+                    //             htmlClass: 'row',
+                    //             items: [
 
-                                    {
-                                        type: 'section',
-                                        htmlClass: 'col-xs-12',
-                                        items: [
-                                            {
-                                                type: "help",
-                                                helpvalue: "<h5>Date Range Filter</h5>"
-                                            },
-                                            {
-                                                key: 'dateRange',
-                                                type: 'datepicker'
-                                            },
-                                            {
-                                                key: 'title'
-                                            }
-                                        ]
-                                    },
+                    //                 {
+                    //                     type: 'section',
+                    //                     htmlClass: 'col-xs-12',
+                    //                     items: [
+                    //                         {
+                    //                             type: "help",
+                    //                             helpvalue: "<h5>Date Range Filter</h5>"
+                    //                         },
+                    //                         {
+                    //                             key: 'dateRange',
+                    //                             type: 'datepicker'
+                    //                         }
+                    //                     ]
+                    //                 },
 
-                                    {
-                                        type: 'section',
-                                        htmlClass: 'col-xs-12',
-                                        items: [
-                                            {
-                                                type: "help",
-                                                helpvalue: "<h5>Filter Fields</h5>"
-                                            },
-                                            {
-                                                key: 'areFilterFiledsEnabled',
-                                                type: 'checkbox',
-                                                onChange: function (value) {
-                                                    if (value) {
-                                                        $scope.getReportPropeties();
-                                                    }
-                                                }
-                                            },
-                                            {
-                                                key: "filterFields",
-                                                title: " ",
-                                                add: "Add",
-                                                style: {
-                                                    "add": "btn-success"
-                                                },
-                                                items: [
-                                                    {
-                                                        type: 'section',
-                                                        htmlClass: 'row',
-                                                        items: [
-                                                            {
-                                                                type: 'section',
-                                                                htmlClass: 'col-xs-12',
-                                                                items: [
-                                                                    {
-                                                                        key: 'filterFields[].fieldProperty',
-                                                                        htmlClass: 'col-xs-4',
-                                                                        options: {
-                                                                            callback: $scope.ReportPropeties,
-                                                                        },
-                                                                        feedback: false,
-                                                                        type: 'uiselect'
-                                                                    },
-                                                                    {
-                                                                        key: 'filterFields[].fieldOperator',
-                                                                        htmlClass: 'col-xs-4',
-                                                                        options: {
-                                                                            callback: $scope.FieldFilterOperators,
-                                                                        },
-                                                                        feedback: false,
-                                                                        type: 'uiselect'
-                                                                    },
-                                                                    {
-                                                                        key: 'filterFields[].fieldValue',
-                                                                        title: 'Value',
-                                                                        htmlClass: 'col-xs-4',
-                                                                        placeholder: 'Enter Value'
-                                                                    }
-                                                                ]
-                                                            }
-                                                        ]
-                                                    }
-                                                ],
-                                                condition: "model.areFilterFiledsEnabled == true",
-                                                remove: true
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
+                    //                 {
+                    //                     type: 'section',
+                    //                     htmlClass: 'col-xs-12',
+                    //                     items: [
+                    //                         {
+                    //                             type: "help",
+                    //                             helpvalue: "<h5>Filter Fields</h5>"
+                    //                         },
+                    //                         {
+                    //                             key: 'areFilterFiledsEnabled',
+                    //                             type: 'checkbox',
+                    //                             onChange: function (value) {
+                    //                                 if (value) {
+                    //                                     $scope.getReportPropeties();
+                    //                                 }
+                    //                             }
+                    //                         },
+                    //                         {
+                    //                             key: "filterFields",
+                    //                             title: " ",
+                    //                             add: "Add",
+                    //                             style: {
+                    //                                 "add": "btn-success"
+                    //                             },
+                    //                             items: [
+                    //                                 {
+                    //                                     type: 'section',
+                    //                                     htmlClass: 'row',
+                    //                                     items: [
+                    //                                         {
+                    //                                             type: 'section',
+                    //                                             htmlClass: 'col-xs-12',
+                    //                                             items: [
+                    //                                                 {
+                    //                                                     key: 'filterFields[].fieldProperty',
+                    //                                                     htmlClass: 'col-xs-4',
+                    //                                                     options: {
+                    //                                                         callback: $scope.ReportPropeties,
+                    //                                                     },
+                    //                                                     feedback: false,
+                    //                                                     type: 'uiselect'
+                    //                                                 },
+                    //                                                 {
+                    //                                                     key: 'filterFields[].fieldOperator',
+                    //                                                     htmlClass: 'col-xs-4',
+                    //                                                     options: {
+                    //                                                         callback: $scope.FieldFilterOperators,
+                    //                                                     },
+                    //                                                     feedback: false,
+                    //                                                     type: 'uiselect'
+                    //                                                 },
+                    //                                                 {
+                    //                                                     key: 'filterFields[].fieldValue',
+                    //                                                     title: 'Value',
+                    //                                                     htmlClass: 'col-xs-4',
+                    //                                                     placeholder: 'Enter Value'
+                    //                                                 }
+                    //                                             ]
+                    //                                         }
+                    //                                     ]
+                    //                                 }
+                    //                             ],
+                    //                             condition: "model.areFilterFiledsEnabled == true",
+                    //                             remove: true
+                    //                         }
+                    //                     ]
+                    //                 }
+                    //             ]
+                    //         }
 
-                        ]
-                    }
+                    //     ]
+                    // }
 
                 ]
             },
