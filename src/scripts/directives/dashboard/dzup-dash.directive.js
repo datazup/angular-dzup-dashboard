@@ -25,7 +25,7 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                         var list = result.list;
 
                         for(i=0;i<list.length;i++){
-
+                            //result.list[i].dashboard.key =$scope.generateUUID();
                             var dashItem = result.list[i].dashboard;
                             //dashItem.title = "Dashboard " + (i + 1);
                             dashItem.identifier = result.list[i].id;
@@ -69,17 +69,17 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
 
                 $scope.addDashboard = function ($event) {
 
-                        if(typeof $event != 'undefined'){
-                            var dash = $scope.getDashboardTemplate();
-                            $scope.dashboardList.push(dash);
-                            $scope.selectDashboard(dash);
-                        }
+                    if(typeof $event != 'undefined'){
+                        var dash = $scope.getDashboardTemplate();
+                        $scope.dashboardList.push(dash);
+                        $scope.selectDashboard(dash);
+                    }
 
-                        var self = this;
-                        $timeout(function () {
-                            var activeIndex = $scope.dashboardList.length;
-                            self.$parent.tabset.select(activeIndex);
-                        }, 10);
+                    var self = this;
+                    $timeout(function () {
+                        var activeIndex = $scope.dashboardList.length;
+                        self.$parent.tabset.select(activeIndex);
+                    }, 10);
                 };
 
                 $scope.removeDashboard = function (dashboard, $event) {

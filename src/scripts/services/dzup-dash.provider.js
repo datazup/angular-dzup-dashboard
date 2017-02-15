@@ -60,6 +60,10 @@ dzupDashboard.provider('$dzupDashboard', function () {
                  return $http.get(conf.host + conf.sourcesUrl);
             }
 
+             this.getSourcesStatic = function(){
+                 return  [{ value: "twitter_stream", label: "Twitter stream" }];
+            }
+
             this.getReportsBySource = function(source){
                  var s = encodeURIComponent(source);
                  return $http.get(conf.host + conf.reportsBySourcesUrl  +'?source='+s);
