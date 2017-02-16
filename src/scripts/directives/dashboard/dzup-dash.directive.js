@@ -24,17 +24,31 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                 $dzupDashboard.getDashboards().success(function (result) {
 
                     var staticDashboards = $dzupDashboard.getStaticDashboards();
+
+                    $dzupDashboard.getScheduledStreams().success(function (result) { return result; })
+                        .then(function (result) {
+
+                            var availableStreams = _.map(result.data.list, function (x) { return { value: x.streamId, label: x.keyword } });
+
+                            staticDashboards[0].rows[0].columns[0].widgets[0].config.definitionModel.stream = availableStreams[0].value;
+                            staticDashboards[0].rows[0].columns[0].widgets[0].stream = availableStreams[0].value;
+                            staticDashboards[1].rows[0].columns[0].widgets[0].config.definitionModel.stream = availableStreams[0].value;
+                            staticDashboards[1].rows[0].columns[0].widgets[0].stream = availableStreams[0].value;
+                            staticDashboards[2].rows[0].columns[0].widgets[0].config.definitionModel.stream = availableStreams[0].value;
+                            staticDashboards[2].rows[0].columns[0].widgets[0].stream = availableStreams[0].value;
+                        });
+
                     if (staticDashboards != null && staticDashboards.length > 0) {
 
-                        for(j=0;j<staticDashboards.length;j++){
+                        for (j = 0; j < staticDashboards.length; j++) {
                             staticDashboards[j].key = $scope.generateUUID();
                             var staticDashItem = staticDashboards[j];
                             staticDashItem.identifier = $scope.generateUUID();
                             staticDashItem.staticDashboard = true;
 
-                            $scope.dashboardList.push({model:staticDashItem});
+                            $scope.dashboardList.push({ model: staticDashItem });
 
-                            if((result == null || result.list.length == 0) && j==(staticDashboards.length-1))
+                            if ((result == null || result.list.length == 0) && j == (staticDashboards.length - 1))
                                 $scope.selectedDashboard = staticDashItem;
                         }
                     }
@@ -42,15 +56,15 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                     if (result != null && result.list.length > 0) {
                         var list = result.list;
 
-                        for(i=0;i<list.length;i++){
-                            result.list[i].dashboard.key =$scope.generateUUID();
+                        for (i = 0; i < list.length; i++) {
+                            result.list[i].dashboard.key = $scope.generateUUID();
                             var dashItem = result.list[i].dashboard;
                             //dashItem.title = "Dashboard " + (i + 1);
                             dashItem.identifier = result.list[i].id;
 
-                            $scope.dashboardList.push({model:dashItem});
+                            $scope.dashboardList.push({ model: dashItem });
 
-                            if(i==(list.length-1))
+                            if (i == (list.length - 1))
                                 $scope.selectedDashboard = dashItem;
                         }
                     }
@@ -87,7 +101,7 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
 
                 $scope.addDashboard = function ($event) {
 
-                    if(typeof $event != 'undefined'){
+                    if (typeof $event != 'undefined') {
                         var dash = $scope.getDashboardTemplate();
                         $scope.dashboardList.push(dash);
                         $scope.selectDashboard(dash);
@@ -103,7 +117,7 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                 $scope.removeDashboard = function (dashboard, $event) {
                     $event.preventDefault();
 
-                    if(dashboard.staticDashboard)return;
+                    if (dashboard.staticDashboard) return;
 
                     var index = $scope.indexOfItem(dashboard);
                     if (index === -1) {
@@ -133,7 +147,7 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                 };
 
                 $scope.update = function (dashItem) {
-                    if(dashItem.model.staticDashboard == true)return;
+                    if (dashItem.model.staticDashboard == true) return;
 
                     $dzupDashboard.create(dashItem)
                         .success(function (result) {
@@ -146,7 +160,7 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                 };
 
                 $scope.saveOrUpdate = function (dashItem) {
-                    if(dashItem.model.staticDashboard == true)return;
+                    if (dashItem.model.staticDashboard == true) return;
 
                     if (dashItem.id && (typeof dashItem.id != "undefined")) {
                         $scope.update(dashItem);

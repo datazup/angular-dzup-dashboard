@@ -42,6 +42,11 @@ app.controller('DzupGenericDataSourceController', ['$scope', '$rootScope','$time
             execCall().success(function (result) { return result; })
                 .then(function (result) {
                         $scope.AvailableStreams = _.map(result.data.list, function (x) { return { value: x.streamId, label: x.keyword } });
+
+                        //Sending available streams to populate static dashboards
+                        $rootScope.$broadcast('streamsLoaded', $scope.AvailableStreams);
+
+
                         $timeout(function(){
                         if (!$scope.$$phase) $scope.$apply()
 
@@ -56,9 +61,9 @@ app.controller('DzupGenericDataSourceController', ['$scope', '$rootScope','$time
             && config.definitionModel.streamType != null) {
             getAvailableStreams(config.definitionModel.streamType, false);
         }
+
         $scope.StreamTypes = [{ value: "scheduled", label: "Scheduled" }, { value: "regular", label: "Regular" }]
         $scope.StreamTypes.selected =  _.find($scope.StreamTypes, {'value': config.definitionModel.streamType});
-
     }
 ]);
 
