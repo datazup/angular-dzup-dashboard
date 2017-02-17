@@ -25,7 +25,7 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
 
                     var staticDashboards = $dzupDashboard.getStaticDashboards();
 
-                    $dzupDashboard.getScheduledStreams().success(function (result) { return result; })
+                    $dzupDashboard.getRegularStreams().success(function (result) { return result; })
                         .then(function (result) {
 
                             var availableStreams = _.map(result.data.list, function (x) { return { value: x.streamId, label: x.keyword } });
