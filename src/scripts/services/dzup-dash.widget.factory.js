@@ -312,6 +312,7 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
 
     var widgets = [];
     var widgetsData = [];
+    var callList = [];
     return {
         setDashboardWidgets: function (index, dashboard) {
 
@@ -330,6 +331,34 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                     }
                 }
             }
+        },
+        setCall: function (identifier, data) {
+
+            var promise = { identifier: identifier, data: data };
+            if (typeof promise != 'undefined') {
+                var index = _.indexOf(this.callList, _.find(this.callList, { identifier: promise.identifier }));
+                if (index != -1) {
+                    this.callList.splice(index, 1, promise);
+                }
+                else {
+                    this.callList.push(promise);
+                }
+            }
+        },
+        removeCall: function(identifier)
+        {
+            var index = _.indexOf(this.callList, _.find(this.callList, { identifier: identifier }));
+             if (index != -1) {
+                 this.callList.splice(index, 1);
+             }
+        },
+        getPromise: function(identifier)
+        {
+            var index = _.indexOf(this.callList, _.find(this.callList, { identifier: identifier }));
+             if (index != -1) {
+                 return this.callList[index].data
+             }
+             return null;
         },
         setWidgetData: function (wid, data) {
 
@@ -351,25 +380,31 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
              }
         },
         getWidgetData: function (wid) {
-            var deferred = new $.Deferred();
             var self = this;
+            var deferred = self.getPromise(wid);
+
+            if(deferred != null) return deferred.promise();
+
+            deferred = new $.Deferred();
             var index = _.indexOf(self.widgetsData, _.find(self.widgetsData, { wid: wid }));
-            if (index != -1)
+            if (index != -1){
                 deferred.resolve(this.widgetsData[index]);
+            }
             else {
                 index = _.indexOf(self.widgets, _.find(self.widgets, { wid: wid }));
 
                 if (index != -1) {
                     var widget = self.widgets[index];
                     $dzupDashboard.getReport(widget.config.definitionModel.reportSource, widget.config.definitionModel.stream, widget.config.definitionModel.report).then(function (result) {
-                        self.setWidgetData(wid, result)
+                        self.setWidgetData(wid, result);
+                        self.removeCall(wid);
                         deferred.resolve(self.getWidgetData(wid));
                     });
+                    self.setCall(wid, deferred);
                 }
                 else {
                     deferred.resolve(null);
                 }
-
             }
             return deferred.promise();
         },
@@ -397,6 +432,7 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
         clear: function () {
             this.widgets = [];
             this.widgetsData = [];
+            this.callList = [];
         },
         getWidgets: function () {
             return this.widgets;

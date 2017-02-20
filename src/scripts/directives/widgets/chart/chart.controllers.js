@@ -31,7 +31,6 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
             $scope.populatedChart = chartService.getChartData(wData, $scope.chart, $scope.chartOptions);
         };
 
-
         $scope.$on('widgetStreamChanged', function(event, data) {
         if(config.definitionModel.dataSource != data) return;
 
@@ -158,7 +157,6 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
             return $scope.chartTypes;
         }
         // END OF FUNCTIONS
-
 
         if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined' && config.definitionModel.dataSource!= null) {
            $scope.reportColumns = $scope.getReportColumns(config.definitionModel.dataSource, false);
