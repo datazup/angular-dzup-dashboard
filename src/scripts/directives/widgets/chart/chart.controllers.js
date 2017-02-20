@@ -1,9 +1,19 @@
 var app = angular.module('dzupDash');
 
-app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfigUtils', 'config', 'widget', 'chartService', 'dzupDashboardWidgetHelper',
-    function ($scope, $timeout, $dzupConfigUtils, config, widget, chartService, dzupDashboardWidgetHelper) {
+app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfigUtils', 'config', 'widget', 'chartService', 'dzupDashboardWidgetHelper', 'usSpinnerService',
+    function ($scope, $timeout, $dzupConfigUtils, config, widget, chartService, dzupDashboardWidgetHelper, usSpinnerService) {
         $scope.config = config;
         $scope.widget = widget;
+
+        $scope.startSpin = function () {
+            usSpinnerService.spin('spinner-1');
+        }
+
+        $scope.stopSpin = function () {
+            usSpinnerService.stop('spinner-1');
+        }
+
+
 
         $scope.setChartData = function (result) {
             if (typeof result.data.length == 'undefined') {
@@ -29,26 +39,41 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
             }
 
             $scope.populatedChart = chartService.getChartData(wData, $scope.chart, $scope.chartOptions);
+
         };
 
 
-        $scope.$on('widgetStreamChanged', function(event, data) {
-        if(config.definitionModel.dataSource != data) return;
+        $scope.$on('widgetStreamChanged', function (event, data) {
+            if (config.definitionModel.dataSource != data) return;
 
-        if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined') {
-                                 dzupDashboardWidgetHelper.getWidgetData(config.definitionModel.dataSource).then(function (result) {
-                                     if (result == null) return;
+            if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined') {
 
-                                     if (result.data != null && typeof result.data != 'undefined') {
-                                         $scope.setChartData(result);
-                                     }
-                                     else {
-                                         result.then(function (pResult) {
-                                             $scope.setChartData(pResult.data);
-                                         });
-                                     }
-                                 });
-                             }
+
+                $scope.showChart = false;
+                $scope.showSpinner = true;
+
+                $timeout(function () {
+                    dzupDashboardWidgetHelper.getWidgetData(config.definitionModel.dataSource).then(function (result) {
+                        if (result == null) return;
+
+                        if (result.data != null && typeof result.data != 'undefined') {
+                            $scope.setChartData(result);
+                            $scope.showSpinner = false;
+                            $scope.showChart = true;
+                        }
+                        else {
+                            result.then(function (pResult) {
+                                $scope.setChartData(pResult.data);
+                                $scope.showSpinner = false;
+                                $scope.showChart = true;
+                            });
+                        }
+                    });
+
+                }, 2000);
+
+
+            }
         });
 
         if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined') {
@@ -160,8 +185,8 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
         // END OF FUNCTIONS
 
 
-        if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined' && config.definitionModel.dataSource!= null) {
-           $scope.reportColumns = $scope.getReportColumns(config.definitionModel.dataSource, false);
+        if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined' && config.definitionModel.dataSource != null) {
+            $scope.reportColumns = $scope.getReportColumns(config.definitionModel.dataSource, false);
         }
 
         $scope.config.definitionModel = $scope.config.definitionModel || {};
@@ -187,7 +212,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                     title: 'Chart Type',
                     format: "uiselect",
                     placeholder: 'Select Chart Type',
-                    default:null,
+                    default: null,
                     validationMessage: "Required"
                 },
                 dataSource: {
@@ -195,7 +220,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                     title: 'Data Source',
                     format: "uiselect",
                     placeholder: 'Select Data Source',
-                    default:null,
+                    default: null,
                     validationMessage: "Required"
                 }
             },
@@ -304,7 +329,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                             },
                                                             {
                                                                 key: 'sortOrder',
-                                                                htmlClass:'sort-options-radio',
+                                                                htmlClass: 'sort-options-radio',
                                                                 condition: "model.sort==true",
                                                                 type: 'radios-inline',
                                                                 titleMap: [
@@ -320,7 +345,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                             },
                                                             {
                                                                 key: 'sortBy',
-                                                                htmlClass:'sort-options-radio',
+                                                                htmlClass: 'sort-options-radio',
                                                                 condition: "model.sort==true",
                                                                 type: 'radios-inline',
                                                                 titleMap: [
@@ -418,7 +443,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                             },
                                                             {
                                                                 key: 'sortOrder',
-                                                                htmlClass:'sort-options-radio',
+                                                                htmlClass: 'sort-options-radio',
                                                                 condition: "model.sort==true",
                                                                 type: 'radios-inline',
                                                                 titleMap: [
@@ -434,7 +459,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                             },
                                                             {
                                                                 key: 'sortBy',
-                                                                htmlClass:'sort-options-radio',
+                                                                htmlClass: 'sort-options-radio',
                                                                 condition: "model.sort==true",
                                                                 type: 'radios-inline',
                                                                 titleMap: [
@@ -534,7 +559,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                             },
                                                             {
                                                                 key: 'sortOrder',
-                                                                htmlClass:'sort-options-radio',
+                                                                htmlClass: 'sort-options-radio',
                                                                 condition: "model.sort==true",
                                                                 type: 'radios-inline',
                                                                 titleMap: [
@@ -550,7 +575,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                             },
                                                             {
                                                                 key: 'sortBy',
-                                                                htmlClass:'sort-options-radio',
+                                                                htmlClass: 'sort-options-radio',
                                                                 condition: "model.sort==true",
                                                                 type: 'radios-inline',
                                                                 titleMap: [
@@ -610,7 +635,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
 
         tv4.addSchema('chartSchema', $scope.schema);
 
-        config.definitionModel.validateForm = function (){
+        config.definitionModel.validateForm = function () {
             $scope.$broadcast('schemaFormValidate');
         }
     }
