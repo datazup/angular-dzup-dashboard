@@ -5,16 +5,6 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
         $scope.config = config;
         $scope.widget = widget;
 
-        $scope.startSpin = function () {
-            usSpinnerService.spin('spinner-1');
-        }
-
-        $scope.stopSpin = function () {
-            usSpinnerService.stop('spinner-1');
-        }
-
-
-
         $scope.setChartData = function (result) {
             if (typeof result.data.length == 'undefined') {
                 result = result.data;
@@ -47,35 +37,30 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
 
             if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined') {
 
-
                 $scope.showChart = false;
                 $scope.showSpinner = true;
 
-                $timeout(function () {
-                    dzupDashboardWidgetHelper.getWidgetData(config.definitionModel.dataSource).then(function (result) {
-                        if (result == null) return;
+                dzupDashboardWidgetHelper.getWidgetData(config.definitionModel.dataSource).then(function (result) {
+                    if (result == null) return;
 
-                        if (result.data != null && typeof result.data != 'undefined') {
-                            $scope.setChartData(result);
+                    if (result.data != null && typeof result.data != 'undefined') {
+                        $scope.setChartData(result);
+                        $scope.showSpinner = false;
+                        $scope.showChart = true;
+                    }
+                    else {
+                        result.then(function (pResult) {
+                            $scope.setChartData(pResult.data);
                             $scope.showSpinner = false;
                             $scope.showChart = true;
-                        }
-                        else {
-                            result.then(function (pResult) {
-                                $scope.setChartData(pResult.data);
-                                $scope.showSpinner = false;
-                                $scope.showChart = true;
-                            });
-                        }
-                    });
-
-                }, 2000);
-
-
+                        });
+                    }
+                });
             }
         });
 
         if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined') {
+
             dzupDashboardWidgetHelper.getWidgetData(config.definitionModel.dataSource).then(function (result) {
                 if (result == null) return;
 
@@ -183,14 +168,9 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
         }
         // END OF FUNCTIONS
 
-<<<<<<< HEAD
 
         if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined' && config.definitionModel.dataSource != null) {
             $scope.reportColumns = $scope.getReportColumns(config.definitionModel.dataSource, false);
-=======
-        if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined' && config.definitionModel.dataSource!= null) {
-           $scope.reportColumns = $scope.getReportColumns(config.definitionModel.dataSource, false);
->>>>>>> 00cdf25d142d38d0e170828b2c37792c55cc50f0
         }
 
         $scope.config.definitionModel = $scope.config.definitionModel || {};
