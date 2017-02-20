@@ -16,6 +16,15 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
 
                 $scope.selectDashboard = function (dashboard, index) {
 
+                    //keeps the dashboard changes in the page memory
+                    if(typeof $scope.selectedDashboard != 'undefined' && $scope.selectedDashboard != null
+                    && typeof $scope.selectedDashboard.model != 'undefined' ){
+                        var index = _.indexOf($scope.dashboardList, _.find($scope.dashboardList, { model:{identifier: $scope.selectedDashboard.model.identifier} }));
+                        if (index != -1) {
+                            $scope.dashboardList.splice(index, 1, $scope.selectedDashboard);
+                        }
+                    }
+
                     $scope.selectedDashboard = dashboard;
                     dzupDashboardWidgetHelper.setDashboardWidgets(index, dashboard);
                 };
