@@ -12,14 +12,15 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                 $scope.tabUrl = $dzupConfigUtils.templateUrlBase['dzup-dashboard'] + '/templates/dashboard.tab.template.view.html';
 
                 $scope.dashboardList = [];
+
                 $scope.selectedDashboard = {};
 
                 $scope.selectDashboard = function (dashboard, index) {
 
                     //keeps the dashboard changes in the page memory
-                    if(typeof $scope.selectedDashboard != 'undefined' && $scope.selectedDashboard != null
-                    && typeof $scope.selectedDashboard.model != 'undefined' ){
-                        var index = _.indexOf($scope.dashboardList, _.find($scope.dashboardList, { model:{identifier: $scope.selectedDashboard.model.identifier} }));
+                    if (typeof $scope.selectedDashboard != 'undefined' && $scope.selectedDashboard != null
+                        && typeof $scope.selectedDashboard.model != 'undefined') {
+                        var index = _.indexOf($scope.dashboardList, _.find($scope.dashboardList, { model: { identifier: $scope.selectedDashboard.model.identifier } }));
                         if (index != -1) {
                             $scope.dashboardList.splice(index, 1, $scope.selectedDashboard);
                         }
@@ -27,6 +28,14 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
 
                     $scope.selectedDashboard = dashboard;
                     dzupDashboardWidgetHelper.setDashboardWidgets(index, dashboard);
+                };
+
+                //Add first available regular stream to static dashboards
+                $scope.addFirstAvailableStream = function (dashboards, firstAvailableStreamId) {
+                    for (var i = 0; i < dashboards.length; i++) {
+                        dashboards[i].rows[0].columns[0].widgets[0].config.definitionModel.stream = firstAvailableStreamId;
+                        dashboards[i].rows[0].columns[0].widgets[0].stream = firstAvailableStreamId;
+                    }
                 };
 
                 // Init dashboard load
@@ -39,12 +48,9 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
 
                             var availableStreams = _.map(result.data.list, function (x) { return { value: x.streamId, label: x.keyword } });
 
-                            staticDashboards[0].rows[0].columns[0].widgets[0].config.definitionModel.stream = availableStreams[0].value;
-                            staticDashboards[0].rows[0].columns[0].widgets[0].stream = availableStreams[0].value;
-                            staticDashboards[1].rows[0].columns[0].widgets[0].config.definitionModel.stream = availableStreams[0].value;
-                            staticDashboards[1].rows[0].columns[0].widgets[0].stream = availableStreams[0].value;
-                            staticDashboards[2].rows[0].columns[0].widgets[0].config.definitionModel.stream = availableStreams[0].value;
-                            staticDashboards[2].rows[0].columns[0].widgets[0].stream = availableStreams[0].value;
+                            var firsAvailableStream = availableStreams[0].value;
+
+                            $scope.addFirstAvailableStream(staticDashboards, firsAvailableStream);
                         });
 
                     if (staticDashboards != null && staticDashboards.length > 0) {
