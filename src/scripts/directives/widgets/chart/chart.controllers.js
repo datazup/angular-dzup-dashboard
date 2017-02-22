@@ -206,7 +206,63 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                     placeholder: 'Select Data Source',
                     default: null,
                     validationMessage: "Required"
-                }
+                },
+                chartTitle: {
+                    type: 'string',
+                    title: 'Chart Title',
+                },
+                xAxisLabel: {
+                    type: 'string',
+                    title: 'X Axis Label'
+                },
+                yAxisLabel: {
+                    type: 'string',
+                    title: 'Y Axis Label'
+                },
+                xAxis: {
+                    type: 'string',
+                    title: 'X Axis',
+                    format: "uiselect",
+                    placeholder: 'Select X Axis Property',
+                    default: null,
+                    validationMessage: "Required"
+                },
+                yAxis: {
+                    type: 'string',
+                    title: 'Y Axis',
+                    format: "uiselect",
+                    placeholder: 'Select Y Axis Property',
+                    default: null,
+                    validationMessage: "Required"
+                },
+                chartColor: {
+                    type: 'string',
+                    title: 'Chart Color',
+                },
+                sort: {
+                    title: "Sort Data",
+                    description: "",
+                    type: "boolean",
+                    default: false
+                },
+                sortOrder: {
+                    title: ' ',
+                    type: "string"
+                },
+                sortBy: {
+                    title: ' ',
+                    type: "string"
+                },
+                from: {
+                    title: "From",
+                    default: 1,
+                    type: "number"
+                },
+                to: {
+                    title: "To",
+                    default: 20,
+                    type: "number"
+                },
             },
             required: [
                 "chartType",
@@ -217,7 +273,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
 
         };
 
-        chartService.updateChartSchemaProperties('discreteBarChart', $scope.schema.properties);
+        // chartService.updateChartSchemaProperties('discreteBarChart', $scope.schema.properties);
 
         $scope.form = [
             {
@@ -386,7 +442,8 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                         items: [
                                             {
                                                 key: 'xAxisLabel',
-                                                placeholder: 'Enter X Axis Label Here'
+                                                placeholder: 'Enter X Axis Label Here',
+                                                feedback: false,
                                             },
                                             {
                                                 key: 'xAxis',
@@ -399,7 +456,8 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                             },
                                             {
                                                 key: 'yAxisLabel',
-                                                placeholder: 'Enter Y Axis Label Here'
+                                                placeholder: 'Enter Y Axis Label Here',
+                                                feedback: false,
                                             },
                                             {
                                                 key: 'yAxis',
@@ -500,7 +558,8 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                         items: [
                                             {
                                                 key: 'xAxisLabel',
-                                                placeholder: 'Enter X Axis Label Here'
+                                                placeholder: 'Enter X Axis Label Here',
+                                                feedback: false,
                                             },
                                             {
                                                 key: 'xAxis',
@@ -512,7 +571,8 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                             },
                                             {
                                                 key: 'yAxisLabel',
-                                                placeholder: 'Enter Y Axis Label Here'
+                                                placeholder: 'Enter Y Axis Label Here',
+                                                feedback: false,
                                             },
                                             {
                                                 key: 'yAxis',
@@ -524,7 +584,8 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                             },
                                             {
                                                 key: 'chartColor',
-                                                placeholder: 'Enter Chart Color Here'
+                                                placeholder: 'Enter Chart Color Here',
+                                                feedback: false,
                                             },
                                             {
                                                 type: 'section',
