@@ -43,10 +43,6 @@ app.controller('DzupGenericDataSourceController', ['$scope', '$rootScope','$time
                 .then(function (result) {
                         $scope.AvailableStreams = _.map(result.data.list, function (x) { return { value: x.streamId, label: x.keyword } });
 
-                        //Sending available streams to populate static dashboards
-                        $rootScope.$broadcast('streamsLoaded', $scope.AvailableStreams);
-
-
                         $timeout(function(){
                         if (!$scope.$$phase) $scope.$apply()
 
@@ -294,8 +290,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                                 type: 'button',
                                                 title: 'Create Report',
                                                 onClick: "createReport()",
-                                                feedback: false,
-                                                condition:'false'
+                                                feedback: false
                                             }
                                         ]
                                     }

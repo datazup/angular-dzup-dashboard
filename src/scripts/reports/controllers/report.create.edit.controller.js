@@ -280,9 +280,21 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
                                 default: null,
                                 required: false
                             },
-                            value: {
+                            valueR: {
                                 type: 'string',
                                 title: 'Value',
+                                default: null,
+                                required: false
+                            },
+                            captureGroup: {
+                                type: 'string',
+                                title: 'Capture Group',
+                                default: null,
+                                required: false
+                            },
+                            dimensionAlias: {
+                                type: 'string',
+                                title: 'Column Name',
                                 default: null,
                                 required: false
                             }
@@ -321,7 +333,12 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
                                 default: null,
                                 required: false
                             },
-
+                            metricAlias: {
+                                type: 'string',
+                                title: 'Column Name',
+                                default: null,
+                                required: false
+                            }
                         }
                     }
                 }
@@ -428,6 +445,7 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
                                                        {
                                                            htmlClass: "col-xs-4",
                                                            key: 'dimensions[].dimensionFunction',
+                                                           titleMap: $scope.dimensionFunctions,
                                                            options: {
                                                                callback: $scope.dimensionFunctions
                                                            },
@@ -435,12 +453,25 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
                                                            type: 'uiselect'
                                                        },
                                                        {
-                                                          htmlClass: "col-xs-4",
-                                                          key: 'dimensions[].value',
+                                                          key: 'dimensions[].valueR',
                                                           feedback: false,
                                                           type: 'string',
-                                                          condition: "dimensions[].dimensionFunction == 'REGEX_EXTRACT' || dimensions[].dimensionFunction == 'REGEX_MATCH'"
-                                                      }
+                                                          condition: "(model.dimensions[arrayIndex].dimensionFunction == 'REGEX_EXTRACT') || (model.dimensions[arrayIndex].dimensionFunction == 'REGEX_MATCH')",
+                                                          htmlClass: "col-xs-4"
+                                                       },
+                                                       {
+                                                          key: 'dimensions[].captureGroup',
+                                                          feedback: false,
+                                                          type: 'string',
+                                                          condition: "(model.dimensions[arrayIndex].dimensionFunction == 'REGEX_EXTRACT')",
+                                                          htmlClass: "col-xs-4"
+                                                       },
+                                                       {
+                                                          key: 'dimensions[].dimensionAlias',
+                                                          feedback: false,
+                                                          type: 'string',
+                                                          htmlClass: "col-xs-4"
+                                                       }
                                                    ]
                                                }]
                                             }
@@ -492,6 +523,12 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
                                                            },
                                                            feedback: false,
                                                            type: 'uiselect'
+                                                       },
+                                                       {
+                                                           key: 'metrics[].metricAlias',
+                                                           feedback: false,
+                                                           type: 'string',
+                                                           htmlClass: "col-xs-4"
                                                        }
                                                    ]
                                                }]
@@ -517,10 +554,75 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
             }
         };
         $scope.title = "Reports";
+
         $scope.ok = function () {
-            $uibModalInstance.close({
+
+            var model = $scope.model;
+
+            var dimensions = model.dimensions;
+            var metrics = model.metrics;
+            var report = {
+                dimensions: [],
+                metrics: []
+            };
+
+            for(i=0;i<dimensions.length;i++)
+            {
+                var dimensionItem = {};
+                dimensionItem.type = dimensions[i].dimensionType;
+
+                var dimensionFN = "$"+ dimensions[i].dimensionProperty + "$";
+                if(typeof dimensions[i].dimensionFunction != 'undefined'){
+                    if(dimensions[i].dimensionFunction == 'REGEX_EXTRACT'  || dimensions[i].dimensionFunction == 'REGEX_MATCH'){
+                        if(dimensions[i].dimensionFunction == 'REGEX_EXTRACT' ){
+                            var captureGroup = (typeof dimensions[i].captureGroup != 'undefined') ? "," +dimensions[i].captureGroup : "";
+                            dimensionFN = dimensions[i].dimensionFunction + "("+ dimensionFN+ ", '#" + dimensions[i].valueR + "#'"+ captureGroup+")";
+                        }
+                        else{
+                            dimensionFN = dimensions[i].dimensionFunction + "("+ dimensionFN+ ", '" + dimensions[i].valueR + "')";
+                        }
+                    }
+                    else{
+                        dimensionFN = dimensions[i].dimensionFunction + "("+ dimensionFN+ ")";
+                    }
+                }
+
+                if(typeof dimensions[i].dimensionAlias != 'undefined' && dimensions[i].dimensionAlias != null){
+                    dimensionItem.name = dimensions[i].dimensionAlias;
+                    dimensionItem.func =  dimensionFN;
+                }
+                else{
+                    dimensionItem.name = dimensionFN;
+                }
+                report.dimensions.push(dimensionItem);
+            }
+
+            for(i=0;i<metrics.length;i++)
+            {
+                var metricItem = {};
+                metricItem.type = metrics[i].metricType;
+
+                var metricFN = "$"+ metrics[i].metricProperty + "$";
+                if(typeof metrics[i].metricFunction != 'undefined' && metrics[i].metricFunction != null){
+                   metricFN = metrics[i].metricFunction + "("+ metricFN+ ")";
+                }
+
+                if(typeof metrics[i].metricAlias != 'undefined' && metrics[i].metricAlias != null){
+                    metricItem.name = metrics[i].metricAlias;
+                    metricItem.func =  metricFN;
+                }
+                else{
+                    metricItem.name = metricFN;
+                }
+
+                report.metrics.push(metricItem);
+            }
+
+            console.log("report:");
+            console.log(JSON.stringify(report))
+           /* $uibModalInstance.close({
                 value: 'evo ga'
-            });
+            });*/
         };
 
         $scope.cancel = function () {
