@@ -35,64 +35,64 @@ app.factory('chartService', [function () {
                     return null;
             }
         },
-        updateChartSchemaProperties: function (chartType, schemeProperties) {
-            schemeProperties.chartTitle = {
-                type: 'string',
-                title: 'Chart Title',
-            }
-            schemeProperties.xAxisLabel = {
-                type: 'string',
-                title: 'X Axis Label'
-            }
-            schemeProperties.yAxisLabel = {
-                type: 'string',
-                title: 'Y Axis Label'
-            }
-            schemeProperties.xAxis = {
-                type: 'string',
-                title: 'X Axis',
-                format: "uiselect",
-                placeholder: 'Select X Axis Property',
-                default: null,
-                validationMessage: "Required"
-            }
-            schemeProperties.yAxis = {
-                type: 'string',
-                title: 'Y Axis',
-                format: "uiselect",
-                placeholder: 'Select Y Axis Property',
-                default: null,
-                validationMessage: "Required"
-            }
-            schemeProperties.chartColor = {
-                type: 'string',
-                title: 'Chart Color',
-            }
-            schemeProperties.sort = {
-                title: "Sort Data",
-                description: "",
-                type: "boolean",
-                default: false
-            }
-            schemeProperties.sortOrder = {
-                title: ' ',
-                type: "string"
-            }
-            schemeProperties.sortBy = {
-                title: ' ',
-                type: "string"
-            }
-            schemeProperties.from = {
-                title: "From",
-                default: 1,
-                type: "number"
-            }
-            schemeProperties.to = {
-                title: "To",
-                default: 20,
-                type: "number"
-            }
-        },
+        // updateChartSchemaProperties: function (chartType, schemeProperties) {
+        //     schemeProperties.chartTitle = {
+        //         type: 'string',
+        //         title: 'Chart Title',
+        //     }
+        //     schemeProperties.xAxisLabel = {
+        //         type: 'string',
+        //         title: 'X Axis Label'
+        //     }
+        //     schemeProperties.yAxisLabel = {
+        //         type: 'string',
+        //         title: 'Y Axis Label'
+        //     }
+        //     schemeProperties.xAxis = {
+        //         type: 'string',
+        //         title: 'X Axis',
+        //         format: "uiselect",
+        //         placeholder: 'Select X Axis Property',
+        //         default: null,
+        //         validationMessage: "Required"
+        //     }
+        //     schemeProperties.yAxis = {
+        //         type: 'string',
+        //         title: 'Y Axis',
+        //         format: "uiselect",
+        //         placeholder: 'Select Y Axis Property',
+        //         default: null,
+        //         validationMessage: "Required"
+        //     }
+        //     schemeProperties.chartColor = {
+        //         type: 'string',
+        //         title: 'Chart Color',
+        //     }
+        //     schemeProperties.sort = {
+        //         title: "Sort Data",
+        //         description: "",
+        //         type: "boolean",
+        //         default: false
+        //     }
+        //     schemeProperties.sortOrder = {
+        //         title: ' ',
+        //         type: "string"
+        //     }
+        //     schemeProperties.sortBy = {
+        //         title: ' ',
+        //         type: "string"
+        //     }
+        //     schemeProperties.from = {
+        //         title: "From",
+        //         default: 1,
+        //         type: "number"
+        //     }
+        //     schemeProperties.to = {
+        //         title: "To",
+        //         default: 20,
+        //         type: "number"
+        //     }
+        // },
         getMappedChartData: function (data, chartOptions) {
 
             var from = parseInt(chartOptions.from);
@@ -151,7 +151,11 @@ app.factory('chartService', [function () {
                 chart: {
                     type: 'pieChart',
                     height: 500,
-                    width: 500,
+                    // width: 500,
+                    // margin: {
+                    //     right: 'auto',
+                    //     left: 'auto'
+                    // },
                     x: function (d) { return d.x; },
                     y: function (d) { return d.y; },
                     showLabels: true,
@@ -181,7 +185,7 @@ app.factory('chartService', [function () {
                 chart: {
                     type: 'lineChart',
                     height: 450,
-                    width: 450,
+                    // width: 450,
                     margin: {
                         top: 20,
                         right: 20,
