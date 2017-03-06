@@ -208,6 +208,12 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
         }
 
         $scope.PreviousReports = [];
+
+         $dzupDashboard.getClientReports().success(function (result) {
+         console.log("result rep: ");
+         console.log(result);
+
+         });
         $scope.sourceOptions = _.chain(JSON.flatten(data, {ignoreArrayPosition:true}))
                                 .map(function (value, key) {
                                    return {

@@ -383,7 +383,7 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
             var deferred = new $.Deferred();
 
             $dzupDashboard.getReport(reportSource, stream, report).then(function (result) {
-                deferred.resolve(result.data[1]);
+                deferred.resolve(result.columns);
             });
 
             return deferred.promise();

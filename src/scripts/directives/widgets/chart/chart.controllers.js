@@ -9,7 +9,7 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
             if (typeof result.data.length == 'undefined') {
                 result = result.data;
             }
-            var wData = result.data[0].list;
+            var wData = result.items.list;
 
             if (typeof $scope.chart == 'undefined') {
                 $scope.chart = chartService.getChart(config.definitionModel.chartType);
@@ -33,7 +33,7 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
         };
 
         $scope.$on('widgetStreamChanged', function (event, data) {
-            if (config.definitionModel.dataSource != data) return;
+            if (typeof config.definitionModel != 'undefined' && config.definitionModel.dataSource != data) return;
 
             if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined') {
 
@@ -93,11 +93,11 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
             if (typeof result.data.length == 'undefined') {
                 result = result.data;
             }
-            var wData = result.data[0].list;
-            $scope.reportColumns = _.map(result.data[1].columns, function (x) { return { value: x, label: x } });
+            var wData = typeof result.items == 'undefined' ? [] : result.items.list;
+            $scope.reportColumns = _.map(result.columns, function (x) { return { value: x, label: x } });
             $scope.injectAxisDdlValues(injectValue);
 
-            if (typeof $scope.chart == 'undefined') {
+            if ((null == $scope.chart || typeof $scope.chart == 'undefined') && config.definitionModel.chartType != null) {
                 $scope.chart = chartService.getChart(config.definitionModel.chartType);
                 $scope.chartOptions = {
                     title: config.definitionModel.chartTitle,
@@ -113,8 +113,8 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                     to: config.definitionModel.to
                 };
             }
-
-            $scope.populatedChart = chartService.getChartData(wData, $scope.chart, $scope.chartOptions);
+            if(null != $scope.chart && null != $scope.chartOptions && typeof $scope.chart !='undefined' && typeof $scope.chartOptions !='undefined')
+                $scope.populatedChart = chartService.getChartData(wData, $scope.chart, $scope.chartOptions);
         };
         $scope.injectAxisDdlValues = function (injectValue) {
             if (injectValue == true) {
