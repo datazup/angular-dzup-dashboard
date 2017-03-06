@@ -18,8 +18,8 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
                     xAxisLabel: config.definitionModel.xAxisLabel,
                     yAxisLabel: config.definitionModel.yAxisLabel,
                     color: config.definitionModel.chartColor,
-                    xAxis: config.definitionModel.xAxis,
-                    yAxis: config.definitionModel.yAxis,
+                    xAxis: "x",
+                    yAxis:  "y",
                     sort: config.definitionModel.sort,
                     sortOrder: config.definitionModel.sortOrder,
                     sortBy: config.definitionModel.sortBy,
@@ -40,7 +40,7 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
                 $scope.showChart = false;
                 $scope.showSpinner = true;
 
-                dzupDashboardWidgetHelper.getWidgetData(config.definitionModel.dataSource).then(function (result) {
+                dzupDashboardWidgetHelper.getWidgetData(config.definitionModel).then(function (result) {
                     if (result == null) return;
 
                     if (result.data != null && typeof result.data != 'undefined') {
@@ -61,7 +61,7 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
 
         if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined') {
 
-            dzupDashboardWidgetHelper.getWidgetData(config.definitionModel.dataSource).then(function (result) {
+            dzupDashboardWidgetHelper.getWidgetData(config.definitionModel).then(function (result) {
                 if (result == null) return;
 
                 if (result.data != null && typeof result.data != 'undefined') {
@@ -104,8 +104,8 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                     xAxisLabel: config.definitionModel.xAxisLabel,
                     yAxisLabel: config.definitionModel.yAxisLabel,
                     color: config.definitionModel.chartColor,
-                    xAxis: config.definitionModel.xAxis,
-                    yAxis: config.definitionModel.yAxis,
+                    xAxis: "x",
+                    yAxis:  "y",
                     sort: config.definitionModel.sort,
                     sortOrder: config.definitionModel.sortOrder,
                     sortBy: config.definitionModel.sortBy,
@@ -138,7 +138,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
 
         $scope.getReportColumns = function (value, injectValue) {
 
-            dzupDashboardWidgetHelper.getWidgetData(value).then(function (result) {
+            return dzupDashboardWidgetHelper.getWidgetData(value).then(function (result) {
                 if (result == null) return;
 
                 if (result.data != null && typeof result.data != 'undefined') {
@@ -149,9 +149,8 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                         $scope.setChartData(injectValue, pResult.data);
                     });
                 }
+                return $scope.reportColumns;
             });
-
-            return $scope.reportColumns;
         }
 
         $scope.getChartTypes = function (injectValue) {
@@ -168,9 +167,9 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
         }
         // END OF FUNCTIONS
 
-
         if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined' && config.definitionModel.dataSource != null) {
-            $scope.reportColumns = $scope.getReportColumns(config.definitionModel.dataSource, false);
+           //gets promise
+           $scope.reportColumns = $scope.getReportColumns(config.definitionModel, false);
         }
 
         $scope.config.definitionModel = $scope.config.definitionModel || {};
@@ -311,7 +310,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                     callback: _.map(dzupDashboardWidgetHelper.getWidgetsByType("dataSource"), function (x) { return { value: x.wid, label: x.title } }),
                                                     eventCallback: function (value) {
                                                         if (typeof value != 'undefined') {
-                                                            $scope.getReportColumns(value, true);
+                                                            $scope.getReportColumns(config.definitionModel, true);
                                                         }
                                                     }
                                                 },

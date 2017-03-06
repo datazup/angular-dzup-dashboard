@@ -383,9 +383,33 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                  this.widgetsData.splice(index, 1);
              }
         },
-        getWidgetData: function (wid) {
+        getWidgetData: function (definitionModel) {
+           var deferred = new $.Deferred();
             var self = this;
-            var deferred = self.getPromise(wid);
+            var dataSourceWidgetIndex = _.indexOf(self.widgets, _.find(self.widgets, { wid: definitionModel.dataSource }));
+
+            if (dataSourceWidgetIndex != -1) {
+                var dataSourceWidget = self.widgets[dataSourceWidgetIndex];
+                var parameters = {
+                    reportSource: dataSourceWidget.config.definitionModel.reportSource,
+                    stream: dataSourceWidget.config.definitionModel.stream,
+                    reportName: dataSourceWidget.config.definitionModel.report,
+                    groupBy: definitionModel.xAxis,
+                    orderBy: definitionModel.yAxis,
+                    from: definitionModel.from,
+                    to: definitionModel.to
+                };
+
+                return $dzupDashboard.getReport(parameters).then(function (result) {
+                    return deferred.resolve(result);
+                });
+            }
+            else{
+                return deferred.resolve(null);
+            }
+            return deferred.promise();
+
+            /*var deferred = self.getPromise(wid);
 
             if(deferred != null) return deferred.promise();
 
@@ -410,7 +434,7 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                     deferred.resolve(null);
                 }
             }
-            return deferred.promise();
+            return deferred.promise();*/
         },
         getWidgetReportColumns: function (reportSource, stream, report) {
 

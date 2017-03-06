@@ -13,6 +13,9 @@ dzupDashboard.provider('$dzupDashboard', function () {
     this.sourcesUrl = "";
     this.reportsUrl = "";
     this.staticDashboards = null;
+    this.createReportUrl =  "";
+    this.deleteReportUrl = "";
+    this.clientReportsUrl = "";
 
     provider.setConf = function(conf) {
         this.host = conf.host;
@@ -24,6 +27,9 @@ dzupDashboard.provider('$dzupDashboard', function () {
         this.sourcesUrl = conf.sourcesUrl;
         this.reportsUrl = conf.reportsUrl;
         this.staticDashboards = conf.staticDashboards;
+        this.createReportUrl = conf.createReportUrl;
+        this.deleteReportUrl = conf.deleteReportUrl;
+        this.clientReportsUrl = conf.clientReportsUrl;
     };
 
     function WidServ($http,conf){
@@ -55,11 +61,13 @@ dzupDashboard.provider('$dzupDashboard', function () {
                 return conf.staticDashboards;
             }
 
-            this.getReport = function(source, streamId, reportName){
-               var s = encodeURIComponent(source);
-               var sid = encodeURIComponent(streamId);
-               var rn = encodeURIComponent(reportName);
-               return $http.get(conf.host + conf.reportsUrl + '?reportName=' + rn + '&source='+s+ '&streamId='+sid);
+            this.getReport = function(parameters){
+               return $http({
+                 url: conf.host + conf.reportsUrl,
+                 method: "GET",
+                 params: {filter:parameters}
+                });
+
             }
 
             this.getSources = function(){
@@ -82,6 +90,23 @@ dzupDashboard.provider('$dzupDashboard', function () {
              this.getRegularStreams = function(){
                  return $http.get(conf.host +  conf.regularUrl );
              }
+
+             this.getClientReports = function()
+             {
+                return $http.get(conf.host +  conf.clientReportsUrl );
+             }
+
+             this.createReport = function(item) {
+                 return $http.post(conf.host+ conf.createReportUrl ,item);
+             }
+
+             this.removeReport = function(identifier) {
+                 return $http({
+                         method: 'DELETE',
+                         url: conf.host + conf.deleteReportUrl,
+                         params: { id:  identifier }
+                     });
+             }
     }
 
     provider.$get = function($http) {
@@ -93,7 +118,10 @@ dzupDashboard.provider('$dzupDashboard', function () {
                      reportsBySourcesUrl:this.reportsBySourcesUrl,
                      sourcesUrl:this.sourcesUrl,
                      reportsUrl:this.reportsUrl,
-                     staticDashboards:this.staticDashboards
+                     staticDashboards:this.staticDashboards,
+                     createReportUrl: this.createReportUrl,
+                     deleteReportUrl: this.deleteReportUrl,
+                     clientReportsUrl: this.clientReportsUrl
                     }
         return new WidServ($http, conf);
     };

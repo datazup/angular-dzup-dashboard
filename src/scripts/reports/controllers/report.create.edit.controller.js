@@ -618,8 +618,20 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
                 report.metrics.push(metricItem);
             }
 
-            console.log("report:");
-            console.log(JSON.stringify(report))
+            var dashItem = {
+                id: "",
+                reportName: model.name,
+                reportDescription: model.description,
+                reportSource: model.reportSource,
+                report: report
+            };
+
+            console.log("dashItem:");
+            console.log(dashItem);
+
+            $dzupDashboard.createReport(dashItem);
+
+
            /* $uibModalInstance.close({
                 value: 'evo ga'
             });*/
