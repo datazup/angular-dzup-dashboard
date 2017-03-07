@@ -4,13 +4,14 @@
         <p class="text-muted small" ng-bind="description" />
         <div class="row">
             <div class="col-xs-6">
-                <select id="selectedReport" data-live-search="true" ng-options="report as (report.name +' | ' +report.reportId) for report in previousReports track by report.reportId"
+                <select id="selectedReport" data-live-search="true" ng-options="report as (report.reportName) for report in previousReports track by report.id"
                         class="form-control selectpicker with-search" data-live-search="true" title="Select a report in the list or search..." selectpicker
-                        ng-model="previousReports.selected" >
+                        ng-model="previousReports.selected" onchange="getReportDef(this.options[this.selectedIndex].value)" >
                 </select>
             </div>
-            <div class="col-xs-3">
-                <button class="btn btn-primary" type="button" ng-click="">New Report</button>
+            <div class="col-xs-6">
+                <button class="btn btn-primary pull-left" type="button" ng-click="newReport()">New Report</button>
+                <button class="btn btn-danger  pull-left margin-left-5" ng-if="previousReports.selected != null" type="button" ng-click="removeReport()">Remove Report</button>
             </div>
         </div>
     </div>
@@ -18,7 +19,7 @@
         <form sf-schema="schema" sf-form="form" sf-model="model" sf-options="{setSchemaDefaults:true, validateOnRender: true}"></form>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
-        <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+        <button class="btn btn-primary" type="button" ng-click="ok()">Save Report</button>
+        <button class="btn btn-warning" type="button" ng-click="cancel()">Close</button>
     </div>
 </section>
