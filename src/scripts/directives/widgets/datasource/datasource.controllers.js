@@ -20,9 +20,12 @@ app.controller('DzupGenericDataSourceController', ['$scope', '$rootScope','$time
         {
 
             if (typeof value != 'undefined') {
+                
+                var streamObj = _.find($scope.AvailableStreams, { value: value });
+                
                  widget.stream = value;
-                 widget.config.definitionModel.streamType = config.definitionModel.streamType = widget.streamType;
-                 widget.config.definitionModel.stream = config.definitionModel.stream =value;
+                 widget.config.definitionModel.streamType = config.definitionModel.streamType = streamObj.streamType;
+                 widget.config.definitionModel.stream = config.definitionModel.stream = value;
                  $scope.getData(widget, config);
                  dzupDashboardWidgetHelper.removeWidgetData(widget.wid);
                  $rootScope.$broadcast('widgetStreamChanged', widget.wid);
@@ -41,7 +44,7 @@ app.controller('DzupGenericDataSourceController', ['$scope', '$rootScope','$time
 
             execCall().success(function (result) { return result; })
                 .then(function (result) {
-                        $scope.AvailableStreams = _.map(result.data.list, function (x) { return { value: x.streamId, label: x.keyword } });
+                        $scope.AvailableStreams = _.map(result.data.list, function (x) { return { value: x.streamId, label: x.keyword, streamType: x.type } });
 
                         $timeout(function(){
                         if (!$scope.$$phase) $scope.$apply()

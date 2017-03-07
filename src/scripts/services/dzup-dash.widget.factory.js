@@ -339,7 +339,8 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                     groupBy: definitionModel.xAxis,
                     orderBy: definitionModel.yAxis,
                     from: definitionModel.from,
-                    to: definitionModel.to
+                    to: definitionModel.to,
+                    streamType:dataSourceWidget.streamType.toUpperCase()
                 };
 
                 return $dzupDashboard.getReport(parameters).then(function (result) {
