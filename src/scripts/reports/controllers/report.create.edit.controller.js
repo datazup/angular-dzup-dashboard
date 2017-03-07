@@ -183,7 +183,7 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
 
                 $("#selectedReport").selectpicker("refresh");
             });
-             
+
              $scope.model = {};
              $scope.$broadcast('schemaFormRedraw');
         }

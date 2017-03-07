@@ -7,6 +7,9 @@ app.controller('DzupGenericDataSourceController', ['$scope', '$rootScope','$time
         $scope.StreamTypes = [];
         $scope.AvailableStreams = [];
 
+        $scope.refresh = function () {
+            $rootScope.$broadcast('widgetStreamChanged', widget.wid);
+        };
 
         $scope.getData = function(widget, config){
              if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.reportSource != 'undefined'
