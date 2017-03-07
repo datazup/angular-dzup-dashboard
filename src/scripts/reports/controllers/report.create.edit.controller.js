@@ -178,7 +178,12 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
 
         $scope.newReport = function(){
              $scope.previousReports.selected = null;
-             $("#selectedReport").selectpicker("refresh");
+             $timeout(function(){
+                if (!$scope.$$phase) $scope.$apply();
+
+                $("#selectedReport").selectpicker("refresh");
+            });
+             
              $scope.model = {};
              $scope.$broadcast('schemaFormRedraw');
         }
@@ -734,9 +739,10 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
             console.log("dashItem:");
             console.log(dashItem);
 
-            $dzupDashboard.createReport(dashItem);
-
-            getClientsReports().then(function(){$scope.newReport();});
+            $dzupDashboard.createReport(dashItem).then(function(result){
+                $scope.previousReports.push(result.data);
+                $scope.newReport();
+            });
             /* $uibModalInstance.close({
                 value: 'closed'
             });*/
