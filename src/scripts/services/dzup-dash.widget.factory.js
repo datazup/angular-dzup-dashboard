@@ -354,8 +354,15 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                     orderBy: definitionModel.yAxis,
                     from: definitionModel.from,
                     to: definitionModel.to,
-                    streamType:dataSourceWidget.streamType.toUpperCase()
+                    streamType: dataSourceWidget.streamType.toUpperCase(),
+                    dinamycFilters: []
                 };
+
+                if (dataSourceWidget.config.definitionModel.filterFields) {
+                    for (var i = 0; i < dataSourceWidget.config.definitionModel.filterFields.length; i++) {
+                        parameters.dinamycFilters.push(dataSourceWidget.config.definitionModel.filterFields[i]);
+                    }
+                }
 
                 return $dzupDashboard.getReport(parameters).then(function (result) {
                     return deferred.resolve(result);
@@ -400,12 +407,9 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                 reportName: report,
                 stream: stream
             };
-            
+
             return $dzupDashboard.getReport(parameters)
                 .then(function (result) {
-                    console.log("getWidgetReportColumns RESULT");
-                    console.log(result.data.columns);
-                    console.log(result);
                     return result.data.columns;
                 });
         },

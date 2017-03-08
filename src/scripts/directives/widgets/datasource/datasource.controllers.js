@@ -51,10 +51,10 @@ app.controller('DzupGenericDataSourceController', ['$scope', '$rootScope', '$tim
                     $scope.AvailableStreams = _.map(result.data.list, function (x) { return { value: x.streamId, label: x.keyword, streamType: x.type } });
 
                     $timeout(function () {
-                        if (!$scope.$$phase) $scope.$apply()
+                        if (!$scope.$$phase) $scope.$apply();
 
                         var selectedItem = _.find($scope.AvailableStreams, {'value': config.definitionModel.stream});
-                        $scope.AvailableStreams.selected = selectedItem
+                        $scope.AvailableStreams.selected = selectedItem;
                         $("#availableStreams").selectpicker("refresh");
                     });
                 });
@@ -99,17 +99,14 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                 });
         }
 
-        $scope.getReportColumns = function () {
+        $scope.getReportColumns = function (report) {
+
+            report = (typeof report !== 'undefined') ?  report : config.definitionModel.report;
+
             $scope.ReportColumns = dzupDashboardWidgetHelper.getWidgetReportColumns(
                 config.definitionModel.reportSource,
-                config.definitionModel.report,
+                report,
                 'getReportColumns');
-        }
-
-
-        $scope.getFieldFilterOperators = function (reportColumn) {
-
-            console.log(reportColumn);
         }
 
         $scope.FieldFilterOperators = [
@@ -145,6 +142,9 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
         if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.reportSource != 'undefined'
             && config.definitionModel.reportSource != null) {
             $scope.getAvailableReports(config.definitionModel.reportSource, false);
+
+            console.log("DEF MODEL");
+            console.log(config.definitionModel);
         }
 
         $scope.config.definitionModel = $scope.config.definitionModel || {};
@@ -187,7 +187,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                     items: {
                         type: "object",
                         properties: {
-                            fieldColumn: {
+                            filterColumn: {
                                 type: 'string',
                                 title: 'Report Column',
                                 format: "uiselect",
@@ -197,7 +197,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                 validationMessage: 'Required'
                                 //required: true
                             },
-                            fieldOperator: {
+                            filterOperator: {
                                 type: 'string',
                                 title: 'Operator',
                                 format: "uiselect",
@@ -207,9 +207,9 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                 validationMessage: 'Required'
                                 // required: true,
                             },
-                            fieldVlaue: {
+                            filterValue: {
                                 type: "string",
-                                title: "Valued",
+                                title: "Value",
                                 // required: true
                             }
                         }
@@ -275,6 +275,11 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                                                 key: 'report',
                                                                 options: {
                                                                     callback: $scope.AvailableReports,
+                                                                    // eventCallback: function (value) {
+                                                                    //     if (typeof value != 'undefined') {
+                                                                    //         $scope.getReportColumns(value);
+                                                                    //     }
+                                                                    // }
 
                                                                 },
                                                                 feedback: false,
@@ -345,9 +350,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                                 key: 'areFilterFiledsEnabled',
                                                 type: 'checkbox',
                                                 onChange: function (value) {
-                                                    console.log(value);
                                                     $scope.getReportColumns();
-
                                                 }
                                             },
                                             {
@@ -367,45 +370,68 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                                                 htmlClass: 'col-xs-12',
                                                                 items: [
                                                                     {
-                                                                        key: 'filterFields[].fieldColumn',
+                                                                        key: 'filterFields[].filterColumn',
                                                                         htmlClass: 'col-xs-4',
                                                                         options: {
                                                                             callback: function () {
-                                                                                console.log("CALBACK");
-                                                                                console.log($scope.ReportColumns.$$state.value)
                                                                                 return _.map($scope.ReportColumns.$$state.value, function (x) {
                                                                                     return {value: x, label: x}
                                                                                 });
-                                                                            },
-                                                                            eventCallback: function (value) {
-                                                                                if (typeof value != 'undefined') {
-                                                                                    $scope.getFieldFilterOperators(value);
-                                                                                }
                                                                             }
                                                                         },
                                                                         feedback: false,
                                                                         type: 'uiselect'
                                                                     },
                                                                     {
-                                                                        key: 'filterFields[].fieldOperator',
+                                                                        key: 'filterFields[].filterOperator',
                                                                         htmlClass: 'col-xs-4',
                                                                         options: {
-                                                                            callback: $scope.FieldFilterOperators,
-                                                                            eventCallback: function (value) {
+                                                                            callback: $scope.FieldFilterOperators
 
-                                                                                console.log("FILTER OPERTOR CALLBACK");
-                                                                                console.log($scope.schema);
-                                                                                $scope.getReportColumns();
-                                                                            }
                                                                         },
                                                                         feedback: false,
                                                                         type: 'uiselect'
                                                                     },
+                                                                    // {
+                                                                    //     key: 'filterFields[].fieldOperator',
+                                                                    //     htmlClass: 'col-xs-4',
+                                                                    //     options: {
+                                                                    //         //callback: $scope.FieldFilterOperators
+                                                                    //         callback: function () {
+                                                                    //             return [
+                                                                    //                 {value: "equal", label: "Equal"},
+                                                                    //                 {value: "nonequal", label: "Non-Equal"},
+                                                                    //                 {value: "contains", label: "Contains"},
+                                                                    //                 {value: "notcontains", label: "Does Not Contain"}];
+                                                                    //         }
+                                                                    //     },
+                                                                    //     feedback: false,
+                                                                    //     type: 'uiselect',
+                                                                    //     condition:"model.filterFields[arrayIndex].fieldColumn == 'Hour Created'"
+                                                                    // },
+                                                                    // {
+                                                                    //     key: 'filterFields[].fieldOperator',
+                                                                    //     htmlClass: 'col-xs-4',
+                                                                    //     options: {
+                                                                    //         //callback: $scope.FieldFilterOperators
+                                                                    //         callback: function () {
+                                                                    //             return [
+                                                                    //                 {value: "equal", label: "Equal"},
+                                                                    //                 {value: "nonequal", label: "Non-Equal"},
+                                                                    //                 {value: "gt", label: "Greater Than"},
+                                                                    //                 {value: "lt", label: "Less Than"}];
+                                                                    //         }
+                                                                    //     },
+                                                                    //     feedback: false,
+                                                                    //     type: 'uiselect',
+                                                                    //     condition:"model.filterFields[arrayIndex].fieldColumn == 'Day Created'"
+                                                                    // },
                                                                     {
-                                                                        key: 'filterFields[].fieldValue',
+                                                                        key: 'filterFields[].filterValue',
                                                                         title: 'Value',
                                                                         htmlClass: 'col-xs-4',
-                                                                        placeholder: 'Enter Value'
+                                                                        placeholder: 'Enter Value',
+                                                                        feedback:false
                                                                     }
                                                                 ]
                                                             }
