@@ -355,12 +355,12 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                     from: definitionModel.from,
                     to: definitionModel.to,
                     streamType: dataSourceWidget.streamType.toUpperCase(),
-                    dinamycFilters: []
+                    dynamicFilters: []
                 };
 
                 if (dataSourceWidget.config.definitionModel.filterFields) {
                     for (var i = 0; i < dataSourceWidget.config.definitionModel.filterFields.length; i++) {
-                        parameters.dinamycFilters.push(dataSourceWidget.config.definitionModel.filterFields[i]);
+                        parameters.dynamicFilters.push(dataSourceWidget.config.definitionModel.filterFields[i]);
                     }
                 }
 
