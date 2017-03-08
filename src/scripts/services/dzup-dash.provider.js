@@ -65,8 +65,9 @@ dzupDashboard.provider('$dzupDashboard', function () {
                return $http({
                  url: conf.host + conf.reportsUrl,
                  method: "GET",
+                 async: true,
                  params: {filter:parameters}
-                });
+               });
 
             }
 
