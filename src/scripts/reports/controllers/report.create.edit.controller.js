@@ -164,6 +164,111 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
           "city": null
         };
 
+        getClientsReports =  function(){
+              return $dzupDashboard.getClientReports().success(function (result) {
+
+                   $scope.previousReports = result.list;
+                   $timeout(function(){
+                       if (!$scope.$$phase) $scope.$apply();
+
+                       $("#selectedReport").selectpicker("refresh");
+                   });
+                });
+        }
+
+        $scope.newReport = function(){
+             $scope.previousReports.selected = null;
+             $timeout(function(){
+                if (!$scope.$$phase) $scope.$apply();
+
+                $("#selectedReport").selectpicker("refresh");
+            });
+             
+             $scope.model = {};
+             $scope.$broadcast('schemaFormRedraw');
+        }
+
+       $scope.removeReport = function(){
+           var repId = $scope.previousReports.selected.id;
+           $dzupDashboard.removeReport(repId).then(function(){
+                getClientsReports().then(function(){$scope.newReport();});
+
+           });
+       }
+
+        getReportDef = function(value)
+        {
+            if (typeof value != 'undefined') {
+                var index = _.indexOf($scope.previousReports, _.find($scope.previousReports, { id: value }));
+                if (index != -1) {
+                    var reportObj =  $scope.previousReports[index];
+                    var model = {
+                        name: reportObj.reportName,
+                        description: reportObj.reportDescription,
+                        reportSource: reportObj.reportSource,
+                    };
+                    var reportDef =  reportObj.report;
+                    var dim = [];
+                    var met = [];
+                    for(var i = 0; i<reportDef.dimensions.length; i++){
+                         dim.push(getStructure(reportDef.dimensions[i]));
+                    }
+
+                    for(var j = 0; j<reportDef.metrics.length; j++){
+                         met.push(getStructure(reportDef.metrics[j]));
+                    }
+
+                    model.dimensions = _.chain(dim).map(function(item){
+                        return {
+                            dimensionProperty: (typeof item.property != 'undefined') ? item.property : null,
+                            dimensionType: (typeof item.property != 'undefined') ? item.type : null,
+                            dimensionFunction: (typeof item.property != 'undefined') ? item.funcName: null,
+                            valueR: (typeof item.parameters != 'undefined') && item.parameters.length > 1 ?item.parameters[1].replace("'#").replace("#'"): null,
+                            captureGroup: (typeof item.parameters != 'undefined') && item.parameters.length > 2 ?item.parameters[2]: null,
+                            dimensionAlias: (typeof item.property != 'undefined') ? item.alias: null
+                        }
+                    }).value();
+
+                    model.metrics = _.chain(met).map(function(item){
+                        return {
+                            metricProperty: (typeof item.property != 'undefined') ? item.property : null,
+                            metricType: (typeof item.property != 'undefined') ? item.type : null,
+                            metricFunction: (typeof item.property != 'undefined') ? item.funcName: null,
+                            metricAlias: (typeof item.property != 'undefined') ? item.alias: null
+                        }
+                    }).value();
+                    $scope.model = null;
+                    $scope.model = model;
+                    $scope.$broadcast('schemaFormRedraw');
+                }
+             }
+
+             return true;
+        }
+
+        var getStructure = function(item)
+        {
+            //"REGEX_EXTRACT($source$, '#<a[^>]*?>(.*?)</a>#', 1)"
+            var obj = { parameters:[], type: item.type};
+            var func =  item.name;
+            if(typeof item.func != 'undefined'){
+                func = item.func;
+                obj.alias = item.name;
+            }
+            var funcBody = func.substring(func.indexOf('('), func.lastIndexOf(')')+1);
+            obj.funcName = func.replace(funcBody, "");
+
+            var funcParameters = funcBody.replace("(","").replace(")","").split(",");
+            for(var d = 0; d<funcParameters.length ; d++){
+                  if(d==0){
+                    obj.property = funcParameters[d].split('$').join('');
+                  }
+                  obj.parameters.push(funcParameters[d]);
+            }
+
+            return obj;
+        }
+
         JSON.unflatten = function(data) {
             "use strict";
             if (Object(data) !== data || Array.isArray(data))
@@ -207,13 +312,11 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
             return result;
         }
 
-        $scope.PreviousReports = [];
+        $scope.previousReports = [];
 
-         $dzupDashboard.getClientReports().success(function (result) {
-         console.log("result rep: ");
-         console.log(result);
+        getClientsReports();
 
-         });
+        $scope.AvailableSources =  $dzupDashboard.getSourcesStatic();
         $scope.sourceOptions = _.chain(JSON.flatten(data, {ignoreArrayPosition:true}))
                                 .map(function (value, key) {
                                    return {
@@ -232,9 +335,7 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
 
         $scope.metricFunctions = [{ value: "SUM", label: "Sum" },{ value: "AVG", label: "Average" },
                                   { value: "MAX", label: "Max" },{ value: "MIN", label: "Min" },
-                                  { value: "COUNT", label: "Count" },{ value: "LAST", label: "Last" }]
-
-        $scope.AvailableSources =  $dzupDashboard.getSourcesStatic();
+                                  { value: "COUNT", label: "Count" },{ value: "LAST", label: "Last" }];
 
         $scope.schema = {
             type: 'object',
@@ -373,7 +474,10 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
                                                             {
                                                                 key: 'reportSource',
                                                                 options: {
-                                                                    callback: $scope.AvailableSources
+                                                                    callback: $scope.AvailableSources,
+                                                                 eventCallback: function (value) {
+                                                                     console.log("value: " + value);
+                                                                 }
                                                                 },
                                                                 feedback: false,
                                                                 type: 'uiselect'
@@ -635,11 +739,12 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
             console.log("dashItem:");
             console.log(dashItem);
 
-            $dzupDashboard.createReport(dashItem);
-
-
-           /* $uibModalInstance.close({
-                value: 'evo ga'
+            $dzupDashboard.createReport(dashItem).then(function(result){
+                $scope.previousReports.push(result.data);
+                $scope.newReport();
+            });
+            /* $uibModalInstance.close({
+                value: 'closed'
             });*/
         };
 

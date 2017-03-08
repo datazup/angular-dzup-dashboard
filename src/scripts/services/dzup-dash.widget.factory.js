@@ -353,7 +353,8 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                     groupBy: definitionModel.xAxis,
                     orderBy: definitionModel.yAxis,
                     from: definitionModel.from,
-                    to: definitionModel.to
+                    to: definitionModel.to,
+                    streamType:dataSourceWidget.streamType.toUpperCase()
                 };
 
                 return $dzupDashboard.getReport(parameters).then(function (result) {
@@ -392,13 +393,14 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
              }
              return deferred.promise();*/
         },
+
         getWidgetReportColumns: function (reportSource, report, stream) {
             var parameters = {
                 reportSource: reportSource,
                 reportName: report,
                 stream: stream
             };
-
+            
             return $dzupDashboard.getReport(parameters)
                 .then(function (result) {
                     console.log("getWidgetReportColumns RESULT");
