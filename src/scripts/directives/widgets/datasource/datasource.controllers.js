@@ -22,7 +22,7 @@ app.controller('DzupGenericDataSourceController', ['$scope', '$rootScope', '$tim
         setStream = function (value) {
 
             if (typeof value != 'undefined') {
-                var streamObj = _.find($scope.AvailableStreams, { value: value });
+                var streamObj = _.find($scope.AvailableStreams, {value: value});
 
                 widget.stream = value;
                 widget.config.definitionModel.streamType = config.definitionModel.streamType = streamObj.streamType;
@@ -48,7 +48,9 @@ app.controller('DzupGenericDataSourceController', ['$scope', '$rootScope', '$tim
             })
                 .then(function (result) {
 
-                    $scope.AvailableStreams = _.map(result.data.list, function (x) { return { value: x.streamId, label: x.keyword, streamType: x.type } });
+                    $scope.AvailableStreams = _.map(result.data.list, function (x) {
+                        return {value: x.streamId, label: x.keyword, streamType: x.type}
+                    });
 
                     $timeout(function () {
                         if (!$scope.$$phase) $scope.$apply();
@@ -67,7 +69,7 @@ app.controller('DzupGenericDataSourceController', ['$scope', '$rootScope', '$tim
 
         $scope.StreamTypes = [{value: "scheduled", label: "Scheduled"}, {value: "regular", label: "Regular"}]
 
-        if(typeof config.definitionModel != 'undefined'){
+        if (typeof config.definitionModel != 'undefined') {
             $scope.StreamTypes.selected = _.find($scope.StreamTypes, {'value': config.definitionModel.streamType});
         }
     }
@@ -87,13 +89,10 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                 return result;
             })
                 .then(function (result) {
-<<<<<<< HEAD
-                    $scope.AvailableReports = _.map(result.data, function (x) {
-                        return {value: x, label: x}
+                    $scope.AvailableReports = _.map(result.data, function (x, y) {
+                        return {value: y, label: x}
                     });
-=======
-                    $scope.AvailableReports = _.map(result.data, function (x,y) { return { value: y, label: x } });
->>>>>>> master
+
                     if (injectValue == true) {
                         $timeout(function () { //the code which needs to run after dom rendering
                             $scope.schema.properties.report.items = $scope.AvailableReports;
@@ -105,17 +104,14 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
 
         $scope.getReportColumns = function (report) {
 
-<<<<<<< HEAD
-            report = (typeof report !== 'undefined') ?  report : config.definitionModel.report;
+            report = (typeof report !== 'undefined') ? report : config.definitionModel.report;
 
             $scope.ReportColumns = dzupDashboardWidgetHelper.getWidgetReportColumns(
                 config.definitionModel.reportSource,
                 report,
                 'getReportColumns');
-=======
-                    return $scope.ReportPropeties;
-                });
->>>>>>> master
+            
+            return $scope.ReportPropeties;
         }
 
         $scope.FieldFilterOperators = [
@@ -441,7 +437,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                                                         title: 'Value',
                                                                         htmlClass: 'col-xs-4',
                                                                         placeholder: 'Enter Value',
-                                                                        feedback:false
+                                                                        feedback: false
                                                                     }
                                                                 ]
                                                             }
