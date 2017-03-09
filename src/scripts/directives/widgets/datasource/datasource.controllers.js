@@ -81,7 +81,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
         $scope.getAvailableReports = function (value, injectValue) {
             $scope.AvailableReports = $dzupDashboard.getReportsBySource(value).success(function (result) { return result; })
                 .then(function (result) {
-                    $scope.AvailableReports = _.map(result.data, function (x) { return { value: x, label: x } });
+                    $scope.AvailableReports = _.map(result.data, function (x,y) { return { value: y, label: x } });
                     if (injectValue == true) {
                         $timeout(function () { //the code which needs to run after dom rendering
                             $scope.schema.properties.report.items = $scope.AvailableReports;
@@ -105,7 +105,6 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                     })
 
                     return $scope.ReportPropeties;
-
                 });
         }
 
@@ -113,6 +112,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
             var modalInstance = $uibModal.open({
                 templateUrl: $dzupConfigUtils.templateUrlBase['dzup-dashboard'] + '/templates/reports/report.modal.view.html',
                 controller: 'ReportCreateEditController',
+                backdrop: false,
                 resolve: {
                     report: function () {
                         return {};
@@ -124,7 +124,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
             modalInstance.result.then(function (importedData) {
 
                 if (importedData) {
-                    $scope.innerModel.properties = importedData;
+                    $scope.getAvailableReports(config.definitionModel.reportSource, true);
                 }
             }, function () {
             });
