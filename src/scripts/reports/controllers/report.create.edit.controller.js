@@ -743,13 +743,13 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
                 $scope.previousReports.push(result.data);
                 $scope.newReport();
             });
-            /* $uibModalInstance.close({
-                value: 'closed'
-            });*/
         };
 
         $scope.cancel = function () {
-            $uibModalInstance.dismiss('cancel');
+            $uibModalInstance.close({
+                value: true
+            });
+            /*$uibModalInstance.dismiss('cancel');*/
         };
     }
 ]);

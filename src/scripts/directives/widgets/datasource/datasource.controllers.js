@@ -87,9 +87,13 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                 return result;
             })
                 .then(function (result) {
+<<<<<<< HEAD
                     $scope.AvailableReports = _.map(result.data, function (x) {
                         return {value: x, label: x}
                     });
+=======
+                    $scope.AvailableReports = _.map(result.data, function (x,y) { return { value: y, label: x } });
+>>>>>>> master
                     if (injectValue == true) {
                         $timeout(function () { //the code which needs to run after dom rendering
                             $scope.schema.properties.report.items = $scope.AvailableReports;
@@ -101,12 +105,17 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
 
         $scope.getReportColumns = function (report) {
 
+<<<<<<< HEAD
             report = (typeof report !== 'undefined') ?  report : config.definitionModel.report;
 
             $scope.ReportColumns = dzupDashboardWidgetHelper.getWidgetReportColumns(
                 config.definitionModel.reportSource,
                 report,
                 'getReportColumns');
+=======
+                    return $scope.ReportPropeties;
+                });
+>>>>>>> master
         }
 
         $scope.FieldFilterOperators = [
@@ -122,6 +131,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
             var modalInstance = $uibModal.open({
                 templateUrl: $dzupConfigUtils.templateUrlBase['dzup-dashboard'] + '/templates/reports/report.modal.view.html',
                 controller: 'ReportCreateEditController',
+                backdrop: false,
                 resolve: {
                     report: function () {
                         return {};
@@ -133,7 +143,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
             modalInstance.result.then(function (importedData) {
 
                 if (importedData) {
-                    $scope.innerModel.properties = importedData;
+                    $scope.getAvailableReports(config.definitionModel.reportSource, true);
                 }
             }, function () {
             });
