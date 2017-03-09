@@ -1,20 +1,20 @@
-<div class="row margin-bottom-10">
+<div class="row margin-bottom-10" adf-id="{{definition.wid}}" adf-widget-type="{{definition.type}}" ng-class="widgetClasses(widget, definition)">
     <h3 class="col-md-12">
         <span class="pull-left padding-5">{{widget.title}}</span>
         <button type="button" class="pull-left btn btn-default btn-sm" ng-click="refresh()">
             <span class="glyphicon glyphicon-refresh"></span>
         </button></h3>
     <div class="col-xs-6">
-        <select id="streamTypes" data-live-search="true" ng-options="type as (type.label) for type in StreamTypes track by type.value"
-                ng-selected="StreamTypes.selected "
-                class="form-control selectpicker with-search" data-live-search="true" title="Select a stream type in the list or search..." selectpicker
-                ng-model="StreamTypes.selected" onchange="getAvailableStreams(this.options[this.selectedIndex].value, false)">
+        <select id="{{'streamTypes-' + widget.wid }}" ng-options="type as (type.label) for type in StreamTypes track by type.value"
+                ng-selected="StreamTypes.selected"
+                class="form-control selectpicker with-search" title="Select a stream type in the list or search..." selectpicker
+                ng-model="StreamTypes.selected" ng-change="getAvailableStreams(StreamTypes.selected, false)">
         </select>
     </div>
     <div class="col-xs-6">
-        <select id="availableStreams" data-live-search="true" ng-options="stream as (stream.label) for stream in AvailableStreams track by stream.value"
-                class="form-control selectpicker with-search" data-live-search="true" title="Select a stream in the list or search..." selectpicker
-                ng-model="AvailableStreams.selected" onchange="setStream(this.options[this.selectedIndex].value)">
+        <select id="{{'availableStreams-' + widget.wid }}" ng-options="stream as (stream.label) for stream in AvailableStreams track by stream.value"
+                class="form-control selectpicker with-search" title="Select a stream in the list or search..." selectpicker
+                ng-model="AvailableStreams.selected" ng-change="setStream(AvailableStreams.selected)">
         </select>
     </div>
 </div>

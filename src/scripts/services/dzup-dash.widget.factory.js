@@ -340,7 +340,7 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                     orderBy: definitionModel.yAxis,
                     from: definitionModel.from,
                     to: definitionModel.to,
-                    streamType:dataSourceWidget.streamType.toUpperCase(),
+                    streamType: (typeof dataSourceWidget.streamType != 'undefined') ? dataSourceWidget.streamType.toUpperCase(): null,
                     dynamicFilters: []
                 };
 

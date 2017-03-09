@@ -19,9 +19,9 @@ app.controller('DzupGenericDataSourceController', ['$scope', '$rootScope','$time
             }
         };
 
-        setStream = function(value)
+        $scope.setStream = function(item)
         {
-
+            var value = item.value;
             if (typeof value != 'undefined') {
                 
                 var streamObj = _.find($scope.AvailableStreams, { value: value });
@@ -35,7 +35,8 @@ app.controller('DzupGenericDataSourceController', ['$scope', '$rootScope','$time
              }
         }
 
-        getAvailableStreams = function (value, injectValue) {
+        $scope.getAvailableStreams = function (item, injectValue) {
+            var value = item.value.toLowerCase();
             widget.streamType  = config.definitionModel.streamType = value;
             var execCall = null;
             if (value === 'scheduled') {
@@ -54,14 +55,15 @@ app.controller('DzupGenericDataSourceController', ['$scope', '$rootScope','$time
 
                             var selectedItem = _.find($scope.AvailableStreams, {'value': config.definitionModel.stream});
                             $scope.AvailableStreams.selected = selectedItem
-                            $("#availableStreams").selectpicker("refresh");
+                            $("#availableStreams-"+$scope.widget.wid).selectpicker("refresh");
                         });
                 });
         };
 
        if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.streamType != 'undefined'
             && config.definitionModel.streamType != null) {
-            getAvailableStreams(config.definitionModel.streamType, false);
+            var item = {value:config.definitionModel.streamType};
+            $scope.getAvailableStreams(item, false);
         }
 
         $scope.StreamTypes = [{ value: "scheduled", label: "Scheduled" }, { value: "regular", label: "Regular" }]

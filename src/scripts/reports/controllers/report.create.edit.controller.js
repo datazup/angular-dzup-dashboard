@@ -223,9 +223,9 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
                             dimensionProperty: (typeof item.property != 'undefined') ? item.property : null,
                             dimensionType: (typeof item.property != 'undefined') ? item.type : null,
                             dimensionFunction: (typeof item.property != 'undefined') ? item.funcName: null,
-                            valueR: (typeof item.parameters != 'undefined') && item.parameters.length > 1 ?item.parameters[1].replace("'#").replace("#'"): null,
-                            captureGroup: (typeof item.parameters != 'undefined') && item.parameters.length > 2 ?item.parameters[2]: null,
-                            dimensionAlias: (typeof item.property != 'undefined') ? item.alias: null
+                            valueR: (typeof item.parameters != 'undefined') && item.parameters.length > 1 ?item.parameters[1].replace("'#").replace("#'"): undefined,
+                            captureGroup: (typeof item.parameters != 'undefined') && item.parameters.length > 2 ?item.parameters[2]: undefined,
+                            dimensionAlias: (typeof item.property != 'undefined') ? item.alias: undefined
                         }
                     }).value();
 
@@ -234,7 +234,7 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
                             metricProperty: (typeof item.property != 'undefined') ? item.property : null,
                             metricType: (typeof item.property != 'undefined') ? item.type : null,
                             metricFunction: (typeof item.property != 'undefined') ? item.funcName: null,
-                            metricAlias: (typeof item.property != 'undefined') ? item.alias: null
+                            metricAlias: (typeof item.property != 'undefined') ? item.alias: undefined
                         }
                     }).value();
                     $scope.model = null;
@@ -351,10 +351,14 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
                 name: {
                     type: 'string',
                     title: 'Report Name',
+                    default: null,
+                    required: true
                 },
                 description:{
                     type: 'string',
-                    title: 'Description'
+                    title: 'Description',
+                    default: "",
+                    required: false
                 },
                 dimensions: {
                     type: "array",
@@ -390,19 +394,19 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
                             valueR: {
                                 type: 'string',
                                 title: 'Value',
-                                default: null,
-                                required: false
+                                default: "",
+                                required: true
                             },
                             captureGroup: {
                                 type: 'string',
                                 title: 'Capture Group',
-                                default: null,
+                                default: "",
                                 required: false
                             },
                             dimensionAlias: {
                                 type: 'string',
                                 title: 'Column Name',
-                                default: null,
+                                default: "",
                                 required: false
                             }
 
@@ -443,7 +447,7 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
                             metricAlias: {
                                 type: 'string',
                                 title: 'Column Name',
-                                default: null,
+                                default: "",
                                 required: false
                             }
                         }
@@ -507,8 +511,7 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
                                                         items: [
                                                             {
                                                                 key: 'description',
-                                                                feedback: false,
-                                                                type: 'string'
+                                                                feedback: false
                                                             }
                                                         ]
                                                     }
@@ -565,14 +568,12 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
                                                        {
                                                           key: 'dimensions[].valueR',
                                                           feedback: false,
-                                                          type: 'string',
                                                           condition: "(model.dimensions[arrayIndex].dimensionFunction == 'REGEX_EXTRACT') || (model.dimensions[arrayIndex].dimensionFunction == 'REGEX_MATCH')",
                                                           htmlClass: "col-xs-4"
                                                        },
                                                        {
                                                           key: 'dimensions[].captureGroup',
                                                           feedback: false,
-                                                          type: 'string',
                                                           condition: "(model.dimensions[arrayIndex].dimensionFunction == 'REGEX_EXTRACT')",
                                                           htmlClass: "col-xs-4"
                                                        },
@@ -665,7 +666,24 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
         };
         $scope.title = "Reports";
 
+        tv4.addSchema('dynamicReportSchema', $scope.schema);
+
         $scope.ok = function () {
+
+            //validation
+            var valMod = JSON.parse(JSON.stringify($scope.model));
+            var schema =tv4.getSchema('dynamicReportSchema');
+            var result = tv4.validateMultiple(valMod, schema, true);
+
+            $scope.$broadcast('schemaFormValidate');
+            if(valMod.metrics.length == 0  || valMod.dimensions.length == 0){
+                result.valid = false;
+            }
+
+            if(!result.valid)
+                return result.valid;
+
+            //end validation
 
             var model = $scope.model;
 
