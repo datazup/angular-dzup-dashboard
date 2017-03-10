@@ -19,7 +19,10 @@ app.controller('DzupGenericDataSourceController', ['$scope', '$rootScope', '$tim
             }
         };
 
-        setStream = function (value) {
+
+        $scope.setStream = function(item)
+        {
+            var value = item.value;
 
             if (typeof value != 'undefined') {
                 var streamObj = _.find($scope.AvailableStreams, {value: value});
@@ -33,8 +36,10 @@ app.controller('DzupGenericDataSourceController', ['$scope', '$rootScope', '$tim
             }
         }
 
-        getAvailableStreams = function (value, injectValue) {
-            widget.streamType = config.definitionModel.streamType = value;
+        $scope.getAvailableStreams = function (item, injectValue) {
+            var value = item.value.toLowerCase();
+            widget.streamType  = config.definitionModel.streamType = value;
+
             var execCall = null;
             if (value === 'scheduled') {
                 execCall = $dzupDashboard.getScheduledStreams;
@@ -55,16 +60,19 @@ app.controller('DzupGenericDataSourceController', ['$scope', '$rootScope', '$tim
                     $timeout(function () {
                         if (!$scope.$$phase) $scope.$apply();
 
-                        var selectedItem = _.find($scope.AvailableStreams, {'value': config.definitionModel.stream});
-                        $scope.AvailableStreams.selected = selectedItem;
-                        $("#availableStreams").selectpicker("refresh");
-                    });
+
+                            var selectedItem = _.find($scope.AvailableStreams, {'value': config.definitionModel.stream});
+                            $scope.AvailableStreams.selected = selectedItem
+                            $("#availableStreams-"+$scope.widget.wid).selectpicker("refresh");
+                        });
+
                 });
         };
 
         if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.streamType != 'undefined'
             && config.definitionModel.streamType != null) {
-            getAvailableStreams(config.definitionModel.streamType, false);
+            var item = {value:config.definitionModel.streamType};
+            $scope.getAvailableStreams(item, false);
         }
 
         $scope.StreamTypes = [{value: "scheduled", label: "Scheduled"}, {value: "regular", label: "Regular"}]
