@@ -9,7 +9,7 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
             if (typeof result.data.length == 'undefined') {
                 result = result.data;
             }
-            var wData = result.items.list;
+            var wData = typeof result.items != "undefined"?result.items.list : [];
 
             if (typeof $scope.chart == 'undefined') {
                 $scope.chart = chartService.getChart(config.definitionModel.chartType);
@@ -126,6 +126,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                 })
             }
         }
+
         $scope.loadChildModelByChartType = function (chartType) {
             $scope.chartType = chartType;
             if (chartType) {
@@ -186,6 +187,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
 
             config.changesApplied = false;
         }
+        $scope.notSet = true;
 
         $scope.schema = {
             type: 'object',
@@ -218,13 +220,22 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                     type: 'string',
                     title: 'Y Axis Label'
                 },
-                xAxis: {
-                    type: 'string',
-                    title: 'X Axis',
-                    format: "uiselect",
-                    placeholder: 'Select X Axis Property',
-                    default: null,
-                    validationMessage: "Required"
+                aggregateAxis: {
+                    type: "array",
+                    items: {
+                        title: "",
+                        type: "object",
+                        properties: {
+                            xAxisAg: {
+                                type: 'string',
+                                title: 'X Axis',
+                                placeholder: 'Select X Axis Property',
+                                default: null,
+                                validationMessage: "Required",
+                                required: true
+                            }
+                        }
+                    }
                 },
                 yAxis: {
                     type: 'string',
@@ -266,7 +277,6 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
             required: [
                 "chartType",
                 "dataSource",
-                "xAxis",
                 "yAxis",
             ]
 
@@ -310,7 +320,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                     callback: _.map(dzupDashboardWidgetHelper.getWidgetsByType("dataSource"), function (x) { return { value: x.wid, label: x.title } }),
                                                     eventCallback: function (value) {
                                                         if (typeof value != 'undefined') {
-                                                            $scope.getReportColumns(config.definitionModel, true);
+                                                            $scope.reportColumns = $scope.getReportColumns(config.definitionModel, true);
                                                         }
                                                     }
                                                 },
@@ -331,18 +341,59 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                 htmlClass: "row",
                                 items: [
                                     {
+                                        condition: "model.chartType!='pieChart'",
+                                        type: "section",
+                                        htmlClass: "col-xs-12",
+                                        items: [
+                                            {
+                                                key: 'xAxisLabel',
+                                                placeholder: 'Enter X Axis Label Here',
+                                                feedback: false,
+                                            }
+                                        ]
+                                    },
+                                    {
+                                       condition: "model.dataSource!=null",
+                                       key: "aggregateAxis",
+                                       style: {
+                                           "add": "btn-success"
+                                       },
+                                       add: "Add",
+                                       title: "",
+                                       htmlClass:'col-xs-12',
+                                       items: [
+                                          {
+                                              key: 'aggregateAxis[].xAxisAg',
+                                              type: 'strapselect',
+                                              feedback: false,
+                                              fieldHtmlClass:'dzup-strapselect',
+                                              options: {
+                                                  asyncCallback: function () {
+                                                      if(typeof $scope.reportColumns.then == 'function'){
+                                                            return $scope.reportColumns.then(function(result){
+                                                            return {data:result};
+                                                         });
+                                                      }
+                                                      else
+                                                      {
+                                                        return new Promise(function(resolve, reject) {
+                                                                   resolve( {data:$scope.reportColumns});
+                                                                 });
+                                                      }
+                                                   },
+                                                   map: {valueProperty: "value", nameProperty: "label"},
+                                                   placement: 'left'
+                                              }
+                                          }
+                                       ]
+
+                                    },
+                                    {
                                         type: "section",
                                         htmlClass: "col-xs-12",
                                         condition: "model.chartType=='pieChart'",
                                         items: [
-                                            {
-                                                key: 'xAxis',
-                                                type: 'uiselect',
-                                                feedback: false,
-                                                options: {
-                                                    callback: $scope.reportColumns
-                                                },
-                                            },
+
                                             {
                                                 key: 'yAxis',
                                                 feedback: false,
@@ -439,7 +490,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                         htmlClass: "col-xs-12",
                                         condition: "model.chartType=='discreteBarChart'",
                                         items: [
-                                            {
+                                 /*           {
                                                 key: 'xAxisLabel',
                                                 placeholder: 'Enter X Axis Label Here',
                                                 feedback: false,
@@ -452,7 +503,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                     callback: $scope.reportColumns
                                                 },
 
-                                            },
+                                            },*/
                                             {
                                                 key: 'yAxisLabel',
                                                 placeholder: 'Enter Y Axis Label Here',
@@ -555,7 +606,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                         htmlClass: "col-xs-12",
                                         condition: "model.chartType=='lineChart'",
                                         items: [
-                                            {
+                                            /*{
                                                 key: 'xAxisLabel',
                                                 placeholder: 'Enter X Axis Label Here',
                                                 feedback: false,
@@ -567,7 +618,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                 options: {
                                                     callback: $scope.reportColumns
                                                 },
-                                            },
+                                            },*/
                                             {
                                                 key: 'yAxisLabel',
                                                 placeholder: 'Enter Y Axis Label Here',
