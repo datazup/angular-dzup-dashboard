@@ -75,10 +75,10 @@ app.controller('DzupGenericDataSourceController', ['$scope', '$rootScope', '$tim
             $scope.getAvailableStreams(item, false);
         }
 
-        $scope.StreamTypes = [{value: "scheduled", label: "Scheduled"}, {value: "regular", label: "Regular"}]
 
-        if (typeof config.definitionModel != 'undefined') {
-            $scope.StreamTypes.selected = _.find($scope.StreamTypes, {'value': config.definitionModel.streamType});
+        $scope.StreamTypes = [{ value: "scheduled", label: "Scheduled" }, { value: "regular", label: "Regular" }]
+        if(typeof $scope.StreamTypes.selected != 'undefined'){
+            $scope.StreamTypes.selected =  _.find($scope.StreamTypes, {'value': config.definitionModel.streamType});
         }
     }
 ]);

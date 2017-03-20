@@ -350,7 +350,7 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                     reportSource: dataSourceWidget.config.definitionModel.reportSource,
                     stream: dataSourceWidget.config.definitionModel.stream,
                     reportName: dataSourceWidget.config.definitionModel.report,
-                    groupBy: definitionModel.xAxis,
+                    aggregateGroupBy: _.map(definitionModel.aggregateAxis,function(x){ return x.xAxisAg}),
                     orderBy: definitionModel.yAxis,
                     from: definitionModel.from,
                     to: definitionModel.to,

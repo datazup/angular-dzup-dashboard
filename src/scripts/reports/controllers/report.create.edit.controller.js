@@ -6,7 +6,7 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
         $scope.report = report;
 
         var data =  {
-          "created_at": "Fri Feb 10 11:52:10 +0000 2017",
+          "created_at": { type: 'time'},
           "id": 830021537210196000,
           "id_str": "830021537210195970",
           "text": "#JU112 Departure to Sarajevo | Scheduled 10-FEB 13:50 Gate C7 | REMARK: New time 14:05 (15 min late)",
@@ -32,7 +32,7 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
             "listed_count": 13,
             "favourites_count": 0,
             "statuses_count": 1344,
-            "created_at": "Sat Mar 28 20:46:36 +0000 2015",
+            "created_at": { type: 'time'},
             "utc_offset": null,
             "time_zone": null,
             "geo_enabled": false,
@@ -360,6 +360,14 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
                     default: "",
                     required: false
                 },
+                 primaryTimeDimension:{
+                    type: 'string',
+                    title: 'Primary Time Dimension',
+                    format: "uiselect",
+                    placeholder: 'Select a primary time dimension',
+                    default: null,
+                    required: true
+                },
                 dimensions: {
                     type: "array",
                     items: {
@@ -478,10 +486,7 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
                                                             {
                                                                 key: 'reportSource',
                                                                 options: {
-                                                                    callback: $scope.AvailableSources,
-                                                                 eventCallback: function (value) {
-                                                                     console.log("value: " + value);
-                                                                 }
+                                                                    callback: $scope.AvailableSources
                                                                 },
                                                                 feedback: false,
                                                                 type: 'uiselect'
@@ -506,15 +511,33 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
                                                 htmlClass: "col-xs-12",
                                                 items:[
                                                     {
+                                                            type: "section",
+                                                            htmlClass: "col-xs-6",
+                                                            items: [
+                                                                {
+                                                                    key: 'description',
+                                                                    feedback: false
+                                                                }
+                                                            ]
+                                                        },
+                                                    {
                                                         type: "section",
-                                                        htmlClass: "col-xs-12",
+                                                        htmlClass: "col-xs-6",
                                                         items: [
                                                             {
-                                                                key: 'description',
-                                                                feedback: false
+                                                                key: 'primaryTimeDimension',
+                                                                options: {
+                                                                    callback: $scope.AvailableSources,
+                                                                 eventCallback: function (value) {
+                                                                     console.log("value: " + value);
+                                                                 }
+                                                                },
+                                                                feedback: false,
+                                                                type: 'uiselect',
+                                                                condition:"false"
                                                             }
                                                         ]
-                                                    }
+                                                    },
                                                 ]
                                             }
                                         ]
