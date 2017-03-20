@@ -408,10 +408,14 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                 stream: stream
             };
 
-            return $dzupDashboard.getReport(parameters)
-                .then(function (result) {
-                    return result.data.columns;
-                });
+            var deferred = new $.Deferred();
+
+            return $dzupDashboard.getReport(parameters).then(function (result) {
+                return deferred.resolve(result.data.columns);
+            });
+
+            return deferred.promise();
+
         },
         addDashboardWidget: function (widget) {
 
