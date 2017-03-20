@@ -66,7 +66,7 @@ dzupDashboard.provider('$dzupDashboardWidget', [function () {
                 },
                 config: null
             },
-            chartConf: {
+           chartConf: {
                     title: 'Chart Configuration',
                     description: 'Chart Configuration',
                     category: 'Chart',

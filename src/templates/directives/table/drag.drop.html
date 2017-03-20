@@ -1,0 +1,42 @@
+<div class="col-md-12" style="overflow-x: scroll;">
+    <table class="hidtable" style="display:none" id="dragtable" border="1">
+        <thead style="cursor:move">
+        <th>{{dragHead}}</th>
+        </thead>
+        <tr ng-repeat="row in conf.data">
+            <td>{{row[dragHead]}}</td>
+        </tr>
+    </table>
+    <table class="coverhidtable" border="1" style="display:none">
+        <thead style="cursor:move">
+        <th>{{dragHead}}</th>
+        </thead>
+        <tr ng-repeat="row in conf.data">
+            <td>{{row[dragHead]}}</td>
+        </tr>
+    </table>
+    <table class="table table-bordered acttable" >
+        <thead>
+        <th style="cursor:move" draggable drag="handleDrag"  dragData="{{hd}}" dragImage="{{dragImageId}}" droppable drop="handleDrop" ng-repeat="hd in conf.heads">
+
+            <a href="" ng-click="order(hd)">{{hd}}</a>
+            <span class="sortorder" ng-show="predicate === hd" ng-class="{reverse:reverse}"></span>
+
+        </th>
+        </thead>
+        <tbody>
+        <tr ng-repeat="data in conf.data | limitTo:numLimit:start">
+            <td ng-repeat="d in conf.heads"><span>{{data[d]}}</span>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="{{conf.heads.length}}">
+                <span>Showing page {{(start /numLimit)+1}} from total of {{pages}}.</span>
+
+                <span style="float:right;padding:5px"><a ng-hide="hideNext()" href="" ng-click="nextPage()">Next</a></span>
+                <span style="float:right;padding:5px"><a ng-hide="hidePrev()" href="" ng-click="PrevPage()">Prev</a></span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
