@@ -76,7 +76,7 @@ dzupDashboard.provider('$dzupDashboard', function () {
             }
 
              this.getSourcesStatic = function(){
-                 return  [{ value: "twitter_stream", label: "Twitter stream" }];
+                 return  [{ value: "twitter_stream", label: "Twitter stream" }, { value: "tagged_stream", label: "Tagged stream" }];
             }
 
             this.getReportsBySource = function(source){
