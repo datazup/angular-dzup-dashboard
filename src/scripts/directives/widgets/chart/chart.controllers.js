@@ -120,7 +120,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
             if (injectValue == true) {
                 $timeout(function () {
                     //the code which needs to run after dom rendering
-                    $scope.schema.properties.xAxis.items = $scope.reportColumns;
+                  //  $scope.schema.properties.xAxis.items = $scope.reportColumns;
                     $scope.schema.properties.yAxis.items = $scope.reportColumns;
 
                 })
