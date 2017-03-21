@@ -850,8 +850,25 @@ angular.module('schemaForm').controller('dynamicSelectController', ['$scope', '$
     $scope.triggerTitleMap = function () {
         // Ugly workaround to trigger titleMap expression re-evaluation so that the selectFilter it reapplied.
         $scope.form.titleMap.push({"value": "345890u340598u3405u9", "name": "34095u3p4ouij"})
-        $timeout(function () { $scope.form.titleMap.pop() })
+        $timeout(function () {
 
+        $scope.form.titleMap.pop() ;
+        if($scope.form.options.asyncReloadOnFilterTrigger){
+
+            $scope.form.options.populateTitleMap = $scope.populateTitleMap;
+            $scope.form.options.form = $scope.form;
+
+            var aCll = $scope.form.options.asyncCallback();
+            if(typeof aCll.then == "function"){
+                aCll.then(function(result) { $scope.form.titleMap = result.data;
+
+                 $scope.populateTitleMap($scope.form);
+
+                });
+            }
+        }
+
+        });
     };
 
     $scope.initFiltering = function (localModel) {

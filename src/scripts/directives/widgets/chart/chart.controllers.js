@@ -147,9 +147,20 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
             if (injectValue == true) {
                 $timeout(function () {
                     //the code which needs to run after dom rendering
-                    $scope.schema.properties.yAxis.items = $scope.reportColumns;
-                    //$scope.schema.properties.tableColumns.items = $scope.reportColumns;
+                    $scope.config.definitionModel.tableColumns = [];
+                    $scope.config.definitionModel.aggregateAxis = {};
+                    var resultItems = _.map($scope.reportColumns,function(item){ return { name:item.label, value: item.value}});
+                    if($scope.config.definitionModel.chartType =="tableChart"){
+                        $scope.config.definitionModel.aggregateAxis = [];
+                        //path to tableColumns
+                        $scope.form["0"].tabs[1].items["0"].items["0"].items["0"].titleMap = resultItems;
+                    }
+                    else
+                    {
 
+                         $scope.config.definitionModel.aggregateAxis = [{xAxisAg:null}];
+                         $scope.schema.properties.yAxis.items = $scope.reportColumns;
+                    }
                 })
             }
         }
@@ -180,6 +191,28 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                 return $scope.reportColumns;
             });
         }
+
+        $scope.getReportColumnsDynamic = function (value, injectValue) {
+            //console.log($scope.form["0"].tabs[1].items["0"].items[2].items["0"].options);
+            if(!angular.equals(value, $scope.defCopy)){
+                $scope.reportColumns = $scope.getReportColumns(value, injectValue);
+                $scope.defCopy =value;
+            }
+
+           if(typeof $scope.reportColumns.then == 'function'){
+                 return $scope.reportColumns.then(function(result){
+                 var items = _.map(result,function(item){ return { name:item.label, value: item.value}});
+                 return {data:items};
+              });
+           }
+           else
+           {
+             return new Promise(function(resolve, reject) {
+             var items = _.map($scope.reportColumns,function(item){ return { name:item.label, value: item.value}});
+                        resolve( {data:items});
+                      });
+           }
+        };
 
         $scope.getChartTypes = function (injectValue) {
 
@@ -350,6 +383,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                         items: [
                                             {
                                                 key: 'dataSource',
+                                                type: 'uiselect',
                                                 options: {
                                                     callback: _.map(dzupDashboardWidgetHelper.getWidgetsByType("dataSource"), function (x) { return { value: x.wid, label: x.title } }),
                                                     eventCallback: function (value) {
@@ -358,8 +392,25 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                         }
                                                     }
                                                 },
+                                               /* "type": "strapselect",
+                                                "onChange": function (modelValue, form) {
+                                                debugger;
+                                                    $scope.form.forEach(function (item) {
+                                                        if (item.key == "xAxisAg") {
+                                                        debugger;
+                                                            item.options.scope.populateTitleMap(item);
+                                                        }
+                                                    });
+
+                                                    if (typeof modelValue != 'undefined') {
+                                                            $scope.reportColumns = $scope.getReportColumns(config.definitionModel, true);
+                                                        }
+
+                                                },
+                                                "options": {
+                                                },
+                                                titleMap: _.map(dzupDashboardWidgetHelper.getWidgetsByType("dataSource"), function (x) { return { value: x.wid, name: x.title } }),*/
                                                 feedback: false,
-                                                type: 'uiselect'
                                             }
                                         ]
                                     }
@@ -387,22 +438,8 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                 options: {
                                                   filterTriggers: ["model.dataSource"],
                                                   multiple: "true",
-                                                  asyncCallback: function () {
-                                                      if(typeof $scope.reportColumns.then == 'function'){
-                                                            return $scope.reportColumns.then(function(result){
-                                                            return {data:result};
-                                                         });
-                                                      }
-                                                      else
-                                                      {
-                                                        return new Promise(function(resolve, reject) {
-                                                                   resolve( {data:$scope.reportColumns});
-                                                                 });
-                                                      }
-                                                   },
-                                                   //scope: $scope.reportColumns,
-                                                   map: {valueProperty: "value", nameProperty: "label"},
-                                                   placement: 'left'
+                                                  asyncCallback: function(){return $scope.getReportColumnsDynamic(config.definitionModel, false)},
+                                                  placement: 'left'
                                               }
                                             }
                                         ]
@@ -435,21 +472,11 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                               feedback: false,
                                               fieldHtmlClass:'dzup-strapselect',
                                               options: {
-                                                  asyncCallback: function () {
-                                                      if(typeof $scope.reportColumns.then == 'function'){
-                                                            return $scope.reportColumns.then(function(result){
-                                                            return {data:result};
-                                                         });
-                                                      }
-                                                      else
-                                                      {
-                                                        return new Promise(function(resolve, reject) {
-                                                                   resolve( {data:$scope.reportColumns});
-                                                                 });
-                                                      }
-                                                   },
-                                                   map: {valueProperty: "value", nameProperty: "label"},
-                                                   placement: 'left'
+                                              filterTriggers: ["model.dataSource"],
+                                              filter:"true",
+                                              asyncCallback: function(){return $scope.getReportColumnsDynamic(config.definitionModel, false)},
+                                               placement: 'left',
+                                               asyncReloadOnFilterTrigger: true
                                               }
                                           }
                                        ]
