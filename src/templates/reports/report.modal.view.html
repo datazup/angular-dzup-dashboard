@@ -6,7 +6,7 @@
             <div class="col-xs-6">
                 <select id="selectedReport" data-live-search="true" ng-options="report as (report.reportName) for report in previousReports track by report.id"
                         class="form-control selectpicker with-search" data-live-search="true" title="Select a report in the list or search..." selectpicker
-                        ng-model="previousReports.selected" onchange="getReportDef(this.options[this.selectedIndex].value)" >
+                        ng-model="previousReports.selected" ng-change="getReportDef(previousReports.selected)" >
                 </select>
             </div>
             <div class="col-xs-6">
@@ -19,7 +19,7 @@
         <form sf-schema="schema" sf-form="form" sf-model="model" sf-options="{setSchemaDefaults:true, validateOnRender: true}"></form>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-primary" type="button" ng-click="ok()">Save Report</button>
-        <button class="btn btn-warning" type="button" ng-click="cancel()">Close</button>
+        <button class="btn btn-primary" type="button" ng-click="save()" ng-show="tabSelected=='Report'">Save Report</button>
+        <button class="btn btn-warning" type="button" ng-click="close()">Close</button>
     </div>
 </section>

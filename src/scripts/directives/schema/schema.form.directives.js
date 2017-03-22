@@ -23,7 +23,7 @@ $templateCache.put("directives/decorators/bootstrap/section.html","<div class=\"
 $templateCache.put("directives/decorators/bootstrap/select.html","<div class=\"form-group {{form.htmlClass}} schema-form-select\" ng-class=\"{\'has-error\': form.disableErrorState !== true && hasError(), \'has-success\': form.disableSuccessState !== true && hasSuccess(), \'has-feedback\': form.feedback !== false}\"><label class=\"control-label {{form.labelHtmlClass}}\" ng-show=\"showTitle()\">{{form.title}}</label><select ng-model=\"$$value$$\" ng-model-options=\"form.ngModelOptions\" ng-disabled=\"form.readonly\" sf-clicked=\"form\" sf-changed=\"form\" class=\"form-control {{form.fieldHtmlClass}}\" schema-validate=\"form\" ng-options=\"item.value as item.name group by item.group for item in form.titleMap\" name=\"{{form.key.slice(-1)[0]}}\"></select><div class=\"help-block\" sf-message=\"form.description\"></div></div>");
 $templateCache.put("directives/decorators/bootstrap/submit.html","<div class=\"form-group schema-form-submit {{form.htmlClass}}\"><input type=\"submit\" class=\"btn {{ form.style || \'btn-primary\' }} {{form.fieldHtmlClass}}\" value=\"{{form.title}}\" ng-disabled=\"form.readonly\" ng-if=\"form.type === \'submit\'\"> <button class=\"btn {{ form.style || \'btn-default\' }}\" type=\"button\" ng-click=\"buttonClick($event,form)\" ng-disabled=\"form.readonly\" ng-if=\"form.type !== \'submit\'\"><span ng-if=\"form.icon\" class=\"{{form.icon}}\"></span> {{form.title}}</button></div>");
 $templateCache.put("directives/decorators/bootstrap/tabarray.html","<div sf-array=\"form\" ng-init=\"selected = { tab: 0 }\" class=\"clearfix schema-form-tabarray schema-form-tabarray-{{form.tabType || \'left\'}} {{form.htmlClass}}\"><div ng-if=\"!form.tabType || form.tabType !== \'right\'\" ng-class=\"{\'col-xs-3\': !form.tabType || form.tabType === \'left\'}\"><ul class=\"nav nav-tabs\" ng-class=\"{ \'tabs-left\': !form.tabType || form.tabType === \'left\'}\"><li ng-repeat=\"item in modelArray track by $index\" ng-click=\"$event.preventDefault() || (selected.tab = $index)\" ng-class=\"{active: selected.tab === $index}\"><a href=\"#\">{{interp(form.title,{\'$index\':$index, value: item}) || $index}}</a></li><li ng-hide=\"form.readonly\" ng-click=\"$event.preventDefault() || (selected.tab = appendToArray().length - 1)\"><a href=\"#\"><i class=\"glyphicon glyphicon-plus\"></i> {{ form.add || \'Add\'}}</a></li></ul></div><div ng-class=\"{\'col-xs-9\': !form.tabType || form.tabType === \'left\' || form.tabType === \'right\'}\"><div class=\"tab-content {{form.fieldHtmlClass}}\"><div class=\"tab-pane clearfix\" ng-repeat=\"item in modelArray track by $index\" ng-show=\"selected.tab === $index\" ng-class=\"{active: selected.tab === $index}\"><sf-decorator ng-init=\"arrayIndex = $index\" form=\"copyWithIndex($index)\"></sf-decorator><button ng-hide=\"form.readonly\" ng-click=\"selected.tab = deleteFromArray($index).length - 1\" type=\"button\" class=\"btn {{ form.style.remove || \'btn-default\' }} pull-right\"><i class=\"glyphicon glyphicon-trash\"></i> {{ form.remove || \'Remove\'}}</button></div></div></div><div ng-if=\"form.tabType === \'right\'\" class=\"col-xs-3\"><ul class=\"nav nav-tabs tabs-right\"><li ng-repeat=\"item in modelArray track by $index\" ng-click=\"$event.preventDefault() || (selected.tab = $index)\" ng-class=\"{active: selected.tab === $index}\"><a href=\"#\">{{interp(form.title,{\'$index\':$index, value: item}) || $index}}</a></li><li ng-hide=\"form.readonly\" ng-click=\"$event.preventDefault() || appendToArray()\"><a href=\"#\"><i class=\"glyphicon glyphicon-plus\"></i> {{ form.add || \'Add\'}}</a></li></ul></div></div>");
-$templateCache.put("directives/decorators/bootstrap/tabs.html","<div ng-init=\"selected = { tab: 0 }\" class=\"schema-form-tabs {{form.htmlClass}}\"><ul class=\"nav nav-tabs\"><li ng-repeat=\"tab in form.tabs\" ng-disabled=\"form.readonly\" ng-click=\"$event.preventDefault() || (selected.tab = $index)\" ng-class=\"{active: selected.tab === $index}\"><a href=\"#\">{{ tab.title }}</a></li></ul><div class=\"tab-content {{form.fieldHtmlClass}}\"><div class=\"tab-pane\" ng-disabled=\"form.readonly\" ng-repeat=\"tab in form.tabs\" ng-show=\"selected.tab === $index\" ng-class=\"{active: selected.tab === $index}\"><bootstrap-decorator ng-repeat=\"item in tab.items\" form=\"item\"></bootstrap-decorator></div></div></div>");
+$templateCache.put("directives/decorators/bootstrap/tabs.html","<div ng-init=\"selected = { tab: 0 }\" class=\"schema-form-tabs {{form.htmlClass}}\"><ul class=\"nav nav-tabs\"><li ng-repeat=\"tab in form.tabs\" ng-disabled=\"form.readonly\" ng-click=\"$event.preventDefault() || (selected.tab = $index)\" ng-class=\"{active: selected.tab === $index}\"><a href=\"#\" ng-click=\"tab.click?tab.click():\'\' \">{{ tab.title }}</a></li></ul><div class=\"tab-content {{form.fieldHtmlClass}}\"><div class=\"tab-pane\" ng-disabled=\"form.readonly\" ng-repeat=\"tab in form.tabs\" ng-show=\"selected.tab === $index\" ng-class=\"{active: selected.tab === $index}\"><bootstrap-decorator ng-repeat=\"item in tab.items\" form=\"item\"></bootstrap-decorator></div></div></div>");
 $templateCache.put("directives/decorators/bootstrap/textarea.html","<div class=\"form-group has-feedback {{form.htmlClass}} schema-form-textarea\" ng-class=\"{\'has-error\': form.disableErrorState !== true && hasError(), \'has-success\': form.disableSuccessState !== true && hasSuccess()}\"><label class=\"{{form.labelHtmlClass}}\" ng-class=\"{\'sr-only\': !showTitle()}\" for=\"{{form.key.slice(-1)[0]}}\">{{form.title}}</label> <textarea ng-if=\"!form.fieldAddonLeft && !form.fieldAddonRight\" class=\"form-control {{form.fieldHtmlClass}}\" id=\"{{form.key.slice(-1)[0]}}\" sf-clicked=\"form\" sf-changed=\"form\" placeholder=\"{{form.placeholder}}\" ng-disabled=\"form.readonly\" ng-model=\"$$value$$\" ng-model-options=\"form.ngModelOptions\" schema-validate=\"form\" name=\"{{form.key.slice(-1)[0]}}\"></textarea><div ng-if=\"form.fieldAddonLeft || form.fieldAddonRight\" ng-class=\"{\'input-group\': (form.fieldAddonLeft || form.fieldAddonRight)}\"><span ng-if=\"form.fieldAddonLeft\" class=\"input-group-addon\" ng-bind-html=\"form.fieldAddonLeft\"></span> <textarea class=\"form-control {{form.fieldHtmlClass}}\" id=\"{{form.key.slice(-1)[0]}}\" sf-clicked=\"form\" sf-changed=\"form\" placeholder=\"{{form.placeholder}}\" ng-disabled=\"form.readonly\" ng-model=\"$$value$$\" ng-model-options=\"form.ngModelOptions\" schema-validate=\"form\" name=\"{{form.key.slice(-1)[0]}}\"></textarea> <span ng-if=\"form.fieldAddonRight\" class=\"input-group-addon\" ng-bind-html=\"form.fieldAddonRight\"></span></div><span class=\"help-block\" sf-message=\"form.description\"></span></div>");}]);
 angular.module('schemaForm').config(['schemaFormDecoratorsProvider', function(decoratorsProvider) {
   var base = 'directives/decorators/bootstrap/';
@@ -1471,53 +1471,15 @@ angular
                             }
                         ];
 
-                        /*
-                        ,
-                            {
-                                name: 'dsl',
-                                mode: 'fruit',
-                                ext: 'fdl'
-                        },
-                            {
-                                name: 'gui',
-                                mode: 'xml',
-                                ext: 'gui'
-                        },
-                            {
-                                name: 'xml',
-                                mode: 'xml',
-                                ext: 'xml'
-                        },
-                            {
-                                name: 'javascript',
-                                mode: 'javascript',
-                                ext: 'js'
-                        }
-                    
-                        */
-
                         $scope.themes = ['chrome', 'monokai', 'twilight'];
 
-                        $scope.showHelp = function () {
 
-                            if ($scope.$parent.model && ($scope.$parent.model.dsl || $scope.$parent.model.text)) {
-                                var options = {
-                                    type: $scope.$parent.model.dsl ? 'project' : 'resource',
-                                    context: $scope.$parent.model.type ? $scope.$parent.model.type.toLowerCase() : 'dsl'
-                                };
-                                $rootScope.$emit('showContextHelp', options);
-                            };
-                        };
-                        var language = 'dsl';
-
-                        if ($scope.$parent.model && $scope.$parent.model.language)
-                            language = $scope.$parent.model.language;
 
                         $scope.selectedTheme = $scope.themes[0];
-                        if (language) {
+                        if ($scope.language) {
                             var selected = null;
                             for (var i = 0; i < $scope.modes.length; i++) {
-                                if ($scope.modes[i].ext === language)
+                                if ($scope.modes[i].ext === $scope.language)
                                     selected = $scope.modes[i];
                             }
 
@@ -1559,10 +1521,6 @@ angular
 
                         scope.language = 'json';
 
-                        if (scope.$parent.model && scope.$parent.model.language)
-                            scope.language = scope.$parent.model.language;
-
-
                         scope.onChangedTheme = function () {
                             scope._editor.setTheme('ace/theme/' + this.selectedTheme);
                         };
@@ -1572,20 +1530,6 @@ angular
                             scope.language = this.selectedMode.mode;
                         };
 
-                       /* scope.updateEditorOnInput = function () {
-                            var shouldShow = !scope._editor.session.getValue().length;
-                            var node = scope._editor.renderer.emptyMessageNode;
-                            if (!shouldShow && node) {
-                                scope._editor.renderer.scroller.removeChild(scope._editor.renderer.emptyMessageNode);
-                                scope._editor.renderer.emptyMessageNode = null;
-                            } else if (shouldShow && !node) {
-                                node = scope._editor.renderer.emptyMessageNode = document.createElement("div");
-                                node.textContent = "placeholder"
-                                node.className = "ace_invisible ace_emptyMessage"
-                                node.style.padding = "0 9px"
-                                scope._editor.renderer.scroller.appendChild(node);
-                            }
-                        };*/
 
                         scope.aceOption = {
                             onLoad: function (_editor) {
@@ -1596,17 +1540,7 @@ angular
 
                                // _editor.on("input", scope.updateEditorOnInput);
 
-                                _editor.commands.addCommand({
-                                    name: 'Save',
-                                    bindKey: {
-                                        win: 'Ctrl-S',
-                                        mac: 'Ctrl-S'
-                                    },
-                                    exec: function (editor) {
-                                        // alert('It is saving');
-                                        scope.$parent.$parent.$parent.shortCutSave();
-                                    }
-                                });
+
 
                                 _editor.commands.addCommand({
                                     name: 'Format',
@@ -1633,92 +1567,6 @@ angular
                                 });
 
 
-                                _editor.commands.addCommand({
-                                    name: 'OpenView',
-                                    bindKey: {
-                                        win: 'Ctrl-Alt-W',
-                                        mac: 'Ctrl-Alt-W'
-                                    },
-                                    exec: function (editor) {
-                                        var resourceInfo = scope.$parent.$parent.$parent.resourceInfo;
-                                        switch (resourceInfo.type) {
-                                            case 'ViewContext':
-                                                var viewName = resourceInfo.name.replace('ViewContext', '');
-                                                var newResourceInfo = _.find(scope.$parent.$parent.$parent.allResources, {
-                                                    name: viewName
-                                                });
-                                                if (newResourceInfo) {
-                                                    scope.$parent.$parent.$parent.selectedResource(newResourceInfo);
-                                                    scope.$apply();
-                                                }
-                                                break;
-                                            default:
-                                                break;
-
-                                        }
-                                    }
-                                });
-
-                                _editor.commands.addCommand({
-                                    name: 'OpenViewContext',
-                                    bindKey: {
-                                        win: 'Ctrl-Alt-X',
-                                        mac: 'Ctrl-Alt-X'
-                                    },
-                                    exec: function (editor) {
-                                        var resourceInfo = scope.$parent.$parent.$parent.resourceInfo;
-                                        switch (resourceInfo.type) {
-                                            case 'View':
-                                                var viewName = resourceInfo.name + 'ViewContext';
-                                                var newResourceInfo = _.find(scope.$parent.$parent.$parent.allResources, {
-                                                    name: viewName
-                                                });
-                                                if (newResourceInfo) {
-                                                    scope.$parent.$parent.$parent.selectedResource(newResourceInfo);
-                                                    scope.$apply();
-                                                }
-                                                break;
-                                            default:
-                                                break;
-
-                                        }
-                                    }
-                                });
-
-                                /*_editor.commands.addCommand({
-                                    name: 'OpenEntityScript',
-                                    bindKey: {
-                                        win: 'Ctrl-Alt-S',
-                                        mac: 'Ctrl-Alt-S'
-                                    },
-                                    exec: function (editor) {
-                                       var resourceInfo = scope.$parent.$parent.$parent.resourceInfo;
-                                        var scriptName = null;
-                                        switch (resourceInfo.type) {
-                                        case 'ViewContext':
-                                              scriptName =  resourceInfo.name.replace('ViewContext','');
-                                               // need to check for suffix: Fd, Detail,List, References
-                                            break;
-                                        case 'View':
-                                              scriptName =  resourceInfo.name;//.replace('ViewContext','');
-                                               // need to check for suffix: Fd, Detail,List, References
-                                            break;
-                                        default:
-                                            break;
-
-                                        }
-                                        if(scriptName){
-                                         var newResourceInfo = _.find(scope.$parent.$parent.$parent.allResources,{ name: viewName });
-                                                if (newResourceInfo){
-                                                    scope.$parent.$parent.$parent.selectedResource(newResourceInfo);
-                                                    scope.$apply();                                                
-                                                        }
-                                        }
-                                            
-                                    }
-                                });*/
-
-
 
                                 _editor.setOptions({
                                     useWrapMode: true,
@@ -1730,7 +1578,7 @@ angular
                             }
                         };
 
-                        scope.$watch('$parent.model', function (newValue, oldValue) {
+                       /* scope.$watch('$parent.model', function (newValue, oldValue) {
                             if (newValue && newValue.language) {
                                 var selectedModel = findMode(scope.modes, newValue.language);
                                 if (selectedModel) {
@@ -1741,37 +1589,7 @@ angular
                                     }
                                 }
                             }
-                        });
-
-                        //NOTE: ovo pravi markere na lijevoj strani editora. Highlight linija ovako:
-                        //      http://jsbin.com/acotuv/216/edit
-                        //      (vidi i css na vrhu)
-                        //      Prije highlight linija, mora se ovo:
-                        //                  var Range = ace.require("ace/range").Range;
-
-                        scope.$watch('$parent.model.errors', function (newValue, oldValue) {
-                            if (scope._editor) {
-                                var session = scope._editor.getSession();
-                                session.clearAnnotations();
-                                var length = 0;
-                                var errors = [];
-                                if (newValue && (length = newValue.length) > 0) {
-                                    //                            var length = newValue.length;
-                                    for (var i = 0; i < length; i++) {
-                                        var error = newValue[i];
-                                        errors.push({
-                                            row: error.lineNumber - 1,
-                                            column: error.positionInLine,
-                                            text: error.message,
-                                            type: "error"
-                                        });
-                                    }
-
-                                }
-                                session.setAnnotations(errors);
-
-                            }
-                        });
+                        });*/
 
                     }
 

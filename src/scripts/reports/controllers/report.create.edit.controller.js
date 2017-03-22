@@ -4,6 +4,7 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
     function ($scope, $timeout, $uibModalInstance, $dzupConfigUtils, report, $dzupDashboard) {
 
         $scope.report = report;
+        $scope.tabSelected = "Report";
 
         var data =  {
           "created_at": { type: 'time'},
@@ -196,54 +197,123 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
            });
        }
 
-        getReportDef = function(value)
+        $scope.getReportDef = function(value, useTimeout)
         {
             if (typeof value != 'undefined') {
-                var index = _.indexOf($scope.previousReports, _.find($scope.previousReports, { id: value }));
-                if (index != -1) {
-                    var reportObj =  $scope.previousReports[index];
-                    var model = {
-                        name: reportObj.reportName,
-                        description: reportObj.reportDescription,
-                        reportSource: reportObj.reportSource,
-                    };
-                    var reportDef =  reportObj.report;
-                    var dim = [];
-                    var met = [];
-                    for(var i = 0; i<reportDef.dimensions.length; i++){
-                         dim.push(getStructure(reportDef.dimensions[i]));
+                var reportObj =  angular.copy(value);
+                var model = {
+                    name: reportObj.reportName,
+                    description: reportObj.reportDescription,
+                    reportSource: reportObj.reportSource,
+                };
+                var reportDef =  reportObj.report;
+                var dim = [];
+                var met = [];
+                for(var i = 0; i<reportDef.dimensions.length; i++){
+                     dim.push(getStructure(reportDef.dimensions[i]));
+                }
+
+                for(var j = 0; j<reportDef.metrics.length; j++){
+                     met.push(getStructure(reportDef.metrics[j]));
+                }
+
+                model.dimensions = _.chain(dim).map(function(item){
+                    return {
+                        dimensionProperty: (typeof item.property != 'undefined') ? item.property : null,
+                        dimensionType: (typeof item.property != 'undefined') ? item.type : null,
+                        dimensionFunction: (typeof item.property != 'undefined') ? item.funcName: null,
+                        valueR: (typeof item.parameters != 'undefined') && item.parameters.length > 1 ?item.parameters[1].replace("'#").replace("#'"): undefined,
+                        captureGroup: (typeof item.parameters != 'undefined') && item.parameters.length > 2 ?item.parameters[2]: undefined,
+                        dimensionAlias: (typeof item.property != 'undefined') ? item.alias: undefined
                     }
+                }).value();
 
-                    for(var j = 0; j<reportDef.metrics.length; j++){
-                         met.push(getStructure(reportDef.metrics[j]));
+                model.metrics = _.chain(met).map(function(item){
+                    return {
+                        metricProperty: (typeof item.property != 'undefined') ? item.property : null,
+                        metricType: (typeof item.property != 'undefined') ? item.type : null,
+                        metricFunction: (typeof item.property != 'undefined') ? item.funcName: null,
+                        metricAlias: (typeof item.property != 'undefined') ? item.alias: undefined
                     }
-
-                    model.dimensions = _.chain(dim).map(function(item){
-                        return {
-                            dimensionProperty: (typeof item.property != 'undefined') ? item.property : null,
-                            dimensionType: (typeof item.property != 'undefined') ? item.type : null,
-                            dimensionFunction: (typeof item.property != 'undefined') ? item.funcName: null,
-                            valueR: (typeof item.parameters != 'undefined') && item.parameters.length > 1 ?item.parameters[1].replace("'#").replace("#'"): undefined,
-                            captureGroup: (typeof item.parameters != 'undefined') && item.parameters.length > 2 ?item.parameters[2]: undefined,
-                            dimensionAlias: (typeof item.property != 'undefined') ? item.alias: undefined
-                        }
-                    }).value();
-
-                    model.metrics = _.chain(met).map(function(item){
-                        return {
-                            metricProperty: (typeof item.property != 'undefined') ? item.property : null,
-                            metricType: (typeof item.property != 'undefined') ? item.type : null,
-                            metricFunction: (typeof item.property != 'undefined') ? item.funcName: null,
-                            metricAlias: (typeof item.property != 'undefined') ? item.alias: undefined
-                        }
-                    }).value();
-                    $scope.model = null;
-                    $scope.model = model;
+                }).value();
+                $scope.model = {};
+                $scope.model = model;
+                if(useTimeout){
+                     $timeout(function () {
+                        $scope.$broadcast('schemaFormRedraw');
+                    });
+                }
+                else{
                     $scope.$broadcast('schemaFormRedraw');
                 }
+
              }
 
              return true;
+        }
+
+        $scope.getJsonReportDef = function(model){
+
+            var dimensions = model.dimensions;
+            var metrics = model.metrics;
+            var report = {
+                dimensions: [],
+                metrics: []
+            };
+
+            for(i=0;i<dimensions.length;i++)
+            {
+                var dimensionItem = {};
+                dimensionItem.type = dimensions[i].dimensionType;
+
+                var dimensionFN = "$"+ dimensions[i].dimensionProperty + "$";
+                if(typeof dimensions[i].dimensionFunction != 'undefined'){
+                    if(dimensions[i].dimensionFunction == 'REGEX_EXTRACT'  || dimensions[i].dimensionFunction == 'REGEX_MATCH'){
+                        if(dimensions[i].dimensionFunction == 'REGEX_EXTRACT' ){
+                            var captureGroup = (typeof dimensions[i].captureGroup != 'undefined') ? "," +dimensions[i].captureGroup : "";
+                            dimensionFN = dimensions[i].dimensionFunction + "("+ dimensionFN+ ", '#" + dimensions[i].valueR + "#'"+ captureGroup+")";
+                        }
+                        else{
+                            dimensionFN = dimensions[i].dimensionFunction + "("+ dimensionFN+ ", '" + dimensions[i].valueR + "')";
+                        }
+                    }
+                    else{
+                        dimensionFN = dimensions[i].dimensionFunction + "("+ dimensionFN+ ")";
+                    }
+                }
+
+                if(typeof dimensions[i].dimensionAlias != 'undefined' && dimensions[i].dimensionAlias != null){
+                    dimensionItem.name = dimensions[i].dimensionAlias;
+                    dimensionItem.func =  dimensionFN;
+                }
+                else{
+                    dimensionItem.name = dimensionFN;
+                }
+                report.dimensions.push(dimensionItem);
+            }
+
+            for(i=0;i<metrics.length;i++)
+            {
+                var metricItem = {};
+                metricItem.type = metrics[i].metricType;
+
+                var metricFN = "$"+ metrics[i].metricProperty + "$";
+                if(typeof metrics[i].metricFunction != 'undefined' && metrics[i].metricFunction != null){
+                   metricFN = metrics[i].metricFunction + "("+ metricFN+ ")";
+                }
+
+                if(typeof metrics[i].metricAlias != 'undefined' && metrics[i].metricAlias != null){
+                    metricItem.name = metrics[i].metricAlias;
+                    metricItem.func =  metricFN;
+                }
+                else{
+                    metricItem.name = metricFN;
+                }
+
+                report.metrics.push(metricItem);
+            }
+
+            return report;
         }
 
         var getStructure = function(item)
@@ -340,6 +410,12 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
         $scope.schema = {
             type: 'object',
             properties: {
+                jsonEditor: {
+                    type: 'string',
+                    title: null,
+                    format: 'ace'
+
+                },
                 reportSource: {
                     type: 'string',
                     title: 'Report Source',
@@ -467,9 +543,29 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
         $scope.form = [
                     {
                         type: 'tabs',
+                         htmlClass: "dzup-tab",
                         tabs: [
                             {
                                 title: 'Report',
+                                click: function(){
+                                    if($scope.tabSelected != "Report"){
+                                        $scope.tabSelected = "Report";
+
+                                        try {
+                                                var result = JSON.parse(angular.copy($scope.model.jsonEditor));
+                                                var jsonModel = {
+                                                     reportName: $scope.model.name,
+                                                     reportDescription: $scope.model.description,
+                                                     reportSource: $scope.model.reportSource,
+                                                     report: result
+                                                 };
+                                                 $scope.getReportDef(jsonModel, true);
+                                            } catch (e) {
+                                                console.log("Not Valid JSON");
+                                                return false;
+                                            }
+                                    }
+                                },
                                 items: [
                                     {
                                         type: 'section',
@@ -672,6 +768,38 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
                                     ]
                                     }
                                 ]
+                            },
+                            {
+                                title: 'Advanced',
+                                type: "section",
+                                click: function(){
+
+                                    if($scope.tabSelected != "Advanced"){
+
+                                        var result = $scope.getJsonReportDef(angular.copy($scope.model));
+                                         $scope.tabSelected = "Advanced";
+                                        $scope.model.jsonEditor =  JSON.stringify(result);
+
+                                    }
+                                },
+                                items: [
+                                    {
+                                            type: "section",
+                                            htmlClass: "row",
+                                            items: [
+                                                {
+                                                    type: "section",
+                                                    htmlClass: "col-xs-12 dzup-dash-json-editor",
+                                                    items: [
+                                                        {
+                                                            key:"jsonEditor",
+                                                            title: null
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                    }
+                                 ]
                             }
                         ]
                     }
@@ -691,7 +819,7 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
 
         tv4.addSchema('dynamicReportSchema', $scope.schema);
 
-        $scope.ok = function () {
+        $scope.save = function () {
 
             //validation
             var valMod = JSON.parse(JSON.stringify($scope.model));
@@ -709,65 +837,7 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
             //end validation
 
             var model = $scope.model;
-
-            var dimensions = model.dimensions;
-            var metrics = model.metrics;
-            var report = {
-                dimensions: [],
-                metrics: []
-            };
-
-            for(i=0;i<dimensions.length;i++)
-            {
-                var dimensionItem = {};
-                dimensionItem.type = dimensions[i].dimensionType;
-
-                var dimensionFN = "$"+ dimensions[i].dimensionProperty + "$";
-                if(typeof dimensions[i].dimensionFunction != 'undefined'){
-                    if(dimensions[i].dimensionFunction == 'REGEX_EXTRACT'  || dimensions[i].dimensionFunction == 'REGEX_MATCH'){
-                        if(dimensions[i].dimensionFunction == 'REGEX_EXTRACT' ){
-                            var captureGroup = (typeof dimensions[i].captureGroup != 'undefined') ? "," +dimensions[i].captureGroup : "";
-                            dimensionFN = dimensions[i].dimensionFunction + "("+ dimensionFN+ ", '#" + dimensions[i].valueR + "#'"+ captureGroup+")";
-                        }
-                        else{
-                            dimensionFN = dimensions[i].dimensionFunction + "("+ dimensionFN+ ", '" + dimensions[i].valueR + "')";
-                        }
-                    }
-                    else{
-                        dimensionFN = dimensions[i].dimensionFunction + "("+ dimensionFN+ ")";
-                    }
-                }
-
-                if(typeof dimensions[i].dimensionAlias != 'undefined' && dimensions[i].dimensionAlias != null){
-                    dimensionItem.name = dimensions[i].dimensionAlias;
-                    dimensionItem.func =  dimensionFN;
-                }
-                else{
-                    dimensionItem.name = dimensionFN;
-                }
-                report.dimensions.push(dimensionItem);
-            }
-
-            for(i=0;i<metrics.length;i++)
-            {
-                var metricItem = {};
-                metricItem.type = metrics[i].metricType;
-
-                var metricFN = "$"+ metrics[i].metricProperty + "$";
-                if(typeof metrics[i].metricFunction != 'undefined' && metrics[i].metricFunction != null){
-                   metricFN = metrics[i].metricFunction + "("+ metricFN+ ")";
-                }
-
-                if(typeof metrics[i].metricAlias != 'undefined' && metrics[i].metricAlias != null){
-                    metricItem.name = metrics[i].metricAlias;
-                    metricItem.func =  metricFN;
-                }
-                else{
-                    metricItem.name = metricFN;
-                }
-
-                report.metrics.push(metricItem);
-            }
+            var report = $scope.getJsonReportDef(model);
 
             var dashItem = {
                 id: "",
@@ -786,7 +856,7 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
             });
         };
 
-        $scope.cancel = function () {
+        $scope.close = function () {
             $uibModalInstance.close({
                 value: true
             });
