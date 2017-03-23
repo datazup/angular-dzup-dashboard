@@ -2,6 +2,8 @@
     <h3 style="text-align:center;">{{widget.title}}</h3>
     <div class="col-md-12">
         <span us-spinner="{radius:30, width:8, length: 16, color: '#1C2B36', opacity: 0.15}" spinner-on="showSpinner"></span>
-        <nvd3 options="chart" data="populatedChart"></nvd3>
+        <nvd3 options="chart" data="populatedChart" ng-if="config.definitionModel.chartType != 'tableChart'"></nvd3>
+        <drag-and-drop-table ng-if="config.definitionModel.chartType == 'tableChart'" conf="config.tableConfig"
+                             order-by="config.definitionModel.yAxis" asc-desc="config.definitionModel.ascDesc" refresh-widget='refreshWidget(refreshConf)'></drag-and-drop-table>
     </div>
-</div>  
+</div>

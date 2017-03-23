@@ -24,42 +24,64 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
                     sortOrder: config.definitionModel.sortOrder,
                     sortBy: config.definitionModel.sortBy,
                     from: config.definitionModel.from,
-                    to: config.definitionModel.to
+                    to: config.definitionModel.to,
+                    chartType: config.definitionModel.chartType
                 };
             }
 
-            $scope.populatedChart = chartService.getChartData(wData, $scope.chart, $scope.chartOptions);
-
+            if( config.definitionModel.chartType != "tableChart")
+                $scope.populatedChart = chartService.getChartData(wData, $scope.chart, $scope.chartOptions);
+             else{
+                $scope.config.tableConfig = {};
+                $scope.config.tableConfig = {
+                  heads: config.definitionModel.tableColumns
+                };
+                $scope.config.tableConfig.data= wData;
+             }
         };
+
+        $scope.refreshWidget = function(refreshConf){
+            if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined') {
+
+                    if(null != refreshConf && typeof refreshConf != "undefined"){
+                        config.definitionModel.ascDesc = refreshConf.ascDesc
+                        config.definitionModel.yAxis = refreshConf.orderBy
+                    }
+
+                    $scope.showChart = false;
+                    $scope.showSpinner = true;
+                    if( config.definitionModel.chartType == "tableChart" && ( null == config.definitionModel.yAxis || typeof config.definitionModel.yAxis == "undefined"))
+                        config.definitionModel.yAxis = config.definitionModel.tableColumns.length > 0 ? config.definitionModel.tableColumns[0]:"";
+
+                    dzupDashboardWidgetHelper.getWidgetData(config.definitionModel).then(function (result) {
+                        if (result == null) return;
+
+                        if (result.data != null && typeof result.data != 'undefined') {
+                            $scope.setChartData(result);
+                            $scope.showSpinner = false;
+                            $scope.showChart = true;
+                        }
+                        else {
+                            result.then(function (pResult) {
+                                $scope.setChartData(pResult.data);
+                                $scope.showSpinner = false;
+                                $scope.showChart = true;
+                            });
+                        }
+                    });
+                }
+        }
 
         $scope.$on('widgetStreamChanged', function (event, data) {
             if (typeof config.definitionModel != 'undefined' && config.definitionModel.dataSource != data) return;
 
-            if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined') {
-
-                $scope.showChart = false;
-                $scope.showSpinner = true;
-
-                dzupDashboardWidgetHelper.getWidgetData(config.definitionModel).then(function (result) {
-                    if (result == null) return;
-
-                    if (result.data != null && typeof result.data != 'undefined') {
-                        $scope.setChartData(result);
-                        $scope.showSpinner = false;
-                        $scope.showChart = true;
-                    }
-                    else {
-                        result.then(function (pResult) {
-                            $scope.setChartData(pResult.data);
-                            $scope.showSpinner = false;
-                            $scope.showChart = true;
-                        });
-                    }
-                });
-            }
+            $scope.refreshWidget();
         });
 
         if (typeof config.definitionModel != 'undefined' && typeof config.definitionModel.dataSource != 'undefined') {
+
+            if( config.definitionModel.chartType == "tableChart" && ( null == config.definitionModel.yAxis || typeof config.definitionModel.yAxis == "undefined"))
+                config.definitionModel.yAxis = config.definitionModel.tableColumns.length > 0 ? config.definitionModel.tableColumns[0]:"";
 
             dzupDashboardWidgetHelper.getWidgetData(config.definitionModel).then(function (result) {
                 if (result == null) return;
@@ -95,6 +117,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
             }
             var wData = typeof result.items == 'undefined' ? [] : result.items.list;
             $scope.reportColumns = _.map(result.columns, function (x) { return { value: x, label: x } });
+
             $scope.injectAxisDdlValues(injectValue);
 
             if ((null == $scope.chart || typeof $scope.chart == 'undefined') && config.definitionModel.chartType != null) {
@@ -110,19 +133,34 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                     sortOrder: config.definitionModel.sortOrder,
                     sortBy: config.definitionModel.sortBy,
                     from: config.definitionModel.from,
-                    to: config.definitionModel.to
+                    to: config.definitionModel.to,
+                    chartType: config.definitionModel.chartType
                 };
             }
-            if(null != $scope.chart && null != $scope.chartOptions && typeof $scope.chart !='undefined' && typeof $scope.chartOptions !='undefined')
+
+            //$scope.chart.chart.type != "tableChart" or use config.definitionModel.chartType
+            if(null != $scope.chart && null != $scope.chartOptions && typeof $scope.chart !='undefined' && typeof $scope.chartOptions !='undefined' &&
+            config.definitionModel.chartType != "tableChart")
                 $scope.populatedChart = chartService.getChartData(wData, $scope.chart, $scope.chartOptions);
         };
         $scope.injectAxisDdlValues = function (injectValue) {
             if (injectValue == true) {
                 $timeout(function () {
                     //the code which needs to run after dom rendering
-                  //  $scope.schema.properties.xAxis.items = $scope.reportColumns;
-                    $scope.schema.properties.yAxis.items = $scope.reportColumns;
+                    $scope.config.definitionModel.tableColumns = [];
+                    $scope.config.definitionModel.aggregateAxis = {};
+                    var resultItems = _.map($scope.reportColumns,function(item){ return { name:item.label, value: item.value}});
+                    if($scope.config.definitionModel.chartType =="tableChart"){
+                        $scope.config.definitionModel.aggregateAxis = [];
+                        //path to tableColumns
+                        $scope.form["0"].tabs[1].items["0"].items["0"].items["0"].titleMap = resultItems;
+                    }
+                    else
+                    {
 
+                         $scope.config.definitionModel.aggregateAxis = [{xAxisAg:null}];
+                         $scope.schema.properties.yAxis.items = $scope.reportColumns;
+                    }
                 })
             }
         }
@@ -154,9 +192,31 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
             });
         }
 
+        $scope.getReportColumnsDynamic = function (value, injectValue) {
+            //console.log($scope.form["0"].tabs[1].items["0"].items[2].items["0"].options);
+            if(!angular.equals(value, $scope.defCopy)){
+                $scope.reportColumns = $scope.getReportColumns(value, injectValue);
+                $scope.defCopy =value;
+            }
+
+           if(typeof $scope.reportColumns.then == 'function'){
+                 return $scope.reportColumns.then(function(result){
+                 var items = _.map(result,function(item){ return { name:item.label, value: item.value}});
+                 return {data:items};
+              });
+           }
+           else
+           {
+             return new Promise(function(resolve, reject) {
+             var items = _.map($scope.reportColumns,function(item){ return { name:item.label, value: item.value}});
+                        resolve( {data:items});
+                      });
+           }
+        };
+
         $scope.getChartTypes = function (injectValue) {
 
-            $scope.chartTypes = [{ value: 'pieChart', label: 'Pie Chart' }, { value: 'discreteBarChart', label: 'Bar Chart' }, { value: 'lineChart', label: 'Line Chart' }];
+            $scope.chartTypes = [{ value: 'pieChart', label: 'Pie Chart' }, { value: 'discreteBarChart', label: 'Bar Chart' }, { value: 'lineChart', label: 'Line Chart' }, { value: 'tableChart', label: 'Table Chart' }];
 
             if (injectValue == true) {
                 $timeout(function () {
@@ -187,7 +247,6 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
 
             config.changesApplied = false;
         }
-        $scope.notSet = true;
 
         $scope.schema = {
             type: 'object',
@@ -220,6 +279,14 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                     type: 'string',
                     title: 'Y Axis Label'
                 },
+                tableColumns: {
+                    type: 'array',
+                    default:[],
+                    title: 'Table Properties',
+                    placeholder: 'Select Table Properties',
+                    validationMessage: "Required",
+                    items: {type:"string"}
+                },
                 aggregateAxis: {
                     type: "array",
                     items: {
@@ -242,8 +309,9 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                     title: 'Y Axis',
                     format: "uiselect",
                     placeholder: 'Select Y Axis Property',
-                    default: null,
-                    validationMessage: "Required"
+                    default: "",
+                    validationMessage: "Required",
+                    required: true
                 },
                 chartColor: {
                     type: 'string',
@@ -276,8 +344,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
             },
             required: [
                 "chartType",
-                "dataSource",
-                "yAxis",
+                "dataSource"
             ]
 
         };
@@ -316,6 +383,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                         items: [
                                             {
                                                 key: 'dataSource',
+                                                type: 'uiselect',
                                                 options: {
                                                     callback: _.map(dzupDashboardWidgetHelper.getWidgetsByType("dataSource"), function (x) { return { value: x.wid, label: x.title } }),
                                                     eventCallback: function (value) {
@@ -324,8 +392,25 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                         }
                                                     }
                                                 },
+                                               /* "type": "strapselect",
+                                                "onChange": function (modelValue, form) {
+                                                debugger;
+                                                    $scope.form.forEach(function (item) {
+                                                        if (item.key == "xAxisAg") {
+                                                        debugger;
+                                                            item.options.scope.populateTitleMap(item);
+                                                        }
+                                                    });
+
+                                                    if (typeof modelValue != 'undefined') {
+                                                            $scope.reportColumns = $scope.getReportColumns(config.definitionModel, true);
+                                                        }
+
+                                                },
+                                                "options": {
+                                                },
+                                                titleMap: _.map(dzupDashboardWidgetHelper.getWidgetsByType("dataSource"), function (x) { return { value: x.wid, name: x.title } }),*/
                                                 feedback: false,
-                                                type: 'uiselect'
                                             }
                                         ]
                                     }
@@ -341,7 +426,26 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                 htmlClass: "row",
                                 items: [
                                     {
-                                        condition: "model.chartType!='pieChart'",
+                                        condition: "model.chartType=='tableChart' && model.dataSource!=null",
+                                        type: "section",
+                                        htmlClass: "col-xs-12",
+                                        items: [
+                                            {
+                                                key: 'tableColumns',
+                                                type: 'strapselect',
+                                                feedback: false,
+                                                fieldHtmlClass:'dzup-strapselect dzup-strapselect-select',
+                                                options: {
+                                                  filterTriggers: ["model.dataSource"],
+                                                  multiple: "true",
+                                                  asyncCallback: function(){return $scope.getReportColumnsDynamic(config.definitionModel, false)},
+                                                  placement: 'left'
+                                              }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        condition: "model.chartType!='pieChart' && model.chartType!='tableChart'",
                                         type: "section",
                                         htmlClass: "col-xs-12",
                                         items: [
@@ -353,7 +457,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                         ]
                                     },
                                     {
-                                       condition: "model.dataSource!=null",
+                                       condition: "model.dataSource!=null && model.chartType!='tableChart'",
                                        key: "aggregateAxis",
                                        style: {
                                            "add": "btn-success"
@@ -368,21 +472,11 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                               feedback: false,
                                               fieldHtmlClass:'dzup-strapselect',
                                               options: {
-                                                  asyncCallback: function () {
-                                                      if(typeof $scope.reportColumns.then == 'function'){
-                                                            return $scope.reportColumns.then(function(result){
-                                                            return {data:result};
-                                                         });
-                                                      }
-                                                      else
-                                                      {
-                                                        return new Promise(function(resolve, reject) {
-                                                                   resolve( {data:$scope.reportColumns});
-                                                                 });
-                                                      }
-                                                   },
-                                                   map: {valueProperty: "value", nameProperty: "label"},
-                                                   placement: 'left'
+                                              filterTriggers: ["model.dataSource"],
+                                              filter:"true",
+                                              asyncCallback: function(){return $scope.getReportColumnsDynamic(config.definitionModel, false)},
+                                               placement: 'left',
+                                               asyncReloadOnFilterTrigger: true
                                               }
                                           }
                                        ]

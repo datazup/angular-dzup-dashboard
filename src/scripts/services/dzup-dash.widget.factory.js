@@ -346,16 +346,26 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
 
             if (dataSourceWidgetIndex != -1) {
                 var dataSourceWidget = self.widgets[dataSourceWidgetIndex];
+
+                var aggregateGroupBy =  [];
+                if(definitionModel.chartType == 'tableChart'){
+                     aggregateGroupBy =  definitionModel.tableColumns;
+                }else{
+                     aggregateGroupBy =  _.map(definitionModel.aggregateAxis,function(x){ return x.xAxisAg});
+                }
+
                 var parameters = {
                     reportSource: dataSourceWidget.config.definitionModel.reportSource,
                     stream: dataSourceWidget.config.definitionModel.stream,
                     reportName: dataSourceWidget.config.definitionModel.report,
-                    aggregateGroupBy: _.map(definitionModel.aggregateAxis,function(x){ return x.xAxisAg}),
+                    aggregateGroupBy: aggregateGroupBy,
                     orderBy: definitionModel.yAxis,
                     from: definitionModel.from,
                     to: definitionModel.to,
                     streamType: (typeof dataSourceWidget.streamType != 'undefined') ? dataSourceWidget.streamType.toUpperCase(): null,
-                    dynamicFilters: []
+                    dynamicFilters: [],
+                    chartType:definitionModel.chartType,
+                    ascDesc: definitionModel.ascDesc
                 };
 
                 if (dataSourceWidget.config.definitionModel.filterFields) {
