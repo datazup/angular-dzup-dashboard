@@ -209,6 +209,7 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
                 var reportDef =  reportObj.report;
                 var dim = [];
                 var met = [];
+
                 for(var i = 0; i<reportDef.dimensions.length; i++){
                      dim.push(getStructure(reportDef.dimensions[i]));
                 }
@@ -218,11 +219,12 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
                 }
 
                 model.dimensions = _.chain(dim).map(function(item){
+
                     return {
                         dimensionProperty: (typeof item.property != 'undefined') ? item.property : null,
                         dimensionType: (typeof item.property != 'undefined') ? item.type : null,
                         dimensionFunction: (typeof item.property != 'undefined') ? item.funcName: null,
-                        valueR: (typeof item.parameters != 'undefined') && item.parameters.length > 1 ?item.parameters[1].replace("'#").replace("#'"): undefined,
+                        valueR: (typeof item.parameters != 'undefined') && item.parameters.length > 1 ?item.parameters[1].replace("'#","").replace("#'",""): undefined,
                         captureGroup: (typeof item.parameters != 'undefined') && item.parameters.length > 2 ?item.parameters[2]: undefined,
                         dimensionAlias: (typeof item.property != 'undefined') ? item.alias: undefined
                     }
@@ -316,6 +318,11 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
             return report;
         }
 
+        function setCharAt(str,index,chr) {
+            if(index > str.length-1) return str;
+            return str.substring(0,index) + chr + str.substring(index+1);
+        }
+
         var getStructure = function(item)
         {
             //"REGEX_EXTRACT($source$, '#<a[^>]*?>(.*?)</a>#', 1)"
@@ -328,7 +335,11 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
             var funcBody = func.substring(func.indexOf('('), func.lastIndexOf(')')+1);
             obj.funcName = func.replace(funcBody, "");
 
-            var funcParameters = funcBody.replace("(","").replace(")","").split(",");
+            funcBody = setCharAt(funcBody,funcBody.indexOf('('),"");
+            funcBody = setCharAt(funcBody,funcBody.lastIndexOf(')'),"");
+
+            var funcParameters = funcBody.split(",");
+
             for(var d = 0; d<funcParameters.length ; d++){
                   if(d==0){
                     obj.property = funcParameters[d].split('$').join('');
@@ -561,7 +572,7 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
                                                  };
                                                  $scope.getReportDef(jsonModel, true);
                                             } catch (e) {
-                                                console.log("Not Valid JSON");
+                                                console.log(e);
                                                 return false;
                                             }
                                     }

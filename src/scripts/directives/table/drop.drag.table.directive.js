@@ -85,14 +85,20 @@ app.directive('dragAndDropTable', ['$compile','$dzupConfigUtils',
       },
       controller: function($scope) {
       $scope.predicate = 'none';
+      $scope.CountRange =  [5,10,15,20,25];
       $scope.reverse = true;
       $scope.numLimit=5;
       $scope.start = 0;
       $scope.$watch('conf.data',function(newVal){
         if(newVal){
-            $scope.pages=Math.ceil($scope.conf.data.length/$scope.numLimit);
+            $scope.pageRecalc();
         }
       });
+
+      $scope.pageRecalc = function(){
+        $scope.pages=Math.ceil($scope.conf.data.length/$scope.numLimit);
+      }
+
       $scope.hideNext=function(){
 
         if(typeof $scope.conf != 'undefined' && typeof $scope.conf.data != 'undefined'){

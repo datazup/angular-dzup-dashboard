@@ -9,12 +9,12 @@ function ($dzupDashboard, $dzupConfigUtils, dzupDashboardWidgetHelper, $compile)
             dashboard:'='
         },
         template:'',
-         link: function (scope, element, attrs) {
+        link: function (scope, element, attrs) {
                var template  = ' <adf-dashboard name="{{dashboard.key}}" structure="{{dashboard.model.structure}}" categories="true" adf-model="dashboard.model" enableConfirmDelete="true" />';
 
                var compiled = $compile(template)(scope);
                element.replaceWith(compiled);
-         }
+        }
      }
 }
 ]);
