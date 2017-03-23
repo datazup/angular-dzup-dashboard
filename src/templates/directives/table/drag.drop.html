@@ -31,7 +31,7 @@
         </tr>
         <tr>
             <td colspan="{{conf.heads.length}}">
-                <span class="pull-left">Showing page {{(start /numLimit)+1}} from total of {{pages}}.</span>
+                <span class="pull-left">Showing page {{(int.parse(start /numLimit)+1)}} from total of {{pages}}.</span>
 
                 <span class="padding-5 pull-right"><a ng-hide="hideNext()" href="" ng-click="nextPage()">Next</a></span>
                 <span class="padding-5 pull-right"><a ng-hide="hidePrev()" href="" ng-click="PrevPage()">Prev</a></span>
