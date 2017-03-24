@@ -152,8 +152,10 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                     //the clear of
                     $scope.config.definitionModel.primaryOrderBy = [];
                     var primaryOrderByScope = angular.element(document.getElementsByClassName("primary-order-by")).scope();
-                    primaryOrderByScope.$select.selected =[]
-                    primaryOrderByScope.$selectMultiple.updateModel()
+                    if(primaryOrderByScope && primaryOrderByScope.$select){
+                        primaryOrderByScope.$select.selected =[]
+                        primaryOrderByScope.$selectMultiple.updateModel()
+                    }
 
                     $scope.config.definitionModel.aggregateAxis = {};
                     var resultItems = _.map($scope.reportColumns,function(item){ return { name:item.label, value: item.value}});
