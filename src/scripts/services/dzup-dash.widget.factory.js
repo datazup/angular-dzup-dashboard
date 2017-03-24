@@ -134,8 +134,8 @@ app.factory('chartService', [function () {
                         bottom: 40,
                         left: 55
                     },
-                    x: function (d) { return d.x; },
-                    y: function (d) { return d.y; },
+                    x: function (d) { if(d && d.x){return d.x;} else {return null;}},
+                    y: function (d) { if(d && d.y){return d.y;} else {return null;}},
                     useInteractiveGuideline: true,
                     dispatch: {
                         stateChange: function (e) { },
