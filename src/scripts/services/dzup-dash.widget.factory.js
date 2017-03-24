@@ -325,7 +325,7 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                  this.widgetsData.splice(index, 1);
              }
         },
-        getWidgetData: function (definitionModel) {
+        getWidgetData: function (definitionModel, reportColumnsReq) {
            var deferred = new $.Deferred();
             var self = this;
             var dataSourceWidgetIndex = _.indexOf(self.widgets, _.find(self.widgets, { wid: definitionModel.dataSource }));
@@ -351,7 +351,9 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                     streamType: (typeof dataSourceWidget.streamType != 'undefined') ? dataSourceWidget.streamType.toUpperCase(): null,
                     dynamicFilters: [],
                     chartType:definitionModel.chartType,
-                    ascDesc: definitionModel.ascDesc
+                    ascDesc: definitionModel.ascDesc,
+                    primaryOrderBy: definitionModel.primaryOrderBy,
+                    reportColumnsOnly: reportColumnsReq
                 };
 
                 return $dzupDashboard.getReport(parameters).then(function (result) {

@@ -1013,13 +1013,14 @@ angular.module('schemaForm').controller('dynamicSelectController', ['$scope', '$
     $scope.uiMultiSelectInitInternalModel = function(_model)
     {
         function find_in_titleMap(value) {
-            for (i = 0; i < $scope.form.titleMap.length; i++) {
-                if ($scope.form.titleMap[i].value == value) {
-                    return $scope.form.titleMap[i].name
+            if($scope.form.titleMap){
+                for (i = 0; i < $scope.form.titleMap.length; i++) {
+                    if ($scope.form.titleMap[i].value == value) {
+                        return $scope.form.titleMap[i].name
+                    }
                 }
             }
-
-
+            return value;
         }
         $scope.internalModel = [];
         if (_model !== undefined && angular.isArray(_model)){
