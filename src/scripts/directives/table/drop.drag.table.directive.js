@@ -128,7 +128,7 @@ app.directive('dragAndDropTable', ['$compile','$dzupConfigUtils',
         $scope.ascDesc = $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
         $scope.orderBy = $scope.predicate = predicate;
         var refreshConf = {
-            ascDesc:$scope.reverse  ? "ASC" : "DESC",
+            ascDesc:$scope.reverse  ? "DESC" : "ASC" ,
             orderBy: $scope.predicate
         }
         $scope.refreshWidget({refreshConf:refreshConf});

@@ -138,12 +138,8 @@ app.factory('chartService', [function () {
                         bottom: 40,
                         left: 55
                     },
-                    x: function (d) {
-                        return d.x;
-                    },
-                    y: function (d) {
-                        return d.y;
-                    },
+                    x: function (d) { if(d && d.x){return d.x;} else {return null;}},
+                    y: function (d) { if(d && d.y){return d.y;} else {return null;}},
                     useInteractiveGuideline: true,
                     dispatch: {
                         stateChange: function (e) {
@@ -339,8 +335,8 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                 this.widgetsData.splice(index, 1);
             }
         },
-        getWidgetData: function (definitionModel) {
-            var deferred = new $.Deferred();
+        getWidgetData: function (definitionModel, reportColumnsReq) {
+           var deferred = new $.Deferred();
             var self = this;
             var dataSourceWidgetIndex = _.indexOf(self.widgets, _.find(self.widgets, {wid: definitionModel.dataSource}));
 
@@ -365,7 +361,9 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                     streamType: (typeof dataSourceWidget.streamType != 'undefined') ? dataSourceWidget.streamType.toUpperCase(): null,
                     dynamicFilters: [],
                     chartType:definitionModel.chartType,
-                    ascDesc: definitionModel.ascDesc
+                    ascDesc: definitionModel.ascDesc,
+                    primaryOrderBy: definitionModel.primaryOrderBy,
+                    reportColumnsOnly: reportColumnsReq
                 };
 
                 if (dataSourceWidget.config.definitionModel.filterFields) {
