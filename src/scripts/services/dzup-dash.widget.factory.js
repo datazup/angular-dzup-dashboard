@@ -363,13 +363,35 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                     chartType:definitionModel.chartType,
                     ascDesc: definitionModel.ascDesc,
                     primaryOrderBy: definitionModel.primaryOrderBy,
-                    reportColumnsOnly: reportColumnsReq
+                    reportColumnsOnly: reportColumnsReq,
+                    dateRange:[]
                 };
 
                 if (dataSourceWidget.config.definitionModel.filterFields) {
                     for (var i = 0; i < dataSourceWidget.config.definitionModel.filterFields.length; i++) {
-                        parameters.dynamicFilters.push(dataSourceWidget.config.definitionModel.filterFields[i]);
+                        if(dataSourceWidget.config.definitionModel.filterFields[i].filterValue && dataSourceWidget.config.definitionModel.filterFields[i].filterValue !="")
+                        {
+                            var item = angular.copy(dataSourceWidget.config.definitionModel.filterFields[i]);
+                            var numValue = Number(item.filterValue);
+                            if(!isNaN(numValue)){
+                               item.filterValue = numValue;
+                            }
+                            parameters.dynamicFilters.push(item);
+                        }
                     }
+                }
+
+                if(dataSourceWidget.config.definitionModel.dateRange && dataSourceWidget.config.definitionModel.dateRange !=""){
+                    var dataRange = dataSourceWidget.config.definitionModel.dateRange.split(" - ");
+                    if(dataRange.length == 2){
+                        var dateFrom = new Date(dataRange[0]);
+                        var dateTo =  new Date(dataRange[1]);
+                        if(dateFrom != "Invalid Date" && dateTo != "Invalid Date"){
+                            parameters.dateRange.push(dateFrom);
+                            parameters.dateRange.push(dateTo);
+                        }
+                    }
+
                 }
 
                 return $dzupDashboard.getReport(parameters).then(function (result) {
@@ -380,40 +402,13 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                 return deferred.resolve(null);
             }
             return deferred.promise();
-
-            /*var deferred = self.getPromise(wid);
-
-             if(deferred != null) return deferred.promise();
-
-             deferred = new $.Deferred();
-             var index = _.indexOf(self.widgetsData, _.find(self.widgetsData, { wid: wid }));
-             if (index != -1){
-             deferred.resolve(this.widgetsData[index]);
-             }
-             else {
-             index = _.indexOf(self.widgets, _.find(self.widgets, { wid: wid }));
-
-             if (index != -1) {
-             var widget = self.widgets[index];
-             $dzupDashboard.getReport(widget.config.definitionModel.reportSource, widget.config.definitionModel.stream, widget.config.definitionModel.report).then(function (result) {
-             self.setWidgetData(wid, result);
-             self.removeCall(wid);
-             deferred.resolve(self.getWidgetData(wid));
-             });
-             self.setCall(wid, deferred);
-             }
-             else {
-             deferred.resolve(null);
-             }
-             }
-             return deferred.promise();*/
         },
 
-        getWidgetReportColumns: function (reportSource, report, stream) {
+        getWidgetReportColumns: function (reportSource, report, reportColumnsOnly) {
             var parameters = {
                 reportSource: reportSource,
                 reportName: report,
-                stream: stream
+                reportColumnsOnly: reportColumnsOnly
             };
 
             var deferred = new $.Deferred();
