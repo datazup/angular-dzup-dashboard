@@ -411,24 +411,6 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                         }
                                                     }
                                                 },
-                                               /* "type": "strapselect",
-                                                "onChange": function (modelValue, form) {
-                                                debugger;
-                                                    $scope.form.forEach(function (item) {
-                                                        if (item.key == "xAxisAg") {
-                                                        debugger;
-                                                            item.options.scope.populateTitleMap(item);
-                                                        }
-                                                    });
-
-                                                    if (typeof modelValue != 'undefined') {
-                                                            $scope.reportColumns = $scope.getReportColumns(config.definitionModel, true);
-                                                        }
-
-                                                },
-                                                "options": {
-                                                },
-                                                titleMap: _.map(dzupDashboardWidgetHelper.getWidgetsByType("dataSource"), function (x) { return { value: x.wid, name: x.title } }),*/
                                                 feedback: false,
                                             }
                                         ]

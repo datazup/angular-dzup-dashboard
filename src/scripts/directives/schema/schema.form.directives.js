@@ -620,7 +620,7 @@ function (schemaFormProvider, schemaFormDecoratorsProvider,sfPathProvider) {
 
 
 //------------------DATEPICKER-------------------------------
-angular.module("schemaForm").run(["$templateCache", function($templateCache) {$templateCache.put("templates/directives/datasource/empty.view.html","<div class=\"form-group {{form.htmlClass}}\" ng-class=\"{'has-error': hasError()}\"><div class=\"input-group\"><div class=\"input-group-addon\"><span class=\"fa fa-calendar txt-danger form-control-feedback\"></span></div><input type=\"text\" sf-field-model schema-validate=\"form\" ng-model=\"$$value$$\" mask=\"99/99/9999 - 99/99/9999\" restrict=\"reject\"  data-placeholder=\"{{form.placeholder || form.schema.placeholder || ('placeholders.select' )}}\" dataformat=\"{{form.dateformat || form.schema.dateformat}}\" setranges=\"true\" custom-datepicker /></div></div>")}]);
+angular.module("schemaForm").run(["$templateCache", function($templateCache) {$templateCache.put("templates/directives/datasource/view.html","<div class=\"form-group {{form.htmlClass}}\" ng-class=\"{'has-error': hasError()}\"><div class=\"input-group\"><div class=\"input-group-addon\"><span class=\"fa fa-calendar txt-danger form-control-feedback\"></span></div><input type=\"text\" sf-field-model schema-validate=\"form\" ng-model=\"$$value$$\" mask=\"99/99/9999 - 99/99/9999\" restrict=\"reject\"  data-placeholder=\"{{form.placeholder || form.schema.placeholder || ('placeholders.select' )}}\" dataformat=\"{{form.dateformat || form.schema.dateformat}}\" setranges=\"true\" custom-datepicker /></div></div>")}]);
 
 
 angular.module('schemaForm').config(
@@ -640,8 +640,8 @@ function (schemaFormProvider, schemaFormDecoratorsProvider,sfPathProvider) {
             schemaFormProvider.defaults.string.unshift(datepicker);
 
             //Add to the bootstrap directive
-            schemaFormDecoratorsProvider.addMapping('bootstrapDecorator', 'datepicker', 'templates/directives/datasource/empty.view.html');
-            schemaFormDecoratorsProvider.createDirective('datepicker', 'templates/directives/datasource/empty.view.html');
+            schemaFormDecoratorsProvider.addMapping('bootstrapDecorator', 'datepicker', 'templates/directives/datasource/view.html');
+            schemaFormDecoratorsProvider.createDirective('datepicker', 'templates/directives/datasource/view.html');
 
 }])
 .directive('datepicker', function() {

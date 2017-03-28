@@ -46,7 +46,7 @@ dzupDashboard.provider('$dzupDashboardWidget', [function () {
                 description: 'Data source widget',
                 category: 'DataSource',
                 controller: 'DzupGenericDataSourceController',
-                templateUrl: configProvider.templateUrlBase['dzup-dashboard'] + '/templates/directives/datasource/empty.view.html',
+                templateUrl: configProvider.templateUrlBase['dzup-dashboard'] + '/templates/directives/datasource/view.html',
                 frameless: true,
                 edit: {
                     templateUrl: configProvider.templateUrlBase['dzup-dashboard'] + '/templates/directives/datasource/edit.view.html',

@@ -49,8 +49,8 @@ app.factory('chartService', [function () {
                             y: result["y"] + currentObject[chartOptions.yAxis]
                         }
                     }, {
-                            y: 0
-                        });
+                        y: 0
+                    });
                 });
 
 
@@ -98,8 +98,12 @@ app.factory('chartService', [function () {
                     //     right: 'auto',
                     //     left: 'auto'
                     // },
-                    x: function (d) { return d.x; },
-                    y: function (d) { return d.y; },
+                    x: function (d) {
+                        return d.x;
+                    },
+                    y: function (d) {
+                        return d.y;
+                    },
                     showLabels: true,
                     duration: 500,
                     labelThreshold: 0.01,
@@ -138,10 +142,14 @@ app.factory('chartService', [function () {
                     y: function (d) { if(d && d.y){return d.y;} else {return null;}},
                     useInteractiveGuideline: true,
                     dispatch: {
-                        stateChange: function (e) { },
-                        changeState: function (e) { },
-                        tooltipShow: function (e) { },
-                        tooltipHide: function (e) { }
+                        stateChange: function (e) {
+                        },
+                        changeState: function (e) {
+                        },
+                        tooltipShow: function (e) {
+                        },
+                        tooltipHide: function (e) {
+                        }
                     },
                     xAxis: {
                         axisLabel: ''
@@ -188,8 +196,12 @@ app.factory('chartService', [function () {
                         bottom: 50,
                         left: 55
                     },
-                    x: function (d) { return d.x; }, //label
-                    y: function (d) { return d.y; }, //value
+                    x: function (d) {
+                        return d.x;
+                    }, //label
+                    y: function (d) {
+                        return d.y;
+                    }, //value
                     showValues: true,
                     valueFormat: function (d) {
                         return d3.format(',.2f')(d);
@@ -280,9 +292,9 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
         },
         setCall: function (identifier, data) {
 
-            var promise = { identifier: identifier, data: data };
+            var promise = {identifier: identifier, data: data};
             if (typeof promise != 'undefined') {
-                var index = _.indexOf(this.callList, _.find(this.callList, { identifier: promise.identifier }));
+                var index = _.indexOf(this.callList, _.find(this.callList, {identifier: promise.identifier}));
                 if (index != -1) {
                     this.callList.splice(index, 1, promise);
                 }
@@ -291,26 +303,24 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                 }
             }
         },
-        removeCall: function(identifier)
-        {
-            var index = _.indexOf(this.callList, _.find(this.callList, { identifier: identifier }));
-             if (index != -1) {
-                 this.callList.splice(index, 1);
-             }
+        removeCall: function (identifier) {
+            var index = _.indexOf(this.callList, _.find(this.callList, {identifier: identifier}));
+            if (index != -1) {
+                this.callList.splice(index, 1);
+            }
         },
-        getPromise: function(identifier)
-        {
-            var index = _.indexOf(this.callList, _.find(this.callList, { identifier: identifier }));
-             if (index != -1) {
-                 return this.callList[index].data
-             }
-             return null;
+        getPromise: function (identifier) {
+            var index = _.indexOf(this.callList, _.find(this.callList, {identifier: identifier}));
+            if (index != -1) {
+                return this.callList[index].data
+            }
+            return null;
         },
         setWidgetData: function (wid, data) {
 
-            var WData = { wid: wid, data: data };
+            var WData = {wid: wid, data: data};
             if (typeof WData != 'undefined') {
-                var index = _.indexOf(this.widgetsData, _.find(this.widgetsData, { wid: WData.wid }));
+                var index = _.indexOf(this.widgetsData, _.find(this.widgetsData, {wid: WData.wid}));
                 if (index != -1) { // widget array contains widget replace is
                     this.widgetsData.splice(index, 1, WData);
                 }
@@ -319,16 +329,16 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                 }
             }
         },
-        removeWidgetData: function(wid){
-             var index = _.indexOf(this.widgetsData, _.find(this.widgetsData, { wid: wid }));
-             if (index != -1) { // widget array contains widget replace is
-                 this.widgetsData.splice(index, 1);
-             }
+        removeWidgetData: function (wid) {
+            var index = _.indexOf(this.widgetsData, _.find(this.widgetsData, {wid: wid}));
+            if (index != -1) { // widget array contains widget replace is
+                this.widgetsData.splice(index, 1);
+            }
         },
         getWidgetData: function (definitionModel, reportColumnsReq) {
            var deferred = new $.Deferred();
             var self = this;
-            var dataSourceWidgetIndex = _.indexOf(self.widgets, _.find(self.widgets, { wid: definitionModel.dataSource }));
+            var dataSourceWidgetIndex = _.indexOf(self.widgets, _.find(self.widgets, {wid: definitionModel.dataSource}));
 
             if (dataSourceWidgetIndex != -1) {
                 var dataSourceWidget = self.widgets[dataSourceWidgetIndex];
@@ -353,58 +363,66 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                     chartType:definitionModel.chartType,
                     ascDesc: definitionModel.ascDesc,
                     primaryOrderBy: definitionModel.primaryOrderBy,
-                    reportColumnsOnly: reportColumnsReq
+                    reportColumnsOnly: reportColumnsReq,
+                    dateRange:[]
                 };
+
+                if (dataSourceWidget.config.definitionModel.filterFields) {
+                    for (var i = 0; i < dataSourceWidget.config.definitionModel.filterFields.length; i++) {
+                        if(dataSourceWidget.config.definitionModel.filterFields[i].filterValue && dataSourceWidget.config.definitionModel.filterFields[i].filterValue !="")
+                        {
+                            var item = angular.copy(dataSourceWidget.config.definitionModel.filterFields[i]);
+                            var numValue = Number(item.filterValue);
+                            if(!isNaN(numValue)){
+                               item.filterValue = numValue;
+                            }
+                            parameters.dynamicFilters.push(item);
+                        }
+                    }
+                }
+
+                if(dataSourceWidget.config.definitionModel.dateRange && dataSourceWidget.config.definitionModel.dateRange !=""){
+                    var dataRange = dataSourceWidget.config.definitionModel.dateRange.split(" - ");
+                    if(dataRange.length == 2){
+                        var dateFrom = new Date(dataRange[0]);
+                        var dateTo =  new Date(dataRange[1]);
+                        if(dateFrom != "Invalid Date" && dateTo != "Invalid Date"){
+                            parameters.dateRange.push(dateFrom);
+                            parameters.dateRange.push(dateTo);
+                        }
+                    }
+
+                }
 
                 return $dzupDashboard.getReport(parameters).then(function (result) {
                     return deferred.resolve(result);
                 });
             }
-            else{
+            else {
                 return deferred.resolve(null);
             }
             return deferred.promise();
-
-            /*var deferred = self.getPromise(wid);
-
-            if(deferred != null) return deferred.promise();
-
-            deferred = new $.Deferred();
-            var index = _.indexOf(self.widgetsData, _.find(self.widgetsData, { wid: wid }));
-            if (index != -1){
-                deferred.resolve(this.widgetsData[index]);
-            }
-            else {
-                index = _.indexOf(self.widgets, _.find(self.widgets, { wid: wid }));
-
-                if (index != -1) {
-                    var widget = self.widgets[index];
-                    $dzupDashboard.getReport(widget.config.definitionModel.reportSource, widget.config.definitionModel.stream, widget.config.definitionModel.report).then(function (result) {
-                        self.setWidgetData(wid, result);
-                        self.removeCall(wid);
-                        deferred.resolve(self.getWidgetData(wid));
-                    });
-                    self.setCall(wid, deferred);
-                }
-                else {
-                    deferred.resolve(null);
-                }
-            }
-            return deferred.promise();*/
         },
-        getWidgetReportColumns: function (reportSource, stream, report) {
+
+        getWidgetReportColumns: function (reportSource, report, reportColumnsOnly) {
+            var parameters = {
+                reportSource: reportSource,
+                reportName: report,
+                reportColumnsOnly: reportColumnsOnly
+            };
 
             var deferred = new $.Deferred();
 
-            $dzupDashboard.getReport(reportSource, stream, report).then(function (result) {
-                deferred.resolve(result.data[1]);
+            return $dzupDashboard.getReport(parameters).then(function (result) {
+                return deferred.resolve(result.data.columns);
             });
 
             return deferred.promise();
+
         },
         addDashboardWidget: function (widget) {
 
-            var index = _.indexOf(this.widgets, _.find(this.widgets, { wid: widget.wid }));
+            var index = _.indexOf(this.widgets, _.find(this.widgets, {wid: widget.wid}));
 
             if (index != -1) { // widget array contains widget replace is
                 this.widgets.splice(index, 1, widget);
