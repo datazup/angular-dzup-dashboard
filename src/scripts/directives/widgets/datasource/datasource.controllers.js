@@ -7,11 +7,8 @@ app.controller('DzupGenericDataSourceController', ['$scope', '$rootScope', '$tim
         $scope.StreamTypes = [];
         $scope.AvailableStreams = [];
 
-        $scope.change = function(item){
-        debugger;
-        }
         $scope.refresh = function () {
-        $scope.$broadcast('schemaFormValidate');
+        
             $scope.getData(widget, config);
             dzupDashboardWidgetHelper.removeWidgetData(widget.wid);
             $rootScope.$broadcast('widgetStreamChanged', widget.wid);
