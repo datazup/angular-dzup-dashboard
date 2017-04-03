@@ -858,9 +858,6 @@ app.controller('ReportCreateEditController', ['$scope', '$timeout', '$uibModalIn
                 report: report
             };
 
-            console.log("dashItem:");
-            console.log(dashItem);
-
             $dzupDashboard.createReport(dashItem).then(function(result){
                 $scope.previousReports.push(result.data);
                 $scope.newReport();

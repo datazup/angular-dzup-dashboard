@@ -1,6 +1,6 @@
 var dzupDashboard = angular.module('dzupDash');
 // not in use
-dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 'dzupDashboardWidgetHelper', function ($dzupDashboard, $dzupConfigUtils, dzupDashboardWidgetHelper) {
+dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 'dzupDashboardWidgetHelper','$uibModal', function ($dzupDashboard, $dzupConfigUtils, dzupDashboardWidgetHelper, $uibModal) {
 
     return {
         restrict: "E",
@@ -74,7 +74,7 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                         for (i = 0; i < list.length; i++) {
                             result.list[i].dashboard.key = $scope.generateUUID();
                             var dashItem = result.list[i].dashboard;
-                            //dashItem.title = "Dashboard " + (i + 1);
+
                             dashItem.identifier = result.list[i].id;
 
                             $scope.dashboardList.push({ model: dashItem });
@@ -113,6 +113,29 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                     });
                     return uuid;
                 }
+
+                $scope.streamConf = function($event) {
+
+                    var modalInstance = $uibModal.open({
+                         templateUrl: $dzupConfigUtils.templateUrlBase['dzup-dashboard'] + '/templates/streams/streams.modal.view.html',
+                         controller: 'StreamsConfigController',
+                         backdrop: false,
+                         resolve: {
+                             report: function () {
+                                 return {};
+                             }
+                         },
+                         size: 'lg'
+                     });
+
+                     modalInstance.result.then(function (importedData) {
+
+                         if (importedData) {
+
+                         }
+                     }, function () {
+                     });
+               }
 
                 $scope.addDashboard = function ($event) {
 

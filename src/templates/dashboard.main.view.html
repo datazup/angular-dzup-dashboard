@@ -1,7 +1,7 @@
 <div class="dzup-dashboard-container">
 
     <uib-tabset active="activeTabIndex">        
-        <uib-tab select="selectDashboard(dashboard, $index)" data-ng-repeat="dashboard in dashboardList track by dashboard.model.key | orderBy: 'dashboard.createdAt'" index="$index">
+        <uib-tab select="selectDashboard(dashboard, $index);" data-ng-repeat="dashboard in dashboardList track by dashboard.model.key | orderBy: 'dashboard.createdAt'" index="$index">
             <uib-tab-heading>
                 {{ dashboard.model.title }}
                 <span ng-if="dashboard.model.staticDashboard != true" title="Click to remove" class="remove-tab" ng-click="removeDashboard(dashboard, $event);">
@@ -12,12 +12,21 @@
                 <dzup-dashboard-item  dashboard="selectedDashboard"</dzup-dashboard-item>
             </div>
         </uib-tab>
-        <uib-tab select=" addDashboard($event)" index="$index">
+        <uib-tab select="addDashboard($event)" index="$index">
             <uib-tab-heading>
                 <div>
                     <i class="fa fa-plus" aria-hidden="true"></i>
                 </div>
             </uib-tab-heading>
         </uib-tab>
+        <li  style="float:right" class="uib-tab nav-item ng-isolate-scope"  index="$index" style="">
+            <a href="" ng-click="streamConf($event)" class="nav-link ng-binding">
+                <uib-tab-heading class="ng-scope">
+                    <div>
+                        <i class="fa fa-gear" aria-hidden="true"></i>
+                    </div>
+                </uib-tab-heading>
+            </a>
+        </li>
     </uib-tabset>
 </div>

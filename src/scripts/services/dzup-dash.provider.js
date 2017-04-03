@@ -16,6 +16,8 @@ dzupDashboard.provider('$dzupDashboard', function () {
     this.createReportUrl =  "";
     this.deleteReportUrl = "";
     this.clientReportsUrl = "";
+    this.scheduledStreamsUrl= "";
+    this.reportStreamConfUrl= "";
 
     provider.setConf = function(conf) {
         this.host = conf.host;
@@ -30,6 +32,8 @@ dzupDashboard.provider('$dzupDashboard', function () {
         this.createReportUrl = conf.createReportUrl;
         this.deleteReportUrl = conf.deleteReportUrl;
         this.clientReportsUrl = conf.clientReportsUrl;
+        this.scheduledStreamsUrl = conf.scheduledStreamsUrl;
+        this.reportStreamConfUrl = conf.reportStreamConfUrl;
     };
 
     function WidServ($http,conf){
@@ -97,6 +101,26 @@ dzupDashboard.provider('$dzupDashboard', function () {
                 return $http.get(conf.host +  conf.clientReportsUrl );
              }
 
+             this.getScheduledStreams = function()
+             {
+                return $http.get(conf.host +  conf.scheduledStreamsUrl );
+             }
+
+             this.getReportStreamsConf = function(parameters){
+                return $http({
+                  url: conf.host + conf.reportStreamConfUrl,
+                  method: "GET",
+                  async: true,
+                  params: {filter:parameters}
+                });
+
+             }
+
+             this.insertReportStreamsConf = function(item)
+             {
+                return $http.post(conf.host +  conf.reportStreamConfUrl, item);
+             }
+
              this.createReport = function(item) {
                  return $http.post(conf.host+ conf.createReportUrl ,item);
              }
@@ -122,7 +146,9 @@ dzupDashboard.provider('$dzupDashboard', function () {
                      staticDashboards:this.staticDashboards,
                      createReportUrl: this.createReportUrl,
                      deleteReportUrl: this.deleteReportUrl,
-                     clientReportsUrl: this.clientReportsUrl
+                     clientReportsUrl: this.clientReportsUrl,
+                     scheduledStreamsUrl: this.scheduledStreamsUrl,
+                     reportStreamConfUrl: this.reportStreamConfUrl
                     }
         return new WidServ($http, conf);
     };

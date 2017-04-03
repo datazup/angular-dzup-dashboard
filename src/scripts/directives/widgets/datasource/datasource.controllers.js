@@ -8,7 +8,7 @@ app.controller('DzupGenericDataSourceController', ['$scope', '$rootScope', '$tim
         $scope.AvailableStreams = [];
 
         $scope.refresh = function () {
-        
+
             $scope.getData(widget, config);
             dzupDashboardWidgetHelper.removeWidgetData(widget.wid);
             $rootScope.$broadcast('widgetStreamChanged', widget.wid);
@@ -114,7 +114,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
         $scope.getReportColumns = function (resetFilter) {
             if(config.definitionModel.areFilterFiledsEnabled){
                 $scope.reportColumns = dzupDashboardWidgetHelper.getWidgetReportColumns(config.definitionModel.reportSource, config.definitionModel.report, true);
-                console.log($scope.reportColumns);
+
                 $scope.defCopy = config.definitionModel;
 
                 if(resetFilter)
