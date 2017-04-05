@@ -1,12 +1,13 @@
 var dzupDashboard = angular.module('dzupDash');
 
-dzupDashboard.provider('$dzupDashboard', function () {
+dzupDashboard.provider('$dzupDashboard', [ function () {
     var provider= {};
 
     provider.shouldUseOnlyCustomWidgets = false;
     this.host = "";
     this.updateUrl = "";
     this.dashboardsRetrievalUrl = "";
+    this.dashboardPublicUrl = "";
     this.scheduledUrl = "";
     this.regularUrl = "";
     this.reportsBySourcesUrl = "";
@@ -23,6 +24,7 @@ dzupDashboard.provider('$dzupDashboard', function () {
         this.host = conf.host;
         this.updateUrl = conf.updateUrl;
         this.dashboardsRetrievalUrl = conf.dashboardsRetrievalUrl;
+        this.dashboardPublicUrl = conf.dashboardPublicUrl;
         this.scheduledUrl  = conf.scheduledUrl;
         this.regularUrl  = conf.regularUrl;
         this.reportsBySourcesUrl = conf.reportsBySourcesUrl;
@@ -38,7 +40,7 @@ dzupDashboard.provider('$dzupDashboard', function () {
 
     function WidServ($http,conf){
             this.create = function(item) {
-                var item = {dashboard:item.model, id:item.model.identifier};
+                var item = {dashboard:item.model, id:item.model.identifier, availableStreams: item.availableStreams, publicDashboard:item.model.isPublic};
                 return $http.post(conf.host+ conf.updateUrl ,item);
             }
 
@@ -61,6 +63,14 @@ dzupDashboard.provider('$dzupDashboard', function () {
                 return result;
             }
 
+            this.getPublicDashboard = function(identifier) {
+                 return $http({
+                    method: 'GET',
+                    url: conf.host + conf.dashboardPublicUrl,
+                    params: { identifier:  identifier }
+                });
+            }
+
             this.getStaticDashboards = function() {
                 return conf.staticDashboards;
             }
@@ -81,6 +91,10 @@ dzupDashboard.provider('$dzupDashboard', function () {
 
              this.getSourcesStatic = function(){
                  return  [{ value: "twitter_stream", label: "Twitter stream" }, { value: "tagged_stream", label: "Tagged stream" }];
+            }
+
+            this.getStreamTypes = function(){
+                 return  [{value: "scheduled", label: "Scheduled"}, {value: "regular", label: "Regular"}];
             }
 
             this.getReportsBySource = function(source){
@@ -138,6 +152,7 @@ dzupDashboard.provider('$dzupDashboard', function () {
         var conf = { host:this.host,
                      updateUrl:this.updateUrl,
                      dashboardsRetrievalUrl:this.dashboardsRetrievalUrl,
+                     dashboardPublicUrl:this.dashboardPublicUrl,
                      scheduledUrl:this.scheduledUrl,
                      regularUrl:this.regularUrl,
                      reportsBySourcesUrl:this.reportsBySourcesUrl,
@@ -154,4 +169,4 @@ dzupDashboard.provider('$dzupDashboard', function () {
     };
 
     return provider;
-});
+}]);

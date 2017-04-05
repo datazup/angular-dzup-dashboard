@@ -1,6 +1,6 @@
 var dzupDashboard = angular.module('dzupDash');
 // not in use
-dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 'dzupDashboardWidgetHelper','$uibModal', function ($dzupDashboard, $dzupConfigUtils, dzupDashboardWidgetHelper, $uibModal) {
+dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 'dzupDashboardWidgetHelper','$uibModal', '$location', function ($dzupDashboard, $dzupConfigUtils, dzupDashboardWidgetHelper, $uibModal,$location) {
 
     return {
         restrict: "E",
@@ -8,7 +8,6 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
         templateUrl: $dzupConfigUtils.templateUrlBase['dzup-dashboard'] + '/templates/dashboard.main.view.html',
         controller: ['$rootScope', '$scope', '$timeout', '$dzupConfigUtils',
             function ($rootScope, $scope, $timeout, $dzupConfigUtils) {
-
                 $scope.tabUrl = $dzupConfigUtils.templateUrlBase['dzup-dashboard'] + '/templates/dashboard.tab.template.view.html';
 
                 $scope.dashboardList = [];
@@ -16,19 +15,27 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                 $scope.selectedDashboard = {};
 
                 $scope.selectDashboard = function (dashboard, index) {
-
-                    //keeps the dashboard changes in the page memory
-                    if (typeof $scope.selectedDashboard != 'undefined' && $scope.selectedDashboard != null
-                        && typeof $scope.selectedDashboard.model != 'undefined') {
-                        var index = _.indexOf($scope.dashboardList, _.find($scope.dashboardList, { model: { identifier: $scope.selectedDashboard.model.identifier } }));
-                        if (index != -1) {
-                            $scope.dashboardList.splice(index, 1, $scope.selectedDashboard);
-                        }
+                    var currentIndex = $scope.updateCurrentDashboardState();
+                    if(index < 0){
+                        index = currentIndex;
                     }
-
                     $scope.selectedDashboard = dashboard;
                     dzupDashboardWidgetHelper.setDashboardWidgets(index, dashboard);
                 };
+
+                $scope.updateCurrentDashboardState = function(){
+                     //keeps the dashboard changes in the page memory
+                    if (typeof $scope.selectedDashboard != 'undefined' && $scope.selectedDashboard != null
+                        && typeof $scope.selectedDashboard.model != 'undefined') {
+                        var itemIndex = _.indexOf($scope.dashboardList, _.find($scope.dashboardList, { model: { identifier: $scope.selectedDashboard.model.identifier } }));
+                        if (itemIndex != -1) {
+                            $scope.dashboardList.splice(itemIndex, 1, $scope.selectedDashboard);
+                        }
+
+                        return itemIndex;
+                    }
+                    return -1;
+                }
 
                 //Add first available regular stream to static dashboards
                 $scope.addFirstAvailableStream = function (dashboards, firstAvailableStreamId) {
@@ -37,6 +44,35 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                         dashboards[i].rows[0].columns[0].widgets[0].stream = firstAvailableStreamId;
                     }
                 };
+
+
+
+                $scope.setDashboardEditMode = function(item){
+                    item.editTemplateUrl= $dzupConfigUtils.templateUrlBase['dzup-dashboard'] + '/templates/dashboard.main.edit.template.html';
+
+                    item.createReport = function (dashboardItem) {
+                       var modalInstance = $uibModal.open({
+                           templateUrl: $dzupConfigUtils.templateUrlBase['dzup-dashboard'] + '/templates/dashboard.public.conf.modal.view.html',
+                           controller: 'PublicDashboardConfigurationController',
+                           backdrop: false,
+                           resolve: {
+                               dashboard: function () {
+                                   return dashboardItem;
+                               }
+                           },
+                           size: 'md'
+                       });
+
+                       modalInstance.result.then(function (modalData) {
+
+                           if (modalData) {
+                            item.availableStreams = modalData.value;
+                           }
+                       }, function () {
+                       });
+                   };
+                    return item;
+                }
 
                 // Init dashboard load
                 $dzupDashboard.getDashboards().success(function (result) {
@@ -74,16 +110,22 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                         for (i = 0; i < list.length; i++) {
                             result.list[i].dashboard.key = $scope.generateUUID();
                             var dashItem = result.list[i].dashboard;
+                            var publicDashIdentifier = result.list[i].publicIdentifier;
+                            var publicIdentifierUrl  = $scope.setPublicUrl(publicDashIdentifier);
 
                             dashItem.identifier = result.list[i].id;
+                            dashItem = $scope.setDashboardEditMode(dashItem);
 
-                            $scope.dashboardList.push({ model: dashItem });
-
+                            $scope.dashboardList.push({ model: dashItem, publicIdentifier:publicDashIdentifier, publicIdentifierUrl:publicIdentifierUrl });
                             if (i == (list.length - 1))
                                 $scope.selectedDashboard = dashItem;
                         }
                     }
                 });
+
+                $scope.setPublicUrl = function(publicDashIdentifier){
+                    return 'Public Url: '+ $location.absUrl() + '/public?id='+publicDashIdentifier;
+                }
 
                 $scope.indexOfItem = function (item) {
                     var index = _.indexOf($scope.dashboardList, item);
@@ -95,9 +137,11 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                         model: {
                             key: $scope.generateUUID(),
                             title: "Dashboard ",
-                            structure: "4-8"
+                            structure: "4-8",
+                            editTemplateUrl: $dzupConfigUtils.templateUrlBase['dzup-dashboard'] + '/templates/dashboard.main.edit.template.html'
                         }
                     };
+                    dash.model = $scope.setDashboardEditMode(dash.model);
                     return dash;
                 };
 
@@ -115,7 +159,6 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                 }
 
                 $scope.streamConf = function($event) {
-
                     var modalInstance = $uibModal.open({
                          templateUrl: $dzupConfigUtils.templateUrlBase['dzup-dashboard'] + '/templates/streams/streams.modal.view.html',
                          controller: 'StreamsConfigController',
@@ -181,7 +224,13 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                 }
 
                 $scope.create = function (dashItem) {
-                    $dzupDashboard.create(dashItem);
+                     //main save/update point
+                    dashItem.availableStreams= _.map(dashItem.model.availableStreams, function(x){ return x.value});
+                     $dzupDashboard.create(dashItem).success(function(result){
+                        $scope.selectedDashboard.publicIdentifier = result.publicIdentifier;
+                        $scope.selectedDashboard.publicIdentifierUrl  = $scope.setPublicUrl(result.publicIdentifier);
+                    });
+
                 };
 
                 $scope.update = function (dashItem) {

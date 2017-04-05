@@ -3,7 +3,7 @@
         <thead style="cursor:move">
         <th>{{dragHead}}</th>
         </thead>
-        <tr ng-repeat="row in conf.data">
+        <tr ng-repeat="row in tableData">
             <td>{{row[dragHead]}}</td>
         </tr>
     </table>
@@ -11,7 +11,7 @@
         <thead style="cursor:move">
         <th>{{dragHead}}</th>
         </thead>
-        <tr ng-repeat="row in conf.data">
+        <tr ng-repeat="row in tableData">
             <td>{{row[dragHead]}}</td>
         </tr>
     </table>
@@ -26,13 +26,13 @@
 
         </thead>
         <tbody>
-        <tr ng-repeat="data in conf.data | limitTo:numLimit:start">
+        <tr ng-repeat="data in tableData | limitTo:numLimit:start">
             <td ng-repeat="d in conf.heads"><span>{{data[d]}}</span>
             </td>
         </tr>
         <tr>
             <td colspan="{{conf.heads.length}}">
-                <span class="pull-left">Showing page {{(int.parse(start /numLimit)+1)}} from total of {{pages}}.</span>
+                <span class="pull-left">Showing page {{currentPage}} from total of {{pages}}.</span>
 
                 <span class="padding-5 pull-right"><a ng-hide="hideNext()" href="" ng-click="nextPage()">Next</a></span>
                 <span class="padding-5 pull-right"><a ng-hide="hidePrev()" href="" ng-click="PrevPage()">Prev</a></span>

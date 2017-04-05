@@ -81,7 +81,8 @@ app.directive('dragAndDropTable', ['$compile','$dzupConfigUtils',
         conf: "=",
         orderBy:"=",
         ascDesc:"=",
-        refreshWidget: '&'
+        refreshWidget: '&',
+        tableData:"="
       },
       controller: function($scope) {
       $scope.predicate = 'none';
@@ -89,20 +90,25 @@ app.directive('dragAndDropTable', ['$compile','$dzupConfigUtils',
       $scope.reverse = true;
       $scope.numLimit=5;
       $scope.start = 0;
-      $scope.$watch('conf.data',function(newVal){
+      $scope.calcCurrentPage= function(){
+       $scope.currentPage = parseInt($scope.start/$scope.numLimit)+1;
+      }
+      $scope.$watch('tableData',function(newVal){
         if(newVal){
             $scope.pageRecalc();
         }
       });
 
       $scope.pageRecalc = function(){
-        $scope.pages=Math.ceil($scope.conf.data.length/$scope.numLimit);
+        $scope.pages=Math.ceil($scope.tableData.length/$scope.numLimit);
+        $scope.calcCurrentPage();
+
       }
 
       $scope.hideNext=function(){
 
-        if(typeof $scope.conf != 'undefined' && typeof $scope.conf.data != 'undefined'){
-             if(($scope.start+ $scope.numLimit) < $scope.conf.data.length){
+        if(typeof $scope.conf != 'undefined' && typeof $scope.tableData != 'undefined'){
+             if(($scope.start+ $scope.numLimit) < $scope.tableData.length){
                return false;
              }
             else
@@ -118,10 +124,12 @@ app.directive('dragAndDropTable', ['$compile','$dzupConfigUtils',
         return false;
       };
       $scope.nextPage=function(){
-        $scope.start=$scope.start+ $scope.numLimit;
+        $scope.start=$scope.start+$scope.numLimit;
+        $scope.calcCurrentPage();
       };
       $scope.PrevPage=function(){
-        $scope.start=$scope.start - $scope.numLimit;
+        $scope.start=$scope.start-$scope.numLimit;
+        $scope.calcCurrentPage();
       };
 
       $scope.order = function(predicate) {

@@ -271,6 +271,8 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
     var widgets = [];
     var widgetsData = [];
     var callList = [];
+    var publicIdentifier = null;
+    var publicStreams = [];
     return {
         setDashboardWidgets: function (index, dashboard) {
 
@@ -364,7 +366,8 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                     ascDesc: definitionModel.ascDesc,
                     primaryOrderBy: definitionModel.primaryOrderBy,
                     reportColumnsOnly: reportColumnsReq,
-                    dateRange:[]
+                    dateRange:[],
+                    publicIdentifier: this.getPublicIdentifier()
                 };
 
                 if (dataSourceWidget.config.definitionModel.filterFields) {
@@ -443,8 +446,17 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
             return _.filter(this.widgets, function (item) {
                 return item.type == widgetType
             });
+        },
+        setPublicConf: function(publicIdentifier, publicStreams){
+            this.publicIdentifier = publicIdentifier;
+            this.publicStreams = publicStreams;
+        },
+        getPublicIdentifier: function(){
+            return this.publicIdentifier;
+        },
+        getPublicStreams: function(value){
+            return this.publicStreams;
         }
-
     };
 
 }]);

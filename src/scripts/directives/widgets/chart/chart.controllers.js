@@ -36,7 +36,7 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
                 $scope.config.tableConfig = {
                   heads: config.definitionModel.tableColumns
                 };
-                $scope.config.tableConfig.data= wData;
+                $scope.tableConfigData = wData;
              }
         };
 

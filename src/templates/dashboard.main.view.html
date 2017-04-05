@@ -9,7 +9,8 @@
                 </span>
             </uib-tab-heading>
             <div ng-if="selectedDashboard == dashboard" ng-class="dashboard.model.staticDashboard ? 'static-dashboard' : ''">
-                <dzup-dashboard-item  dashboard="selectedDashboard"</dzup-dashboard-item>
+                <dzup-dashboard-item dashboard="selectedDashboard"></dzup-dashboard-item>
+                <div ng-if="dashboard.model.isPublic && dashboard.publicIdentifier != ''" class="dashboard-public-url">{{dashboard.publicIdentifierUrl}}</div>
             </div>
         </uib-tab>
         <uib-tab select="addDashboard($event)" index="$index">
@@ -19,7 +20,7 @@
                 </div>
             </uib-tab-heading>
         </uib-tab>
-        <li  style="float:right" class="uib-tab nav-item ng-isolate-scope"  index="$index" style="">
+        <li  style="float:right" class="uib-tab nav-item ng-isolate-scope"  index="$index">
             <a href="" ng-click="streamConf($event)" class="nav-link ng-binding">
                 <uib-tab-heading class="ng-scope">
                     <div>
@@ -29,4 +30,5 @@
             </a>
         </li>
     </uib-tabset>
+
 </div>
