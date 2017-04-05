@@ -4,6 +4,154 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
     function ($scope, $timeout, $dzupConfigUtils, config, widget, chartService, dzupDashboardWidgetHelper, usSpinnerService) {
         $scope.config = config;
         $scope.widget = widget;
+        
+         $scope.radarDefultData = function(wData, chart, chartOptions, config){
+            
+             var data = [
+                 
+                 // {x: topic1-area1, y:40}, { x: topic1-area2, y: 45} , {x: topic1-area3, y: 40 }
+                 {
+                     key: 'Topic1',
+                     values: [{ label: 'Area1', value: 40 }, { label: 'Area2', value: 56}, { label: 'Area3', value: 74}]
+                 },
+                 {
+                     key: 'Topic2',
+                     values: [{ label: 'Area5', value: 23 }, { label: 'Area6', value: 57}, { label: 'Area7', value: 35}]
+                 },
+                 {
+                     key: 'Topic3',
+                     values: [{ label: 'Area1', value:67 }, { label: 'Area2', value: 34}, { label: 'Area3', value: 76}]
+                 },
+                 {
+                     key: 'Topic4',
+                     values: [{ label: 'Area1', value: 41 }, { label: 'Area2', value: 55}, { label: 'Area3', value: 67}]
+                 }
+                 
+             ];
+             
+             return data;
+             
+        };
+        
+        $scope.getGeoDefaultData = function(wData, chart, chartOptions, config){
+            if (!wData){
+                return null;
+            }
+            var calculateMetric = function(yOldData, yNewData, totalCount, mType){
+                switch(mType){
+                    case 'SUM':      
+                        return yOldData+yNewData;                        
+                    case 'AVG':
+                        var avg = 0;
+                        return avg;
+                    case 'MAX':
+                        return yNewData>yOldData?yNewData:yOldData;
+                    case 'MIN':
+                        return yNewData<yOldData?yNewData:yOldData;
+                    case 'LAST':
+                        return yNewData;                        
+                };
+                return yNewData;
+            };
+            var agregatedCols = config.definitionModel.aggregateAxis;
+            if (agregatedCols){
+             
+                var metricType = chartOptions.metricType;
+                
+                var countriesObj = {};
+                var statesObj = {};
+                for (var i=0;i<wData.length;i++){
+                    var dObj = wData[i];
+                    var x = dObj.x;
+                    var y = dObj.y;
+                    
+                    var splitted = x.split('-');
+                    var country = splitted[0];
+                    var state = splitted[1];
+                    if (country){
+                        var existingCountry = countriesObj[country];
+                        if (!existingCountry){
+                            countriesObj[country] = y;
+                        }else{
+                            countriesObj[country] += y;
+                        }
+                        
+                        var existingCountryState = statesObj[country];
+                        if (!existingCountryState){
+                            statesObj[country] = {};
+                            statesObj[country][state] = y;
+                        }else{
+                            var existingState = statesObj[country][state];
+                            if (!existingState){
+                                statesObj[country][state] = y;
+                            }else{
+                                statesObj[country][state] += y;
+                            }
+                        }
+                    }
+                }
+                
+                var data = {};
+                var countries = [];
+                var states = {};
+                for (var prop in countriesObj) {
+                    var obj = {
+                        country: prop,
+                        value: countriesObj[prop]
+                    };
+                    countries.push(obj);
+                }
+                
+                for (var prop in statesObj) {
+                    states[prop] = [];
+                    var so =  statesObj[prop];
+                    for (var propso in so){
+                        var state = propso;
+                        var value = so[propso];
+                        states[prop].push({ state: state, value: value});
+                    }
+                }
+               
+                data.countries = countries;
+                data.states = states;
+                
+                return data;
+                
+            }else{
+                console.log('There is no aggregated cols for geoChart');
+                return null;
+            }
+            
+            /*var data = {
+                countries: [
+                    { country: 'US', count: 123 },
+                    { country: 'KR', count: 36 }
+                ],
+                states: {
+                    KR:[
+                            {
+                                state: 'KR-11', count: 10
+                            },
+                            {
+                                state: 'KR-44', count: 15
+                            },
+                            {
+                                state: 'KR-26', count: 23
+                            },
+                            {
+                                state: 'KR-47', count: 25
+                            }
+                    ],
+                    US: [
+                            {
+                                state: 'AL', count: 10
+                            }
+                    ]
+                }
+            }
+            
+            return data;*/
+        };
 
         $scope.setChartData = function (result) {
             if (typeof result.data.length == 'undefined') {
@@ -25,11 +173,16 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
                     sortBy: config.definitionModel.sortBy,
                     from: config.definitionModel.from,
                     to: config.definitionModel.to,
-                    chartType: config.definitionModel.chartType
+                    chartType: config.definitionModel.chartType,
+                    metricType: config.definitionModel.metricType
                 };
             }
 
-            if( config.definitionModel.chartType != "tableChart")
+            if (config.definitionModel.chartType === "geoChart"){
+                $scope.populatedChart = $scope.getGeoDefaultData(wData, $scope.chart, $scope.chartOptions, config);                
+            }else if (config.definitionModel.chartType === "radarChart"){
+                $scope.populatedChart = $scope.radarDefultData(wData, $scope.chart, $scope.chartOptions, config);
+            }else if( config.definitionModel.chartType != "tableChart")
                 $scope.populatedChart = chartService.getChartData(wData, $scope.chart, $scope.chartOptions);
              else{
                 $scope.config.tableConfig = {};
@@ -138,11 +291,13 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                 };
             }
 
-            //$scope.chart.chart.type != "tableChart" or use config.definitionModel.chartType
-            if(null != $scope.chart && null != $scope.chartOptions && typeof $scope.chart !='undefined' && typeof $scope.chartOptions !='undefined' &&
-            config.definitionModel.chartType != "tableChart")
+            if(null != $scope.chart && null != $scope.chartOptions && typeof $scope.chart !='undefined' && typeof $scope.chartOptions !='undefined' && config.definitionModel.chartType != "tableChart"){
                 $scope.populatedChart = chartService.getChartData(wData, $scope.chart, $scope.chartOptions);
+            }
+                
         };
+        
+        
         $scope.injectAxisDdlValues = function (injectValue) {
             if (injectValue == true) {
                 $timeout(function () {
@@ -227,7 +382,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
 
         $scope.getChartTypes = function (injectValue) {
 
-            $scope.chartTypes = [{ value: 'pieChart', label: 'Pie Chart' }, { value: 'discreteBarChart', label: 'Bar Chart' }, { value: 'lineChart', label: 'Line Chart' }, { value: 'tableChart', label: 'Table Chart' }];
+            $scope.chartTypes = [{ value: 'pieChart', label: 'Pie Chart' }, { value: 'discreteBarChart', label: 'Bar Chart' }, { value: 'lineChart', label: 'Line Chart' }, { value: 'tableChart', label: 'Table Chart' }, { value: 'radarChart', label: 'Radar Chart' }, { value: 'geoChart', label: 'Geo Chart' }];
 
             if (injectValue == true) {
                 $timeout(function () {
@@ -335,6 +490,13 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                 chartColor: {
                     type: 'string',
                     title: 'Chart Color',
+                },
+                metricType: {
+                    title: 'Metric Type',
+                    description: '',
+                    type: 'string',
+                    enum: ['SUM', 'AVG', 'MIN','MAX','LAST'],
+                    default: 'SUM'
                 },
                 sort: {
                     title: "Sort Data",
@@ -601,7 +763,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                     {
                                         type: "section",
                                         htmlClass: "col-xs-12",
-                                        condition: "model.chartType=='discreteBarChart'",
+                                        condition: "model.chartType=='discreteBarChart' || model.chartType=='geoChart'",
                                         items: [
                                  /*           {
                                                 key: 'xAxisLabel',
@@ -711,6 +873,17 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                         ]
                                                     }
                                                 ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        type: "section",
+                                        htmlClass: "col-xs-12",
+                                        condition: "model.chartType=='geoChart'",
+                                        items: [
+                                            {
+                                                key: 'metricType',
+                                                feedback: false
                                             }
                                         ]
                                     },
@@ -833,6 +1006,22 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                             }
                                         ]
                                     }
+                                    /*, {
+                                        type: 'section',
+                                        htmlClass: 'col-xs-12',
+                                        condition: 'model.chartType==="geoChart"',
+                                        items:[
+                                            
+                                        ]
+                                    },
+                                    {
+                                        type: 'section',
+                                        htmlClass: 'col-xs-12',
+                                        condition: 'model.chartType==="radarChart"',
+                                        items:[
+                                            
+                                        ]
+                                    }*/
                                 ]
                             }
                         ]
