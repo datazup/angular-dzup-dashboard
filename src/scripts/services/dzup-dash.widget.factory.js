@@ -31,6 +31,12 @@ app.factory('chartService', [function () {
                 case 'discreteBarChart':
                     return this.getDiscreteBarChart();
                     break;
+                case 'radarChart':
+                    return this.getRadarChart();
+                    break;
+                case 'geoChart':
+                    return this.getGeoChart();
+                    break;
                 default:
                     return null;
             }
@@ -80,12 +86,21 @@ app.factory('chartService', [function () {
             }
 
             if (chart.chart.type == 'lineChart' || chart.chart.type == 'discreteBarChart') {
-
                 return [{
                     values: this.getMappedChartData(data, options),
                     key: options.key,
                     color: options.color
                 }];
+            }
+            if (chart.chart.type==='radarChart'){
+                var obj = {};
+                
+                return obj;
+            }
+            if (chart.chart.type==='geoChart'){
+                var obj = {};
+                
+                return obj;
             }
         },
         getPieChart: function () {
@@ -223,6 +238,45 @@ app.factory('chartService', [function () {
             };
             return discreteBarChart;
         },
+        getRadarChart: function(){
+            var radarChart = {
+                chart: {
+                    type: 'radarChart',
+                    height: 350,
+                    margin: {
+                        top: 20,
+                        right: 20,
+                        bottom: 20,
+                        left: 20
+                    },
+                    radiusFix: 100,
+                    max: 100,
+                    ticks: 10,
+                    showLegend: true, 
+                    tooltips: true
+                },
+                title: {
+                    enable: false,
+                    text: ''
+                }
+            };
+            
+            return radarChart;
+        },
+        getGeoChart: function(){
+            var geoChart = {
+                chart: {
+                    type: 'geoChart',
+                    keepAspectRatio: true
+                },
+                title: {
+                    enable: false,
+                    text: ''
+                }
+            };
+            
+            return geoChart;
+        }
     };
 }]);
 
