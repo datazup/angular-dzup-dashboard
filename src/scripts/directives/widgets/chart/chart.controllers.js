@@ -165,7 +165,7 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
                     title: config.definitionModel.chartTitle,
                     xAxisLabel: config.definitionModel.xAxisLabel,
                     yAxisLabel: config.definitionModel.yAxisLabel,
-                    color: config.definitionModel.chartColor,
+                    /*color: config.definitionModel.chartColor,*/
                     xAxis: "x",
                     yAxis:  "y",
                     sort: config.definitionModel.sort,
@@ -174,7 +174,8 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
                     from: config.definitionModel.from,
                     to: config.definitionModel.to,
                     chartType: config.definitionModel.chartType,
-                    metricType: config.definitionModel.metricType
+                    metricType: config.definitionModel.metricType,
+                    splitDataBy:config.definitionModel.splitDataBy
                 };
             }
 
@@ -279,7 +280,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                     title: config.definitionModel.chartTitle,
                     xAxisLabel: config.definitionModel.xAxisLabel,
                     yAxisLabel: config.definitionModel.yAxisLabel,
-                    color: config.definitionModel.chartColor,
+                    /*color: config.definitionModel.chartColor,*/
                     xAxis: "x",
                     yAxis:  "y",
                     sort: config.definitionModel.sort,
@@ -287,7 +288,9 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                     sortBy: config.definitionModel.sortBy,
                     from: config.definitionModel.from,
                     to: config.definitionModel.to,
-                    chartType: config.definitionModel.chartType
+                    chartType: config.definitionModel.chartType,
+                    splitDataBy:config.definitionModel.splitDataBy
+
                 };
             }
 
@@ -323,10 +326,10 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                     }
                     else
                     {
-
                          $scope.config.definitionModel.aggregateAxis = [{xAxisAg:null}];
                          $scope.schema.properties.yAxis.items = $scope.reportColumns;
                     }
+                    $scope.schema.properties.splitDataBy.items= $scope.reportColumns;
                 })
             }
         }
@@ -354,12 +357,16 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                         $scope.setChartData(injectValue, pResult.data);
                     });
                 }
+
+                if(injectValue && config.definitionModel.areFilterFiledsEnabled)
+                    $scope.config.definitionModel.filterFields = [{filterColumn:null,filterOperator:null , filterValue:"" }];
+
                 return $scope.reportColumns;
             });
         }
 
         $scope.getReportColumnsDynamic = function (value, injectValue) {
-            //console.log($scope.form["0"].tabs[1].items["0"].items[2].items["0"].options);
+
             if(!angular.equals(value, $scope.defCopy)){
                 $scope.reportColumns = $scope.getReportColumns(value, injectValue);
                 $scope.defCopy =value;
@@ -398,6 +405,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
            //gets promise
            $scope.reportColumns = $scope.getReportColumns(config.definitionModel, false);
         }
+        $scope.fieldFilterOperators = $dzupDashboard.getFilterOperators();
 
         $scope.config.definitionModel = $scope.config.definitionModel || {};
         $scope.loadChildModelByChartType($scope.config.definitionModel.chartType);
@@ -514,7 +522,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                 },
                 from: {
                     title: "From",
-                    default: 1,
+                    default: 0,
                     type: "number"
                 },
                 to: {
@@ -522,6 +530,52 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                     default: 20,
                     type: "number"
                 },
+                areFilterFiledsEnabled: {
+                    type: 'boolean',
+                    title: 'Enable Filter Fields',
+                    description: '',
+                    default: false,
+                },
+                filterFields: {
+                    type: "array",
+                    description: '',
+                    items: {
+                        type: "object",
+                        properties: {
+                            filterColumn: {
+                                type: 'string',
+                                title: 'Report Column',
+                                placeholder: 'Select Column',
+                                description: '',
+                                default: null,
+                                validationMessage: 'Required',
+                                required: true
+                            },
+                            filterOperator: {
+                                type: 'string',
+                                title: 'Operator',
+                                format: "uiselect",
+                                placeholder: 'Select Operator',
+                                description: '',
+                                default: null,
+                                validationMessage: 'Required',
+                                required: true,
+                            },
+                            filterValue: {
+                                type: "string",
+                                title: "Value",
+                                disableErrorState : true
+                            }
+                        }
+                    }
+                },
+                splitDataBy: {
+                    type:  ['null','string'],
+                    title: 'Split Property',
+                    default: null,
+                    format: "uiselect",
+                    placeholder: 'Select by which property you want to split data.'
+                }
             },
             required: [
                 "chartType",
@@ -666,213 +720,28 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                     {
                                         type: "section",
                                         htmlClass: "col-xs-12",
-                                        condition: "model.chartType=='pieChart'",
+                                        condition: "model.chartType=='discreteBarChart' || model.chartType=='geoChart' || model.chartType=='lineChart'",
                                         items: [
-
                                             {
-                                                key: 'yAxis',
+                                                key: 'yAxisLabel',
+                                                placeholder: 'Enter Y Axis Label Here',
                                                 feedback: false,
-                                                type: 'uiselect',
-                                                options: {
-                                                    callback: $scope.reportColumns
-                                                },
-                                            },
-                                            {
-                                                type: 'section',
-                                                htmlClass: "row",
-                                                items: [
-                                                    {
-                                                        type: "section",
-                                                        htmlClass: "col-xs-6",
-                                                        items: [
-                                                            {
-                                                                key: 'sort',
-                                                                onChange: function (modelValue, form) {
-                                                                    config.definitionModel.sortOrder = 'asc';
-                                                                    config.definitionModel.sortBy = 'x';
-                                                                }
-                                                            },
-                                                            {
-                                                                key: 'sortOrder',
-                                                                htmlClass: 'sort-options-radio',
-                                                                condition: "model.sort==true",
-                                                                type: 'radios-inline',
-                                                                titleMap: [
-                                                                    {
-                                                                        value: 'asc',
-                                                                        name: 'Ascending'
-                                                                    },
-                                                                    {
-                                                                        value: 'desc',
-                                                                        name: 'Descending'
-                                                                    }
-                                                                ]
-                                                            },
-                                                            {
-                                                                key: 'sortBy',
-                                                                htmlClass: 'sort-options-radio',
-                                                                condition: "model.sort==true",
-                                                                type: 'radios-inline',
-                                                                titleMap: [
-                                                                    {
-                                                                        value: 'X',
-                                                                        name: 'X Axis'
-                                                                    },
-                                                                    {
-                                                                        value: 'Y',
-                                                                        name: 'Y Axis'
-                                                                    }
-                                                                ]
-                                                            }
-                                                        ]
-                                                    },
-                                                    {
-                                                        type: "section",
-                                                        htmlClass: "col-xs-6",
-                                                        items: [
-                                                            {
-                                                                type: "help",
-                                                                helpvalue: "<h5>Take ...</h5>"
-                                                            },
-                                                            {
-                                                                type: "section",
-                                                                htmlClass: "col-xs-6",
-                                                                items: [
-                                                                    {
-                                                                        key: 'from',
-                                                                        feedback: false,
-                                                                    }
-                                                                ]
-                                                            },
-                                                            {
-                                                                type: "section",
-                                                                htmlClass: "col-xs-6",
-                                                                items: [
-                                                                    {
-                                                                        key: 'to',
-                                                                        feedback: false,
-                                                                    }
-                                                                ]
-                                                            }
-                                                        ]
-                                                    }
-                                                ]
                                             }
+
                                         ]
                                     },
                                     {
                                         type: "section",
                                         htmlClass: "col-xs-12",
-                                        condition: "model.chartType=='discreteBarChart' || model.chartType=='geoChart'",
+                                        condition: "model.chartType=='pieChart' || model.chartType=='discreteBarChart' || model.chartType=='geoChart' || model.chartType=='lineChart'",
                                         items: [
-                                 /*           {
-                                                key: 'xAxisLabel',
-                                                placeholder: 'Enter X Axis Label Here',
-                                                feedback: false,
-                                            },
-                                            {
-                                                key: 'xAxis',
-                                                type: 'uiselect',
-                                                feedback: false,
-                                                options: {
-                                                    callback: $scope.reportColumns
-                                                },
-
-                                            },*/
-                                            {
-                                                key: 'yAxisLabel',
-                                                placeholder: 'Enter Y Axis Label Here',
-                                                feedback: false,
-                                            },
                                             {
                                                 key: 'yAxis',
-                                                type: 'uiselect',
                                                 feedback: false,
+                                                type: 'uiselect',
                                                 options: {
                                                     callback: $scope.reportColumns
                                                 },
-
-                                            },
-                                            {
-                                                type: 'section',
-                                                htmlClass: "row",
-                                                items: [
-                                                    {
-                                                        type: "section",
-                                                        htmlClass: "col-xs-6",
-                                                        items: [
-                                                            {
-                                                                key: 'sort',
-                                                                onChange: function (modelValue, form) {
-                                                                    config.definitionModel.sortOrder = 'asc';
-                                                                    config.definitionModel.sortBy = 'x';
-                                                                }
-                                                            },
-                                                            {
-                                                                key: 'sortOrder',
-                                                                htmlClass: 'sort-options-radio',
-                                                                condition: "model.sort==true",
-                                                                type: 'radios-inline',
-                                                                titleMap: [
-                                                                    {
-                                                                        value: 'asc',
-                                                                        name: 'Ascending'
-                                                                    },
-                                                                    {
-                                                                        value: 'desc',
-                                                                        name: 'Descending'
-                                                                    }
-                                                                ]
-                                                            },
-                                                            {
-                                                                key: 'sortBy',
-                                                                htmlClass: 'sort-options-radio',
-                                                                condition: "model.sort==true",
-                                                                type: 'radios-inline',
-                                                                titleMap: [
-                                                                    {
-                                                                        value: 'x',
-                                                                        name: 'X Axis'
-                                                                    },
-                                                                    {
-                                                                        value: 'y',
-                                                                        name: 'Y Axis'
-                                                                    }
-                                                                ]
-                                                            }
-                                                        ]
-                                                    },
-                                                    {
-                                                        type: "section",
-                                                        htmlClass: "col-xs-6",
-                                                        items: [
-                                                            {
-                                                                "type": "help",
-                                                                "helpvalue": "<h5>Take ...</h5>"
-                                                            },
-                                                            {
-                                                                type: "section",
-                                                                htmlClass: "col-xs-6",
-                                                                items: [
-                                                                    {
-                                                                        key: 'from',
-                                                                        feedback: false,
-                                                                    }
-                                                                ]
-                                                            },
-                                                            {
-                                                                type: "section",
-                                                                htmlClass: "col-xs-6",
-                                                                items: [
-                                                                    {
-                                                                        key: 'to',
-                                                                        feedback: false,
-                                                                    }
-                                                                ]
-                                                            }
-                                                        ]
-                                                    }
-                                                ]
                                             }
                                         ]
                                     },
@@ -883,92 +752,163 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                         items: [
                                             {
                                                 key: 'metricType',
-                                                feedback: false
+                                                feedback: false,
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        type: 'section',
+                                        htmlClass: 'col-xs-12',
+                                        items: [
+                                            {
+                                                type: "help",
+                                                helpvalue: "<h5>Filter Fields</h5>"
+                                            },
+                                            {
+                                                key: 'areFilterFiledsEnabled',
+                                                type: 'checkbox'
+                                            },
+                                            {
+                                                condition: "model.areFilterFiledsEnabled == true",
+                                                key: "filterFields",
+                                                title: " ",
+                                                add: "Add",
+                                                style: {
+                                                    "add": "btn-success"
+                                                },
+                                                items: [
+                                                    {
+                                                        type: 'section',
+                                                        htmlClass: 'row',
+                                                        items: [
+                                                            {
+                                                                type: 'section',
+                                                                htmlClass: 'col-xs-12',
+                                                                items: [
+                                                                    {
+                                                                        key: 'filterFields[].filterColumn',
+                                                                        htmlClass: 'col-xs-4',
+                                                                        options: {
+                                                                           filterTriggers: ["model.dataSource"],
+                                                                           filter:"true",
+                                                                           asyncCallback: function(){return $scope.getReportColumnsDynamic(config.definitionModel, false)},
+                                                                           placement: 'left',
+                                                                           asyncReloadOnFilterTrigger: true
+                                                                        },
+                                                                        feedback: false,
+                                                                        type: 'strapselect'
+                                                                    },
+                                                                    {
+                                                                        key: 'filterFields[].filterOperator',
+                                                                        htmlClass: 'col-xs-4',
+                                                                        options: {
+                                                                            callback: $scope.fieldFilterOperators
+                                                                        },
+                                                                        feedback: false,
+                                                                        type: 'uiselect'
+                                                                    },
+                                                                    {
+                                                                        key: 'filterFields[].filterValue',
+                                                                        title: 'Alias',
+                                                                        htmlClass: 'col-xs-4',
+                                                                        placeholder: 'Enter Value',
+                                                                        feedback: false
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                remove: true
                                             }
                                         ]
                                     },
                                     {
                                         type: "section",
                                         htmlClass: "col-xs-12",
-                                        condition: "model.chartType=='lineChart'",
+                                        condition: "model.chartType== 'lineChart'",
                                         items: [
-                                            /*{
-                                                key: 'xAxisLabel',
-                                                placeholder: 'Enter X Axis Label Here',
-                                                feedback: false,
-                                            },
+
                                             {
-                                                key: 'xAxis',
+                                                key: 'splitDataBy',
+                                                feedback: false,
                                                 type: 'uiselect',
-                                                feedback: false,
                                                 options: {
-                                                    callback: $scope.reportColumns
-                                                },
-                                            },*/
+                                                    callback: $scope.reportColumns,
+                                                    eventCallback: function(value) {
+                                                            if(typeof value == 'undefined')
+                                                                $scope.config.definitionModel.splitDataBy = null;
+                                                            }
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        type: 'section',
+                                        htmlClass: "row",
+                                        condition: "model.chartType=='pieChart' || model.chartType=='lineChart' || model.chartType=='discreteBarChart' ",
+                                        items: [
                                             {
-                                                key: 'yAxisLabel',
-                                                placeholder: 'Enter Y Axis Label Here',
-                                                feedback: false,
-                                            },
-                                            {
-                                                key: 'yAxis',
-                                                type: 'uiselect',
-                                                feedback: false,
-                                                options: {
-                                                    callback: $scope.reportColumns
-                                                },
-                                            },
-                                            {
-                                                key: 'chartColor',
-                                                placeholder: 'Enter Chart Color Here',
-                                                feedback: false,
-                                            },
-                                            {
-                                                type: 'section',
-                                                htmlClass: "row",
+                                                type: "section",
+                                                htmlClass: "col-xs-6",
                                                 items: [
+                                                    {
+                                                        key: 'sort',
+                                                        htmlClass: "col-xs-6",
+                                                        onChange: function (modelValue, form) {
+                                                            config.definitionModel.sortOrder = 'asc';
+                                                            config.definitionModel.sortBy = 'x';
+                                                        }
+                                                    },
+                                                    {
+                                                        key: 'sortOrder',
+                                                        htmlClass: 'col-xs-12 sort-options-radio',
+                                                        condition: "model.sort==true",
+                                                        type: 'radios-inline',
+                                                        titleMap: [
+                                                            {
+                                                                value: 'asc',
+                                                                name: 'Ascending'
+                                                            },
+                                                            {
+                                                                value: 'desc',
+                                                                name: 'Descending'
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        key: 'sortBy',
+                                                        htmlClass: 'col-xs-12 sort-options-radio',
+                                                        condition: "model.sort==true",
+                                                        type: 'radios-inline',
+                                                        titleMap: [
+                                                            {
+                                                                value: 'X',
+                                                                name: 'X Axis'
+                                                            },
+                                                            {
+                                                                value: 'Y',
+                                                                name: 'Y Axis'
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                type: "section",
+                                                htmlClass: "col-xs-6",
+                                                items: [
+                                                    {
+                                                        type: "help",
+                                                        helpvalue: "<h5>Take ...</h5>"
+                                                    },
                                                     {
                                                         type: "section",
                                                         htmlClass: "col-xs-6",
                                                         items: [
                                                             {
-                                                                key: 'sort',
-                                                                onChange: function (modelValue, form) {
-                                                                    config.definitionModel.sortOrder = 'asc';
-                                                                    config.definitionModel.sortBy = 'x';
-                                                                }
-                                                            },
-                                                            {
-                                                                key: 'sortOrder',
-                                                                htmlClass: 'sort-options-radio',
-                                                                condition: "model.sort==true",
-                                                                type: 'radios-inline',
-                                                                titleMap: [
-                                                                    {
-                                                                        value: 'asc',
-                                                                        name: 'Ascending'
-                                                                    },
-                                                                    {
-                                                                        value: 'desc',
-                                                                        name: 'Descending'
-                                                                    }
-                                                                ]
-                                                            },
-                                                            {
-                                                                key: 'sortBy',
-                                                                htmlClass: 'sort-options-radio',
-                                                                condition: "model.sort==true",
-                                                                type: 'radios-inline',
-                                                                titleMap: [
-                                                                    {
-                                                                        value: 'x',
-                                                                        name: 'X Axis'
-                                                                    },
-                                                                    {
-                                                                        value: 'y',
-                                                                        name: 'Y Axis'
-                                                                    }
-                                                                ]
+                                                                key: 'from',
+                                                                feedback: false,
                                                             }
                                                         ]
                                                     },
@@ -977,28 +917,8 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                         htmlClass: "col-xs-6",
                                                         items: [
                                                             {
-                                                                "type": "help",
-                                                                "helpvalue": "<h5>Take ...</h5>"
-                                                            },
-                                                            {
-                                                                type: "section",
-                                                                htmlClass: "col-xs-6",
-                                                                items: [
-                                                                    {
-                                                                        key: 'from',
-                                                                        feedback: false,
-                                                                    }
-                                                                ]
-                                                            },
-                                                            {
-                                                                type: "section",
-                                                                htmlClass: "col-xs-6",
-                                                                items: [
-                                                                    {
-                                                                        key: 'to',
-                                                                        feedback: false,
-                                                                    }
-                                                                ]
+                                                                key: 'to',
+                                                                feedback: false,
                                                             }
                                                         ]
                                                     }
@@ -1006,22 +926,6 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                             }
                                         ]
                                     }
-                                    /*, {
-                                        type: 'section',
-                                        htmlClass: 'col-xs-12',
-                                        condition: 'model.chartType==="geoChart"',
-                                        items:[
-                                            
-                                        ]
-                                    },
-                                    {
-                                        type: 'section',
-                                        htmlClass: 'col-xs-12',
-                                        condition: 'model.chartType==="radarChart"',
-                                        items:[
-                                            
-                                        ]
-                                    }*/
                                 ]
                             }
                         ]

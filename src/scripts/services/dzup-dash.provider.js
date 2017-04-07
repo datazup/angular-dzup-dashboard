@@ -97,6 +97,14 @@ dzupDashboard.provider('$dzupDashboard', [ function () {
                  return  [{value: "scheduled", label: "Scheduled"}, {value: "regular", label: "Regular"}];
             }
 
+            this.getFilterOperators = function(){
+                 return  [
+                         {value: "equal", label: "Equal"},
+                         {value: "notequal", label: "Non-Equal"},
+                         {value: "gt", label: "Greater Than"},
+                         {value: "lt", label: "Less Than"}];
+            }
+
             this.getReportsBySource = function(source){
                  var s = encodeURIComponent(source);
                  return $http.get(conf.host + conf.reportsBySourcesUrl  +'?source='+s);

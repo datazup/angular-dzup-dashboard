@@ -149,14 +149,7 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                    }
                 };
 
-        $scope.fieldFilterOperators = [
-            {value: "equal", label: "Equal"},
-            {value: "nonequal", label: "Non-Equal"},
-            {value: "gt", label: "Greater Than"},
-            {value: "lt", label: "Less Than"},
-            {value: "contains", label: "Contains"},
-            {value: "notcontains", label: "Does Not Contain"}];
-
+        $scope.fieldFilterOperators = $dzupDashboard.getFilterOperators();
 
         $scope.createReport = function () {
             var modalInstance = $uibModal.open({
@@ -368,21 +361,6 @@ app.controller('DzupGenericDataSourceEditController', ['$scope', '$timeout', '$u
                                 type: 'section',
                                 htmlClass: 'row',
                                 items: [
-
-                                    /*{
-                                        type: 'section',
-                                        htmlClass: 'col-xs-12',
-                                        items: [
-                                            {
-                                                type: "help",
-                                                helpvalue: "<h5>Date Range Filter</h5>"
-                                            },
-                                            {
-                                                key: 'dateRange',
-                                                type: 'datepicker'
-                                            }
-                                        ]
-                                    },*/
                                     {
                                         type: 'section',
                                         htmlClass: 'col-xs-12',

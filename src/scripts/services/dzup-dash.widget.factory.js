@@ -68,6 +68,12 @@ app.factory('chartService', [function () {
                 return mappedData.slice(from, to).value();
             }
         },
+        getMappedLineChartData: function (data, chartOptions) {
+           data = _.sortBy(data, function(item) {
+               return [item.x, item.y];
+            });
+            return data;
+        },
         getChartData: function (data, chart, options) {
 
             if (options && options.title) {
@@ -85,13 +91,33 @@ app.factory('chartService', [function () {
                 return this.getMappedChartData(data, options);
             }
 
-            if (chart.chart.type == 'lineChart' || chart.chart.type == 'discreteBarChart') {
+            if (chart.chart.type == 'lineChart') {
+                if(options.splitDataBy && options.splitDataBy !="" && chart.chart.type == 'lineChart' ){
+                   var splitteditems = [];
+                   for(var i=0;i<data.length; i++){
+                          var setKey = data[i][options.splitDataBy];
+                          var setResult  = this.getMappedLineChartData(data[i]["data"],options);
+                          splitteditems.push({values:setResult, key:setKey})
+                   }
+                   return splitteditems;
+                }else{
+                    return [{
+                        values: this.getMappedLineChartData(data, options),
+                        key: options.key,
+                        color: options.color
+                    }];
+                }
+
+            }
+
+            if(chart.chart.type == 'discreteBarChart'){
                 return [{
                     values: this.getMappedChartData(data, options),
                     key: options.key,
                     color: options.color
                 }];
             }
+
             if (chart.chart.type==='radarChart'){
                 var obj = {};
                 
@@ -414,6 +440,7 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                     orderBy: definitionModel.yAxis,
                     from: definitionModel.from,
                     to: definitionModel.to,
+                    splitDataBy: definitionModel.splitDataBy,
                     streamType: (typeof dataSourceWidget.streamType != 'undefined') ? dataSourceWidget.streamType.toUpperCase(): null,
                     dynamicFilters: [],
                     chartType:definitionModel.chartType,
@@ -424,11 +451,27 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                     publicIdentifier: this.getPublicIdentifier()
                 };
 
+                //data source filters
                 if (dataSourceWidget.config.definitionModel.filterFields) {
                     for (var i = 0; i < dataSourceWidget.config.definitionModel.filterFields.length; i++) {
                         if(dataSourceWidget.config.definitionModel.filterFields[i].filterValue && dataSourceWidget.config.definitionModel.filterFields[i].filterValue !="")
                         {
                             var item = angular.copy(dataSourceWidget.config.definitionModel.filterFields[i]);
+                            var numValue = Number(item.filterValue);
+                            if(!isNaN(numValue)){
+                               item.filterValue = numValue;
+                            }
+                            parameters.dynamicFilters.push(item);
+                        }
+                    }
+                }
+
+                //chart filters
+                if(definitionModel.filterFields && definitionModel.filterFields.length > 0){
+                    for(var i = 0; i < definitionModel.filterFields.length; i++){
+                        if(definitionModel.filterFields[i].filterValue && definitionModel.filterFields[i].filterValue !="")
+                        {
+                            var item = angular.copy(definitionModel.filterFields[i]);
                             var numValue = Number(item.filterValue);
                             if(!isNaN(numValue)){
                                item.filterValue = numValue;
