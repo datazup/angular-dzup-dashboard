@@ -65,9 +65,11 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
                     var x = dObj.x;
                     var y = dObj.y;
                     
-                    var splitted = x.split('-');
-                    var country = splitted[0];
-                    var state = splitted[1];
+                    var splitterIndex = x.indexOf('-');
+                    //var splitted = x.split('-');
+                    var country = x.substring.(0, splitterIndex); //splitted[0];
+                    var state = x.substring(substring, x.length-1);
+                    
                     if (country){
                         var existingCountry = countriesObj[country];
                         if (!existingCountry){
