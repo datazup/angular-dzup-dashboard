@@ -71,7 +71,7 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
                    
                     
                     if (country){
-                        var state = x.substring(splitterIndex+1, x.length-1);
+                        var state = x.substring(splitterIndex+1, x.length);
                         
                         var existingCountry = countriesObj[country];
                         if (!existingCountry){
