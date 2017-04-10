@@ -17,8 +17,8 @@
                 ng-model="AvailableStreams.selected" ng-change="setStream(AvailableStreams.selected)">
         </select>
     </div>
-    <h5 class="col-md-12 margin-top-10">Date Range Filter</h5>
-    <div class="col-md-12">
+    <h5 ng-if="config.definitionModel.areFilterFiledsEnabled" class="col-md-12 margin-top-10">Date Range Filter</h5>
+    <div ng-if="config.definitionModel.areFilterFiledsEnabled" class="col-md-12">
         <div class="input-group">
             <div class="input-group-addon"><span class="fa fa-calendar txt-danger form-control-feedback"></span>
             </div>
@@ -28,7 +28,7 @@
     </div>
 
     <h5 class="col-md-12 margin-top-5" ng-if="config.definitionModel.filterFields && config.definitionModel.filterFields.length>0 && config.definitionModel.areFilterFiledsEnabled">Filters</h5>
-    <div ng-repeat="item in config.definitionModel.filterFields">
+    <div ng-repeat="item in config.definitionModel.filterFields" ng-if="config.definitionModel.filterFields && config.definitionModel.filterFields.length>0 && config.definitionModel.areFilterFiledsEnabled">
         <div class="col-xs-6">
             <input type="text" readonly="readonly" style="color:#666666" placeholder="Enter Value" class="form-control" value="{{item.filterAlias && item.filterAlias!='' ? item.filterAlias :'Filter '+($index+1)}}"></input>
         </div>

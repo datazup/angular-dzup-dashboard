@@ -64,7 +64,8 @@ dzupDashboard.provider('$dzupDashboardWidget', [function () {
                         return result.valid;
                     }
                 },
-                config: null
+                config: null,
+                styleClass: "dzup-data-source-widget"
             },
            chartConf: {
                     title: 'Chart Configuration',
@@ -88,7 +89,8 @@ dzupDashboard.provider('$dzupDashboardWidget', [function () {
                             return result.valid;
                         }
                     },
-                    config: null
+                    config: null,
+                    styleClass: "dzup-chart-widget"
                 }
         }
         return ds;
