@@ -5,7 +5,7 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
         $scope.config = config;
         $scope.widget = widget;
         
-         $scope.radarDefultData = function(wData, chart, chartOptions, config){
+         /*$scope.radarDefultData = function(wData, chart, chartOptions, config){
             
              var data = [
                  
@@ -31,7 +31,7 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
              
              return data;
              
-        };
+        };*/
         
         $scope.getGeoDefaultData = function(wData, chart, chartOptions, config){
             if (!wData){
@@ -182,7 +182,8 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
             if (config.definitionModel.chartType === "geoChart"){
                 $scope.populatedChart = $scope.getGeoDefaultData(wData, $scope.chart, $scope.chartOptions, config);                
             }else if (config.definitionModel.chartType === "radarChart"){
-                $scope.populatedChart = $scope.radarDefultData(wData, $scope.chart, $scope.chartOptions, config);
+                //$scope.populatedChart = $scope.radarDefultData(wData, $scope.chart, $scope.chartOptions, config);
+                $scope.populatedChart = chartService.getChartData(wData, $scope.chart, $scope.chartOptions, config);
             }else if( config.definitionModel.chartType != "tableChart")
                 $scope.populatedChart = chartService.getChartData(wData, $scope.chart, $scope.chartOptions);
              else{
@@ -720,7 +721,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                     {
                                         type: "section",
                                         htmlClass: "col-xs-12",
-                                        condition: "model.chartType=='discreteBarChart' || model.chartType=='geoChart' || model.chartType=='lineChart'",
+                                        condition: "model.chartType=='discreteBarChart' || model.chartType=='geoChart' || model.chartType=='lineChart' || model.chartType== 'radarChart'",
                                         items: [
                                             {
                                                 key: 'yAxisLabel',
@@ -733,7 +734,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                     {
                                         type: "section",
                                         htmlClass: "col-xs-12",
-                                        condition: "model.chartType=='pieChart' || model.chartType=='discreteBarChart' || model.chartType=='geoChart' || model.chartType=='lineChart'",
+                                        condition: "model.chartType=='pieChart' || model.chartType=='discreteBarChart' || model.chartType=='geoChart' || model.chartType=='lineChart' || model.chartType== 'radarChart'",
                                         items: [
                                             {
                                                 key: 'yAxis',
@@ -826,7 +827,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                     {
                                         type: "section",
                                         htmlClass: "col-xs-12",
-                                        condition: "model.chartType== 'lineChart'",
+                                        condition: "model.chartType== 'lineChart' || model.chartType== 'radarChart'",
                                         items: [
 
                                             {

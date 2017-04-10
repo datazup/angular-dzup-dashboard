@@ -72,7 +72,47 @@ app.factory('chartService', [function () {
            data = _.sortBy(data, function(item) {
                return [item.x, item.y];
             });
+
             return data;
+        },
+        getMappedRadarChartData: function (data, chartOptions) {
+            return data;
+        },
+        getMappedRadarChartDataMultiXaxis: function (data, chartOptions) {
+
+               var mappedData =  _.chain(data).map(function (value, key) {
+                   var arrVal = [];
+                   for (var prop in value) {
+                   if(prop != "Language")
+                     arrVal.push({ label: prop, value:value[prop]})
+
+                   }
+                   return {subList:arrVal};
+               }).value();
+
+              var subData = []
+              for(var i=0; i< mappedData.length;i++ ){
+                      for(var y=0; y< mappedData[i].subList.length;y++ ){
+                        subData.push(mappedData[i].subList[y]);
+                      }
+              }
+
+              mappedData = _.chain(subData)
+                              .groupBy("label")
+                              .map(function (value, key) {
+                                  return _.reduce(value, function (result, currentObject) {
+                                  console.log("val:")
+                                  console.log(currentObject["value"]);
+                                      return {
+                                          label: currentObject["label"],
+                                          value: result["y"] + currentObject["value"]
+                                      }
+                                  }, {
+                                      y: 0
+                                  });
+                              }).value();
+
+             return mappedData;
         },
         getChartData: function (data, chart, options) {
 
@@ -91,8 +131,28 @@ app.factory('chartService', [function () {
                 return this.getMappedChartData(data, options);
             }
 
-            if (chart.chart.type == 'lineChart') {
-                if(options.splitDataBy && options.splitDataBy !="" && chart.chart.type == 'lineChart' ){
+            if (chart.chart.type == 'radarChart') {
+                if(options.splitDataBy && options.splitDataBy !="" ){
+                   var splitteditems = [];
+                   for(var i=0;i<data.length; i++){
+                          var setKey = data[i][options.splitDataBy];
+
+                          var setResult  = this.getMappedRadarChartData(data[i]["data"],options);
+                          splitteditems.push({values:setResult, key:setKey})
+                   }
+                   return splitteditems;
+                }else{ //TO DO
+                    return [{
+                        values: [],
+                        key: options.key,
+                        color: options.color
+                    }];
+                }
+
+            }
+
+            if (chart.chart.type == 'lineChart' ) {
+                if(options.splitDataBy && options.splitDataBy !="" ){
                    var splitteditems = [];
                    for(var i=0;i<data.length; i++){
                           var setKey = data[i][options.splitDataBy];
