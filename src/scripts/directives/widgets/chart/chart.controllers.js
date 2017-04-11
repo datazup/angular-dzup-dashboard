@@ -42,7 +42,8 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
                     case 'SUM':      
                         return yOldData+yNewData;                        
                     case 'AVG':
-                        var avg = 0;
+                        var avg = yOldData;
+                        avg += (yNewData-avg)/totalCount;
                         return avg;
                     case 'MAX':
                         return yNewData>yOldData?yNewData:yOldData;
@@ -60,14 +61,19 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
                 
                 var countriesObj = {};
                 var statesObj = {};
+                
+                var counter = {
+                    countries: {},
+                    states: {}
+                };
+                
                 for (var i=0;i<wData.length;i++){
                     var dObj = wData[i];
                     var x = dObj.x;
                     var y = dObj.y;
                     
                     var splitterIndex = x.indexOf('-');
-                    //var splitted = x.split('-');
-                    var country = x.substring(0, splitterIndex); //splitted[0];
+                    var country = x.substring(0, splitterIndex);
                    
                     
                     if (country){
@@ -76,19 +82,27 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
                         var existingCountry = countriesObj[country];
                         if (!existingCountry){
                             countriesObj[country] = y;
+                            counter.countries[country] = 1;
                         }else{
-                            countriesObj[country] += y;
+                            ++counter.countries[country];
+                            var calculatedMetricValue = calculateMetric(countriesObj[country], y, counter.countries[country], metricType);
+                            countriesObj[country] = calculatedMetricValue;
                         }
                         
                         var existingCountryState = statesObj[country];
                         if (!existingCountryState){
                             statesObj[country] = {};
                             statesObj[country][state] = y;
+                            counter.states[country] = {};
+                            counter.states[country][state] = 1;
                         }else{
                             var existingState = statesObj[country][state];
                             if (!existingState){
                                 statesObj[country][state] = y;
+                                counter.states[country][state] = 1;
                             }else{
+                                ++counter.states[country][state];
+                                var calculatedMetricValue = calculateMetric(statesObj[country][state], y, counter.states[country][state], metricType);
                                 statesObj[country][state] += y;
                             }
                         }
