@@ -344,7 +344,9 @@ nv.models.radarChart = function() {
             if (data && data[0] && data[0].values){
                 legs=data[0].values;//TODO: Think in a better way to put only the legs of the radar    
             }            
-            
+           /* var that = this;
+            $(that).attr("class", "col-lg-12");*/
+
             var container = d3.select(this),
                 that = this,
                 size = legs.length,
@@ -375,6 +377,7 @@ nv.models.radarChart = function() {
             // Setup containers and skeleton of chart
 
             var wrap = container.selectAll('g.nv-wrap.nv-radarChart').data([data]);
+
             var wrapEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-radarChart');
             var gEnter = wrapEnter.append('g');
             var g = wrap.select('g');
@@ -592,7 +595,11 @@ nv.models.radarChart = function() {
                 .style("opacity", 0.3);
 
             // Axes
+             //Fix: initial legs labels change
+            wrap.select("g.axes").selectAll("g.axis").data(legs).remove();
+
             var ax = wrap.select("g.axes").selectAll("g.axis").data(legs);
+
             ax.exit().remove();
 
 			var axEnter = ax.enter().append("g")

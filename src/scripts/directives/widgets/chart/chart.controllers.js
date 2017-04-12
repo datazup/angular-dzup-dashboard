@@ -187,7 +187,7 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
                 $scope.populatedChart = $scope.getGeoDefaultData(wData, $scope.chart, $scope.chartOptions, config);                
             }else if (config.definitionModel.chartType === "radarChart"){
                 //$scope.populatedChart = $scope.radarDefultData(wData, $scope.chart, $scope.chartOptions, config);
-                $scope.populatedChart = chartService.getChartData(wData, $scope.chart, $scope.chartOptions, config);
+                $scope.populatedChart = chartService.getChartData(wData, $scope.chart, $scope.chartOptions);
             }else if( config.definitionModel.chartType != "tableChart")
                 $scope.populatedChart = chartService.getChartData(wData, $scope.chart, $scope.chartOptions);
              else{
