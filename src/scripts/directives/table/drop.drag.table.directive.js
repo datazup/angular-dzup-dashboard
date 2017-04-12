@@ -95,6 +95,7 @@ app.directive('dragAndDropTable', ['$compile','$dzupConfigUtils',
       }
       $scope.$watch('tableData',function(newVal){
         if(newVal){
+            $scope.start = 0;
             $scope.pageRecalc();
         }
       });
@@ -108,7 +109,7 @@ app.directive('dragAndDropTable', ['$compile','$dzupConfigUtils',
       $scope.hideNext=function(){
 
         if(typeof $scope.conf != 'undefined' && typeof $scope.tableData != 'undefined'){
-             if(($scope.start+ $scope.numLimit) < $scope.tableData.length){
+             if(($scope.start+ $scope.numLimit) < $scope.tableData.length && $scope.numLimit < $scope.tableData.length){
                return false;
              }
             else
@@ -117,7 +118,7 @@ app.directive('dragAndDropTable', ['$compile','$dzupConfigUtils',
         return false;
       };
        $scope.hidePrev=function(){
-        if($scope.start===0){
+        if($scope.start===0 || $scope.numLimit >= $scope.tableData.length){
           return true;
         }
         else

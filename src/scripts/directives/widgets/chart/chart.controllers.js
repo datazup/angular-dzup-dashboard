@@ -865,9 +865,9 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                     {
                                         type: 'section',
                                         htmlClass: "row",
-                                        condition: "model.chartType=='pieChart' || model.chartType=='lineChart' || model.chartType=='discreteBarChart' ",
+                                        condition: "model.chartType=='pieChart' || model.chartType=='lineChart' || model.chartType=='discreteBarChart' || model.chartType=='tableChart'",
                                         items: [
-                                            {   condition: "model.chartType!='lineChart'",
+                                            {   condition: "model.chartType!='lineChart' && model.chartType!='tableChart'",
                                                 type: "section",
                                                 htmlClass: "col-xs-6",
                                                 items: [
@@ -919,6 +919,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                 items: [
                                                     {
                                                         type: "help",
+                                                        htmlClass: "margin-left-15",
                                                         helpvalue: "<h5>Take ...</h5>"
                                                     },
                                                     {
