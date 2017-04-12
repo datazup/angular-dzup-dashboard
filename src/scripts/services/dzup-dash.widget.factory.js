@@ -413,6 +413,7 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
     var callList = [];
     var publicIdentifier = null;
     var publicStreams = [];
+    var areAllRegularStreamsAllowed = [];
     return {
         setDashboardWidgets: function (index, dashboard) {
 
@@ -604,15 +605,19 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                 return item.type == widgetType
             });
         },
-        setPublicConf: function(publicIdentifier, publicStreams){
+        setPublicConf: function(publicIdentifier, publicStreams, areAllRegularStreamsAllowed){
             this.publicIdentifier = publicIdentifier;
             this.publicStreams = publicStreams;
+            this.areAllRegularStreamsAllowed = areAllRegularStreamsAllowed;
         },
         getPublicIdentifier: function(){
             return this.publicIdentifier;
         },
         getPublicStreams: function(value){
             return this.publicStreams;
+        },
+        getAreAllRegularStreamsAllowed: function(value){
+            return this.areAllRegularStreamsAllowed;
         }
     };
 

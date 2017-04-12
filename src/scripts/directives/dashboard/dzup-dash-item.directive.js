@@ -35,7 +35,7 @@ function ($dzupDashboard, $dzupConfigUtils, dzupDashboardWidgetHelper, $compile)
                 if(result.length > 0){
                      scope.dashboard = { model:result[0].dashboard, fromPublic:true };
                       dzupDashboardWidgetHelper.setDashboardWidgets(0, scope.dashboard);
-                      dzupDashboardWidgetHelper.setPublicConf(scope.dashboardId, result[0].availableStreams);
+                      dzupDashboardWidgetHelper.setPublicConf(scope.dashboardId, result[0].availableStreams, result[0].areAllRegularStreamsAllowed);
                       var template  = '<adf-dashboard name="{{dashboard.key}}" editable="false" structure="{{dashboard.model.structure}}" categories="true" adf-model="dashboard.model" enableConfirmDelete="true" />';
 
                      var compiled = $compile(template)(scope);

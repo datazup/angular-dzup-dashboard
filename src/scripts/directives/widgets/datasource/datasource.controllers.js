@@ -58,12 +58,12 @@ app.controller('DzupGenericDataSourceController', ['$scope', '$rootScope', '$tim
             .then(function (result) {
 
                 $scope.AvailableStreams = _.chain(result.data.list).filter(function(x){
-                    return ( dzupDashboardWidgetHelper.getPublicIdentifier() != null && dzupDashboardWidgetHelper.getPublicStreams().length > 0 &&
-                    dzupDashboardWidgetHelper.getPublicStreams().indexOf(x.streamId) !== -1) || dzupDashboardWidgetHelper.getPublicIdentifier()==null;
-                }).map( function (x) {
-                    return {value: x.streamId, label: x.keyword, streamType: x.type};
-                }).value();
-
+                      return (dzupDashboardWidgetHelper.getPublicIdentifier() != null && dzupDashboardWidgetHelper.getPublicStreams().length > 0 && dzupDashboardWidgetHelper.getPublicStreams().indexOf(x.streamId) !== -1)
+                      || dzupDashboardWidgetHelper.getPublicIdentifier()==null
+                      || (dzupDashboardWidgetHelper.getPublicIdentifier()!=null && dzupDashboardWidgetHelper.getAreAllRegularStreamsAllowed() && x.type == "REGULAR");
+                  }).map( function (x) {
+                      return {value: x.streamId, label: x.keyword, streamType: x.type};
+                  }).value();
                 $timeout(function () {
                     if (!$scope.$$phase) $scope.$apply();
 

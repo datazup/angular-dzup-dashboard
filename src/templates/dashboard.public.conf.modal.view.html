@@ -2,6 +2,17 @@
     <div class="modal-header">
         <h4 class="modal-title" ng-bind="title"></h4>
         <p class="text-muted small" ng-bind="description" />
+
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-4 margin-bottom-10">
+                    <label class="checkbox-inline custom-checkbox nowrap">
+                        <input type="checkbox" id="allowAllRegularStreams" ng-model="dashboard.areAllRegularStreamsAllowed">
+                        <span style="font-size: 14px;font-weight: 400;">Allow all regular streams</span>
+                    </label>
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class="col-xs-6">
                 <select id="publicStreamTypes" ng-options="type as (type.label) for type in StreamTypes track by type.value"

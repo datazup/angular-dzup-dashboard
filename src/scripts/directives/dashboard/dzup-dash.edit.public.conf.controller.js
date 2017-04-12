@@ -37,7 +37,8 @@ app.controller('PublicDashboardConfigurationController', ['$scope', '$timeout', 
 
         $scope.close = function () {
             $uibModalInstance.close({
-                value: $scope.dashboard.availableStreams
+                availableStreams: $scope.dashboard.availableStreams,
+                areAllRegularStreamsAllowed: $scope.dashboard.areAllRegularStreamsAllowed
             });
         };
     }

@@ -66,7 +66,8 @@ dzupDashboard.directive('dzupDashboard', ['$dzupDashboard', '$dzupConfigUtils', 
                        modalInstance.result.then(function (modalData) {
 
                            if (modalData) {
-                            item.availableStreams = modalData.value;
+                                item.availableStreams = modalData.availableStreams;
+                                item.areAllRegularStreamsAllowed = modalData.areAllRegularStreamsAllowed;
                            }
                        }, function () {
                        });

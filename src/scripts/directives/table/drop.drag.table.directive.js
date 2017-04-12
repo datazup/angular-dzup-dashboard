@@ -90,8 +90,12 @@ app.directive('dragAndDropTable', ['$compile','$dzupConfigUtils',
       $scope.reverse = true;
       $scope.numLimit=5;
       $scope.start = 0;
-      $scope.calcCurrentPage= function(){
-       $scope.currentPage = parseInt($scope.start/$scope.numLimit)+1;
+      $scope.calcCurrentPage= function(pages){
+
+        $scope.currentPage = parseInt($scope.start/$scope.numLimit)+1;
+        if(typeof pages != 'undefined' && $scope.currentPage > pages){
+             $scope.currentPage = pages;
+        }
       }
       $scope.$watch('tableData',function(newVal){
         if(newVal){
@@ -102,14 +106,16 @@ app.directive('dragAndDropTable', ['$compile','$dzupConfigUtils',
 
       $scope.pageRecalc = function(){
         $scope.pages=Math.ceil($scope.tableData.length/$scope.numLimit);
-        $scope.calcCurrentPage();
-
+        $scope.calcCurrentPage($scope.pages);
+        if($scope.pages < ($scope.start/$scope.currentPage)){
+                $scope.start = ($scope.currentPage-1) * $scope.numLimit;
+        }
       }
 
       $scope.hideNext=function(){
 
         if(typeof $scope.conf != 'undefined' && typeof $scope.tableData != 'undefined'){
-             if(($scope.start+ $scope.numLimit) < $scope.tableData.length && $scope.numLimit < $scope.tableData.length){
+             if(($scope.start+$scope.numLimit) < $scope.tableData.length){
                return false;
              }
             else
@@ -118,7 +124,7 @@ app.directive('dragAndDropTable', ['$compile','$dzupConfigUtils',
         return false;
       };
        $scope.hidePrev=function(){
-        if($scope.start===0 || $scope.numLimit >= $scope.tableData.length){
+        if($scope.start===0 ){
           return true;
         }
         else

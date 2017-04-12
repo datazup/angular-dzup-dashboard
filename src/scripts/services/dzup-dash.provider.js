@@ -40,7 +40,7 @@ dzupDashboard.provider('$dzupDashboard', [ function () {
 
     function WidServ($http,conf){
             this.create = function(item) {
-                var item = {dashboard:item.model, id:item.model.identifier, availableStreams: item.availableStreams, publicDashboard:item.model.isPublic};
+                var item = {dashboard:item.model, id:item.model.identifier, availableStreams: item.availableStreams, publicDashboard:item.model.isPublic, areAllRegularStreamsAllowed:item.model.areAllRegularStreamsAllowed};
                 return $http.post(conf.host+ conf.updateUrl ,item);
             }
 
