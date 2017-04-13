@@ -534,7 +534,7 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                 };
 
                 //data source filters
-                if (dataSourceWidget.config.definitionModel.filterFields) {
+                if (dataSourceWidget.config.definitionModel.areFilterFiledsEnabled && dataSourceWidget.config.definitionModel.filterFields) {
                     for (var i = 0; i < dataSourceWidget.config.definitionModel.filterFields.length; i++) {
                         if(dataSourceWidget.config.definitionModel.filterFields[i].filterValue && dataSourceWidget.config.definitionModel.filterFields[i].filterValue !="")
                         {
@@ -563,12 +563,16 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                     }
                 }
 
-                if(dataSourceWidget.config.definitionModel.dateRange && dataSourceWidget.config.definitionModel.dateRange !=""){
+                if(dataSourceWidget.config.definitionModel.areFilterFiledsEnabled && dataSourceWidget.config.definitionModel.dateRange && dataSourceWidget.config.definitionModel.dateRange !=""){
                     var dataRange = dataSourceWidget.config.definitionModel.dateRange.split(" - ");
                     if(dataRange.length == 2){
                         var dateFrom = new Date(dataRange[0]);
                         var dateTo =  new Date(dataRange[1]);
+
                         if(dateFrom != "Invalid Date" && dateTo != "Invalid Date"){
+                            dateFrom =  dateFrom.setHours(dateFrom.getHours() - dateFrom.getTimezoneOffset() / 60);
+                            dateTo =  dateTo.setHours(dateTo.getHours() - dateTo.getTimezoneOffset() / 60);
+                            
                             parameters.dateRange.push(dateFrom);
                             parameters.dateRange.push(dateTo);
                         }
