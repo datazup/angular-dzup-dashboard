@@ -59,19 +59,22 @@ app.factory('chartService', [function () {
                     });
                 });
 
-
-            if (chartOptions.sort == true && chartOptions.sortOrder == 'asc') {
+           /* if (chartOptions.sort == true && chartOptions.sortOrder == 'asc') {
                 return mappedData.sortBy(chartOptions.sortBy).slice(from, to).value();
             } else if (chartOptions.sort == true && chartOptions.sortOrder == 'desc') {
                 return mappedData.sortBy(chartOptions.sortBy).reverse().slice(from, to).value();
             } else {
                 return mappedData.slice(from, to).value();
-            }
+            }*/
+           return mappedData.value();
         },
         getMappedLineChartData: function (data, chartOptions) {
-           data = _.sortBy(data, function(item) {
-               return [item.x, item.y];
-            });
+           data = _.chain(data).map(function(x, index){
+                if(typeof x.orderIndex != "undefined")
+                    return { x:x.orderIndex, y:x.y, label: x.x}
+                else return { x:x.x, y:x.y, label: x.x}
+
+            }).sortBy("x").value();
 
             return data;
         },
@@ -132,6 +135,7 @@ app.factory('chartService', [function () {
             }
 
             if (chart.chart.type == 'radarChart') {
+
                 if(options.splitDataBy && options.splitDataBy !="" ){
                    var splitteditems = [];
                    for(var i=0;i<data.length; i++){
@@ -152,12 +156,15 @@ app.factory('chartService', [function () {
             }
 
             if (chart.chart.type == 'lineChart' ) {
+
                 if(options.splitDataBy && options.splitDataBy !="" ){
                    var splitteditems = [];
                    for(var i=0;i<data.length; i++){
                           var setKey = data[i][options.splitDataBy];
                           var setResult  = this.getMappedLineChartData(data[i]["data"],options);
-                          splitteditems.push({values:setResult, key:setKey})
+
+                          splitteditems.push({values:setResult, key:setKey});
+
                    }
                    return splitteditems;
                 }else{
@@ -241,7 +248,6 @@ app.factory('chartService', [function () {
                     },
                     x: function (d) { if(d && d.x){return d.x;} else {return null;}},
                     y: function (d) { if(d && d.y){return d.y;} else {return null;}},
-                    useInteractiveGuideline: true,
                     dispatch: {
                         stateChange: function (e) {
                         },
@@ -252,15 +258,29 @@ app.factory('chartService', [function () {
                         tooltipHide: function (e) {
                         }
                     },
-                    xAxis: {
-                        axisLabel: ''
+                     xAxis: {
+                         axisLabel: "",
+                         tickFormat: function(d) {
+                                 var that = this;
+                                    if(that.farthestViewportElement && that.farthestViewportElement.__data__){
+                                         var items = _.find(that.farthestViewportElement.__data__, function(obj) {
+                                             return _.some(obj.values, {x: d});
+                                         });
+                                         if(items && items.values){
+                                            var a =  _.find(items.values, {x:d})
+                                            return a.label;
+                                         }
+                                    }
+                                    return d;
+                             }
                     },
                     yAxis: {
                         axisLabel: '',
                         axisLabelDistance: -10
                     },
                     callback: function (chart) {
-                    }
+                    },
+                    showXAxis:true
                 },
                 title: {
                     enable: false,
@@ -505,7 +525,8 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                     streamType: (typeof dataSourceWidget.streamType != 'undefined') ? dataSourceWidget.streamType.toUpperCase(): null,
                     dynamicFilters: [],
                     chartType:definitionModel.chartType,
-                    ascDesc: definitionModel.ascDesc,
+                    ascDesc: definitionModel.ascDesc ? definitionModel.ascDesc : definitionModel.sortOrder,
+                    orderByTimeDimension: definitionModel.sortDataByTimeDimension,
                     primaryOrderBy: definitionModel.primaryOrderBy,
                     reportColumnsOnly: reportColumnsReq,
                     dateRange:[],

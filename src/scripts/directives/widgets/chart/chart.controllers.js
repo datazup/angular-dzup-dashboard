@@ -5,34 +5,6 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
         $scope.config = config;
         $scope.widget = widget;
         
-         /*$scope.radarDefultData = function(wData, chart, chartOptions, config){
-            
-             var data = [
-                 
-                 // {x: topic1-area1, y:40}, { x: topic1-area2, y: 45} , {x: topic1-area3, y: 40 }
-                 {
-                     key: 'Topic1',
-                     values: [{ label: 'Area1', value: 40 }, { label: 'Area2', value: 56}, { label: 'Area3', value: 74}]
-                 },
-                 {
-                     key: 'Topic2',
-                     values: [{ label: 'Area5', value: 23 }, { label: 'Area6', value: 57}, { label: 'Area7', value: 35}]
-                 },
-                 {
-                     key: 'Topic3',
-                     values: [{ label: 'Area1', value:67 }, { label: 'Area2', value: 34}, { label: 'Area3', value: 76}]
-                 },
-                 {
-                     key: 'Topic4',
-                     values: [{ label: 'Area1', value: 41 }, { label: 'Area2', value: 55}, { label: 'Area3', value: 67}]
-                 }
-                 
-             ];
-             
-             return data;
-             
-        };*/
-        
         $scope.getGeoDefaultData = function(wData, chart, chartOptions, config){
             if (!wData){
                 return null;
@@ -139,36 +111,6 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
                 console.log('There is no aggregated cols for geoChart');
                 return null;
             }
-            
-            /*var data = {
-                countries: [
-                    { country: 'US', count: 123 },
-                    { country: 'KR', count: 36 }
-                ],
-                states: {
-                    KR:[
-                            {
-                                state: 'KR-11', count: 10
-                            },
-                            {
-                                state: 'KR-44', count: 15
-                            },
-                            {
-                                state: 'KR-26', count: 23
-                            },
-                            {
-                                state: 'KR-47', count: 25
-                            }
-                    ],
-                    US: [
-                            {
-                                state: 'AL', count: 10
-                            }
-                    ]
-                }
-            }
-            
-            return data;*/
         };
 
         $scope.setChartData = function (result) {
@@ -199,9 +141,6 @@ app.controller('DzupGenericChartController', ['$scope', '$timeout', '$dzupConfig
 
             if (config.definitionModel.chartType === "geoChart"){
                 $scope.populatedChart = $scope.getGeoDefaultData(wData, $scope.chart, $scope.chartOptions, config);                
-            }else if (config.definitionModel.chartType === "radarChart"){
-                //$scope.populatedChart = $scope.radarDefultData(wData, $scope.chart, $scope.chartOptions, config);
-                $scope.populatedChart = chartService.getChartData(wData, $scope.chart, $scope.chartOptions);
             }else if( config.definitionModel.chartType != "tableChart")
                 $scope.populatedChart = chartService.getChartData(wData, $scope.chart, $scope.chartOptions);
              else{
@@ -535,6 +474,12 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                     title: ' ',
                     type: "string"
                 },
+                sortDataByTimeDimension:{
+                     title: "Sort Data By Primary Time Dimension",
+                     description: "",
+                     type: "boolean",
+                     default: false
+                 },
                 sortBy: {
                     title: ' ',
                     type: "string"
@@ -843,6 +788,23 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                         ]
                                     },
                                     {
+                                        type: 'section',
+                                        htmlClass: "row",
+                                        condition: "model.chartType=='discreteBarChart'",
+                                        items: [
+                                            {
+                                                type: "section",
+                                                htmlClass: "col-xs-12",
+                                                items: [
+                                                    {
+                                                       key: 'sortDataByTimeDimension',
+                                                       htmlClass: "col-xs-12",
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
                                         type: "section",
                                         htmlClass: "col-xs-12",
                                         condition: "model.chartType== 'lineChart' || model.chartType== 'radarChart'",
@@ -865,9 +827,9 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                     {
                                         type: 'section',
                                         htmlClass: "row",
-                                        condition: "model.chartType=='pieChart' || model.chartType=='lineChart' || model.chartType=='discreteBarChart' || model.chartType=='tableChart'",
+                                        condition: "model.chartType=='pieChart' || model.chartType=='lineChart' || model.chartType=='discreteBarChart' || model.chartType=='tableChart' || model.chartType== 'radarChart'",
                                         items: [
-                                            {   condition: "model.chartType!='lineChart' && model.chartType!='tableChart'",
+                                            {   condition: "model.chartType!='lineChart' && model.chartType!='tableChart' && model.chartType != 'radarChart'",
                                                 type: "section",
                                                 htmlClass: "col-xs-6",
                                                 items: [
@@ -875,7 +837,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                         key: 'sort',
                                                         htmlClass: "col-xs-6",
                                                         onChange: function (modelValue, form) {
-                                                            config.definitionModel.sortOrder = 'asc';
+                                                            config.definitionModel.sortOrder = 'ASC';
                                                             config.definitionModel.sortBy = 'x';
                                                         }
                                                     },
@@ -886,16 +848,16 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                         type: 'radios-inline',
                                                         titleMap: [
                                                             {
-                                                                value: 'asc',
+                                                                value: 'ASC',
                                                                 name: 'Ascending'
                                                             },
                                                             {
-                                                                value: 'desc',
+                                                                value: 'DESC',
                                                                 name: 'Descending'
                                                             }
                                                         ]
                                                     },
-                                                    {
+                                                   /* {
                                                         key: 'sortBy',
                                                         htmlClass: 'col-xs-12 sort-options-radio',
                                                         condition: "model.sort==true",
@@ -910,7 +872,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                                 name: 'Y Axis'
                                                             }
                                                         ]
-                                                    }
+                                                    }*/
                                                 ]
                                             },
                                             {

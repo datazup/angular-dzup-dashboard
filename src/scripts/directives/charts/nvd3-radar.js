@@ -643,6 +643,10 @@ nv.models.radarChart = function() {
                     selection.transition().call(chart);
                 });
 
+             legText.on('mouseover', function(d,i) {
+                               var hoveredLeg = legs[i];
+                            });
+
             d3.transition(ax)
                 .select("text")
                 .style("text-anchor", function(d, i) {
