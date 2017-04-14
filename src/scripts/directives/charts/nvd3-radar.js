@@ -371,22 +371,31 @@ nv.models.radarChart = function() {
 
     function chart(selection) {
         selection.each(function(data) {
-            if (!data || !data.length) return;
+           /* if(!data || !data.length) {
+                return;
+            } */
             
             data = data || [];
             
             legs = [];
             if (data && data[0] && data[0].values){
                 legs=data[0].values;//TODO: Think in a better way to put only the legs of the radar    
-            }            
-           /* var that = this;
-            $(that).attr("class", "col-lg-12");*/
+            }
 
             var container = d3.select(this),
                 that = this,
                 size = legs.length,
                 availableWidth = (width  || parseInt(container.style('width')) || 500) - margin.left - margin.right,
                 availableHeight = (height || parseInt(container.style('height')) || 500) - margin.top - margin.bottom;
+
+            if (!data || !data.length) {
+                 container.html('<text class="dzup-no-data" x="170" y="75" font-weight="bold" font-family="sans-serif" font-size="18px">No Data Available.</text>');
+                 return;
+            }
+            else
+            {
+                container.select(".dzup-no-data").remove();
+            }
 
             chart.update = function() { container.transition().duration(transitionDuration).call(chart) };
             chart.container = this;
