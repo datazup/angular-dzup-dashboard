@@ -28,6 +28,10 @@ nv.models.radar = function() {
             //.sizeDomain([16,256])
         ;
 
+    var div = d3.select("body").append("div")
+                  .attr("class", "dash-chart-tooltip")
+                  .style("opacity", 0);
+
     //============================================================
 
 
@@ -40,6 +44,7 @@ nv.models.radar = function() {
 
 
     function chart(selection) {
+
         selection.each(function(data) {
 
             var availableWidth = width - margin.left - margin.right,
@@ -140,6 +145,38 @@ nv.models.radar = function() {
                 .style('stroke-opacity', 1)
                 .style('fill-opacity', .5);
 
+
+            wrap.selectAll("circle.circle").remove();
+            var circleGroups = groups.selectAll('.nv-group g.circle-group circle.circle').data(function(d) { return d.values });
+
+            circleGroups.enter().append('circle')
+                            .attr('class', 'circle')
+                            .attr('cx', function(d,i) {return d.x; })
+                            .attr('cy', function(d,i) { return d.y; })
+                            .attr('value', function(d,i) { return d.value; })
+                            .attr('r', "3")
+                            .on("mouseover", function(d) {
+                                div.transition()
+                                    .duration(200)
+                                    .style("opacity", .9);
+                                div.html(d.value)
+                                    .style("left", (d3.event.pageX) + "px")
+                                    .style("top", (d3.event.pageY - 28) + "px");
+                                })
+                            .on("mouseout", function(d) {
+                                div.transition()
+                                    .duration(500)
+                                    .style("opacity", 0);
+                            });
+
+              d3.transition(circleGroups.exit())
+                             .attr('class', 'circle')
+                             .attr('cx', function(d,i) {console.log(d);return d.x; })
+                             .attr('cy', function(d,i) { return d.y; })
+                             .attr('value', function(d,i) { return d.value; })
+                             .attr('r', "3")
+                             .remove();
+
             var lineRadar = groups.selectAll('path.nv-line').data(function(d) { return [d.values] });
 
             lineRadar.enter().append('path')
@@ -157,8 +194,6 @@ nv.models.radar = function() {
 
             d3.transition(lineRadar)
                 .attr('d', line );
-
-
 
         });
 
@@ -639,13 +674,9 @@ nv.models.radarChart = function() {
                 ;
 
             legText.on('click', function(d,i) {
-                    chart.cursor(legs.length - i);
-                    selection.transition().call(chart);
+                   /* chart.cursor(legs.length - i);
+                    selection.transition().call(chart);*/
                 });
-
-             legText.on('mouseover', function(d,i) {
-                               var hoveredLeg = legs[i];
-                            });
 
             d3.transition(ax)
                 .select("text")

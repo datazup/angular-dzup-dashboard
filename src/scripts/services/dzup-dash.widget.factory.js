@@ -572,7 +572,7 @@ app.factory('dzupDashboardWidgetHelper', ['$dzupDashboard', function ($dzupDashb
                         if(dateFrom != "Invalid Date" && dateTo != "Invalid Date"){
                             dateFrom =  dateFrom.setHours(dateFrom.getHours() - dateFrom.getTimezoneOffset() / 60);
                             dateTo =  dateTo.setHours(dateTo.getHours() - dateTo.getTimezoneOffset() / 60);
-                            
+
                             parameters.dateRange.push(dateFrom);
                             parameters.dateRange.push(dateTo);
                         }
