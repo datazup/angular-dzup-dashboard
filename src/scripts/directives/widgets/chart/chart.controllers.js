@@ -661,7 +661,8 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                        style: {
                                            "add": "btn-success"
                                        },
-                                       add: "Add",
+                                       add: config.definitionModel.chartType !='radarChart' ? "Add" :null,
+                                       remove:config.definitionModel.chartType !='radarChart' ? true :null,
                                        title: "",
                                        htmlClass:'col-xs-12',
                                        items: [
@@ -809,7 +810,6 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                         htmlClass: "col-xs-12",
                                         condition: "model.chartType== 'lineChart' || model.chartType== 'radarChart'",
                                         items: [
-
                                             {
                                                 key: 'splitDataBy',
                                                 feedback: false,
@@ -817,10 +817,11 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                                 options: {
                                                     callback: $scope.reportColumns,
                                                     eventCallback: function(value) {
-                                                            if(typeof value == 'undefined')
+                                                            if(typeof value == 'undefined' && config.definitionModel.chartType != 'radarChart')
                                                                 $scope.config.definitionModel.splitDataBy = null;
                                                             }
-                                                }
+                                                },
+
                                             }
                                         ]
                                     },
@@ -829,7 +830,7 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                         htmlClass: "row",
                                         condition: "model.chartType=='pieChart' || model.chartType=='lineChart' || model.chartType=='discreteBarChart' || model.chartType=='tableChart' || model.chartType== 'radarChart'",
                                         items: [
-                                            {   condition: "model.chartType!='tableChart' && model.chartType != 'radarChart'",
+                                            {   condition: " model.chartType!='tableChart' && model.chartType != 'radarChart'",
                                                 type: "section",
                                                 htmlClass: "col-xs-6",
                                                 items: [
