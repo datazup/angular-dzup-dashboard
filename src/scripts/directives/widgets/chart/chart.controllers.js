@@ -828,9 +828,9 @@ app.controller('DzupGenericChartEditController', ['$scope', '$timeout', '$uibMod
                                     {
                                         type: 'section',
                                         htmlClass: "row",
-                                        condition: "model.chartType=='pieChart' || model.chartType=='lineChart' || model.chartType=='discreteBarChart' || model.chartType=='tableChart' || model.chartType== 'radarChart'",
+                                        condition: "model.chartType=='pieChart' || model.chartType=='lineChart' || model.chartType=='discreteBarChart' || model.chartType=='tableChart' || model.chartType== 'radarChart' || model.chartType=='geoChart'",
                                         items: [
-                                            {   condition: " model.chartType!='tableChart' && model.chartType != 'radarChart'",
+                                            {   condition: " model.chartType!='tableChart' && model.chartType != 'radarChart' && model.chartType=='geoChart'",
                                                 type: "section",
                                                 htmlClass: "col-xs-6",
                                                 items: [
